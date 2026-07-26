@@ -1,0 +1,6 @@
+{
+  "name": "The Premium Barbershop Groningen",
+  "description": "Ultra-modern, high-speed website and integrated appointment booking platform for The Premium Barbershop Groningen.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
