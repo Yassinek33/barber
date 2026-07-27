@@ -1,6 +1,6 @@
 import { BarberService, Barber, CustomerReview, LookbookItem, AuditComparisonItem } from '../types';
 
-export const HERO_IMAGE_PATH = '/src/assets/images/barber_hero_1785073738321.jpg';
+export const HERO_IMAGE_PATH = '/barbers/home.png';
 export const MASTER_IMAGE_PATH = '/src/assets/images/barber_master_1785073753141.jpg';
 
 export const SHOP_INFO = {

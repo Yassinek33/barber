@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { SlidersHorizontal, Sparkles, Scissors, ChevronRight } from 'lucide-react';
-import { MASTER_IMAGE_PATH } from '../data/barbershopData';
 
 interface BeforeAfterSliderProps {
   onOpenBooking: () => void;
@@ -78,7 +77,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
               >
                 {/* AFTER IMAGE (Underneath, Full) */}
                 <img
-                  src={MASTER_IMAGE_PATH}
+                  src="/barbers/apres.png"
                   alt="Après Transformation Haircut Skin Fade"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover object-center filter contrast-105"
@@ -93,7 +92,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                   style={{ width: `${sliderPosition}%` }}
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80"
+                    src="/barbers/avant.png"
                     alt="Avant Transformation"
                     referrerPolicy="no-referrer"
                     className="absolute inset-0 w-full h-full object-cover object-center filter grayscale brightness-90 contrast-120"
