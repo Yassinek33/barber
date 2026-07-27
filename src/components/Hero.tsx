@@ -29,8 +29,43 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+
+        {/* Framed Showcase Photo - The Salon */}
+        <div className="relative mb-10 group">
+          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)]">
+            <img
+              src={HERO_IMAGE_PATH}
+              alt="Intérieur du salon The Premium Barbershop Groningen"
+              referrerPolicy="no-referrer"
+              className="w-full h-64 sm:h-80 lg:h-[420px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 flex items-end justify-between">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
+                  <Sparkles className="w-3 h-3" />
+                  Notre Salon
+                </span>
+                <h2 className="text-xl sm:text-2xl font-black text-white uppercase italic tracking-tight drop-shadow-lg">
+                  {SHOP_INFO.name}
+                </h2>
+              </div>
+              <div className="hidden sm:flex items-center gap-1 text-amber-400 text-xs font-bold bg-black/40 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                <Star className="w-3.5 h-3.5 fill-amber-400" />
+                <span>{SHOP_INFO.googleRating}/5</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Decorative corner frame accents */}
+          <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-amber-400 rounded-tl-lg pointer-events-none" />
+          <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-amber-400 rounded-tr-lg pointer-events-none" />
+          <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 border-amber-400 rounded-bl-lg pointer-events-none" />
+          <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-amber-400 rounded-br-lg pointer-events-none" />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
+
           {/* Left Hero Section (Professional Polish Design) */}
           <div className="lg:col-span-7 flex flex-col justify-between py-4 pr-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
             <div>

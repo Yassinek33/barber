@@ -95,7 +95,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                     src="/barbers/avant.png"
                     alt="Avant Transformation"
                     referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover object-center filter grayscale brightness-90 contrast-120"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
                     style={{ width: '100%', maxWidth: 'none' }}
                   />
                   <div className="absolute top-4 left-4 bg-slate-900/90 border border-slate-700 text-slate-200 px-3 py-1 rounded-full text-xs font-bold shadow-md uppercase tracking-wider">
