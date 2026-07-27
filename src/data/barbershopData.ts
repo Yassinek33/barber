@@ -108,7 +108,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 18,
     rating: 4.98,
     reviewsCount: 245,
-    avatarUrl: "/barbers/majid.jpg",
+    avatarUrl: "/barbers/majid.png",
     bio: "Met 18 jaar ervaring ben ik een gerespecteerde kapper bekend om mijn vakmanschap en oog voor detail. Ik bedien een diverse klantenkring, van lokale vaste klanten tot mensen van ver. Mijn passie voor haar en stijl houdt me up-to-date met de nieuwste trends, waardoor ik mijn klanten altijd de beste service bied.",
     specialties: ["18 Jaar Ervaring", "Oog voor Detail", "Nieuwste Hair Trends"],
     instagram: "@majid_barber"
@@ -121,7 +121,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 12,
     rating: 4.96,
     reviewsCount: 198,
-    avatarUrl: "/barbers/ayoub.jpg",
+    avatarUrl: "/barbers/ayoub.png",
     bio: "Ayoub is een ervaren Master Barber met meer dan 12 jaar in de kappersbranche. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonalisederde look.",
     specialties: ["Precisie & Creativiteit", "Moderne Stijlen", "Baardverzorging"],
     instagram: "@ayoub_barber"
@@ -134,7 +134,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 10,
     rating: 4.94,
     reviewsCount: 155,
-    avatarUrl: "/barbers/yanti.jpg",
+    avatarUrl: "/barbers/yanti.png",
     bio: "Yanti heeft veel ervaring in de kappersbranche. Met zijn passie voor het vak en vakmanschap weet hij elke klant te voorzien van een stijl die perfect past. Hij combineert moderne trends met klassieke kapsels en biedt daarnaast gespecialiseerde baardverzorging. Yanti werkt nauwkeurig, creatief en met persoonlijke aandacht.",
     specialties: ["Persoonlijke Aandacht", "Nauwkeurig & Creatief", "Klassiek & Modern"],
     instagram: "@yanti_barber"
