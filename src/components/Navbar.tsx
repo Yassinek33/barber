@@ -89,9 +89,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
-            <a href="#services" className="hover:text-white transition-colors">Services</a>
+            <a href="#services" className="hover:text-white transition-colors">Diensten</a>
             <a href="#barbers" className="hover:text-white transition-colors">Barbiers</a>
-            <a href="#lookbook" className="hover:text-white transition-colors">Galerie</a>
+            <a href="#lookbook" className="hover:text-white transition-colors">Galerij</a>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
@@ -105,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-amber-500/20 border-amber-400 text-amber-300'
                   : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
               }`}
-              title={isAudioPlaying ? 'Désactiver l\'ambiance ASMR' : 'Activer l\'ambiance sonore Barber ASMR'}
+              title={isAudioPlaying ? 'ASMR-sfeer uitschakelen' : 'ASMR barbergeluid inschakelen'}
             >
               {isAudioPlaying ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -114,7 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenMyBookings}
               className="relative p-2 bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-600 transition-all"
-              title="Mes rendez-vous enregistrés"
+              title="Mijn opgeslagen afspraken"
             >
               <Calendar className="w-4 h-4" />
               {myBookingsCount > 0 && (
@@ -130,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="px-5 py-2 border border-white/20 bg-white text-black hover:bg-zinc-200 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
             >
               <Scissors className="w-3.5 h-3.5" />
-              <span>Réserver RDV</span>
+              <span>Afspraak Maken</span>
             </button>
           </div>
 
@@ -141,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="gold-button px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
             >
               <Scissors className="w-3.5 h-3.5" />
-              <span>Réserver</span>
+              <span>Reserveren</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -160,13 +160,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
             <div className="flex items-center gap-2 text-xs">
               <span className={`w-2 h-2 rounded-full ${isOpenNow ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-              <span className="text-slate-300">{isOpenNow ? 'Ouvert aujourd\'hui' : 'Fermé'}</span>
+              <span className="text-slate-300">{isOpenNow ? 'Vandaag open' : 'Gesloten'}</span>
             </div>
             <button
               onClick={onOpenAuditModal}
               className="text-xs px-2 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30"
             >
-              Audit vs Ancien Site
+              Audit vs Oude Site
             </button>
           </div>
 
@@ -176,21 +176,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Services & Tarifs
+              Diensten & Tarieven
             </a>
             <a
               href="#barbers"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Nos Barbiers
+              Onze Barbiers
             </a>
             <a
               href="#before-after"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Simulateur Avant / Après
+              Voor/Na Simulator
             </a>
             <a
               href="#quiz"
@@ -198,28 +198,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="py-1 hover:text-amber-400 flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
-              Quiz Style Sur Mesure
+              Stijl Quiz op Maat
             </a>
             <a
               href="#lookbook"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Galerie & Lookbook
+              Galerij & Lookbook
             </a>
             <a
               href="#reviews"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Avis Client (4.9/5★)
+              Klantbeoordelingen (4.9/5★)
             </a>
             <a
               href="#location"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Localisation Groningen
+              Locatie Groningen
             </a>
           </nav>
 
@@ -232,7 +232,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-sm font-semibold flex items-center justify-center gap-2"
             >
               <Calendar className="w-4 h-4 text-amber-400" />
-              <span>Mes Rendez-vous ({myBookingsCount})</span>
+              <span>Mijn Afspraken ({myBookingsCount})</span>
             </button>
 
             <button
@@ -243,7 +243,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full gold-button py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-lg"
             >
               <Scissors className="w-4 h-4" />
-              <span>Réserver un Créneau</span>
+              <span>Reserveer een Tijdslot</span>
             </button>
           </div>
         </div>

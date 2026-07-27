@@ -16,21 +16,21 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
   const [recommendedStyle, setRecommendedStyle] = useState<any | null>(null);
 
   const faceShapes = [
-    { id: 'oval', label: 'Ovale / Carré', desc: 'S\'adapte à presque toutes les coupes' },
-    { id: 'round', label: 'Rond', desc: 'Besoin de hauteur et de dégradé sur les côtés' },
-    { id: 'elongated', label: 'Allongé / Fin', desc: 'Préfère du volume équilibré sur les côtés' }
+    { id: 'oval', label: 'Ovaal / Vierkant', desc: 'Past bij bijna elk kapsel' },
+    { id: 'round', label: 'Rond', desc: 'Heeft hoogte en fade aan de zijkanten nodig' },
+    { id: 'elongated', label: 'Langwerpig / Smal', desc: 'Profiteert van gebalanceerd volume aan de zijkanten' }
   ];
 
   const hairTypes = [
-    { id: 'straight', label: 'Lisses / Fins', desc: 'Idéal pour Crop texturisé ou Side-Part' },
-    { id: 'wavy', label: 'Ondulés / Épais', desc: 'Parfait pour Pompadour ou Slick Back' },
-    { id: 'curly', label: 'Frisés / Crépus', desc: 'Sublimés par un Low Skin Fade net' }
+    { id: 'straight', label: 'Sluik / Fijn', desc: 'Ideaal voor een getextureerde Crop of Side-Part' },
+    { id: 'wavy', label: 'Golvend / Dik', desc: 'Perfect voor Pompadour of Slick Back' },
+    { id: 'curly', label: 'Krullend / Kroes', desc: 'Komt het best tot zijn recht met een strakke Low Skin Fade' }
   ];
 
   const maintenanceLevels = [
-    { id: 'low', label: 'Express (1 à 2 min)', desc: 'Peu de coiffage, prêt en un coup de peigne' },
-    { id: 'medium', label: 'Standard (5 min)', desc: 'Application rapide de cire mat ou pommade' },
-    { id: 'high', label: 'Soigné (10 min+)', desc: 'Sèche-cheveux, brosse et finition parfaite' }
+    { id: 'low', label: 'Express (1 tot 2 min)', desc: 'Weinig styling nodig, klaar met één kam-beweging' },
+    { id: 'medium', label: 'Standaard (5 min)', desc: 'Snel aanbrengen van matte wax of pomade' },
+    { id: 'high', label: 'Verzorgd (10 min+)', desc: 'Föhn, borstel en perfecte afwerking' }
   ];
 
   const handleSelectAnswer = (key: 'faceShape' | 'hairType' | 'maintenance', val: string) => {
@@ -52,18 +52,18 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
       setRecommendedStyle({
         title: "Precision Low Skin Fade & Textured Top",
         serviceId: "skin-fade",
-        serviceName: "Precision Skin Fade & Contour",
+        serviceName: "Precisie Skin Fade & Contour",
         price: 32,
-        desc: "Ce style apporte de la hauteur et affine les contours de votre visage tout en conservant une structure très propre sur les côtés.",
+        desc: "Deze stijl geeft hoogte en verfijnt de contouren van uw gezicht, met een strakke structuur aan de zijkanten.",
         imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&auto=format&fit=crop&q=80"
       });
     } else if (ans.maintenance === 'high' || ans.hairType === 'wavy') {
       setRecommendedStyle({
-        title: "Royal Combo (Coupe Pompadour + Barbe VIP)",
+        title: "Royal Combo (Pompadour Knipbeurt + VIP Baard)",
         serviceId: "royal-combo",
-        serviceName: "Royal Combo (Coupe + Barbe VIP)",
+        serviceName: "Royal Combo (Knipbeurt + VIP Baard)",
         price: 49,
-        desc: "L'accord parfait : une coupe sculptée avec du volume élégant associée à un traçage de barbe millimétré à la serviette chaude.",
+        desc: "De perfecte combinatie: een gesculpteerde knipbeurt met elegant volume samen met een millimeter-precieze baardlijn met warme handdoek.",
         imageUrl: "https://images.unsplash.com/photo-[#503443207922]?w=600&auto=format&fit=crop&q=80"
       });
     } else {
@@ -72,7 +72,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
         serviceId: "classic-cut",
         serviceName: "Gentleman Classic Cut",
         price: 28,
-        desc: "Une coupe intemporelle, soignée et très facile à entretenir au quotidien avec un rendu naturel.",
+        desc: "Een tijdloze, verzorgde knipbeurt die dagelijks makkelijk te onderhouden is met een natuurlijk resultaat.",
         imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
       });
     }
@@ -92,13 +92,13 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
         <div className="text-center space-y-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Assistant Diagnostic de Style</span>
+            <span>Stijl Diagnose Assistent</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Quelle coupe est faite <span className="gold-text-gradient">pour vous ?</span>
+            Welk kapsel past <span className="gold-text-gradient">bij u?</span>
           </h2>
           <p className="text-slate-400 text-xs sm:text-sm">
-            Répondez à 3 questions rapides pour obtenir la recommandation personnalisée de nos maîtres barbiers.
+            Beantwoord 3 korte vragen voor een persoonlijk advies van onze meester-barbiers.
           </p>
         </div>
 
@@ -109,8 +109,8 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
           {step <= 3 && (
             <div className="mb-8">
               <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2">
-                <span>Étape {step} sur 3</span>
-                <span>{Math.round((step / 3) * 100)}% Complété</span>
+                <span>Stap {step} van 3</span>
+                <span>{Math.round((step / 3) * 100)}% Voltooid</span>
               </div>
               <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                 <div
@@ -125,7 +125,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
           {step === 1 && (
             <div className="space-y-6">
               <h3 className="font-display text-xl font-bold text-white text-center">
-                1. Quelle est la forme principale de votre visage ?
+                1. Wat is de hoofdvorm van uw gezicht?
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {faceShapes.map((item) => (
@@ -146,7 +146,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
           {step === 2 && (
             <div className="space-y-6">
               <h3 className="font-display text-xl font-bold text-white text-center">
-                2. Quel est la nature de vos cheveux ?
+                2. Wat is de aard van uw haar?
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {hairTypes.map((item) => (
@@ -167,7 +167,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
           {step === 3 && (
             <div className="space-y-6">
               <h3 className="font-display text-xl font-bold text-white text-center">
-                3. Combien de temps consacrez-vous au coiffage le matin ?
+                3. Hoeveel tijd besteedt u 's ochtends aan stylen?
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {maintenanceLevels.map((item) => (
@@ -189,7 +189,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
             <div className="space-y-6 text-center animate-fade-in">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider">
                 <Check className="w-4 h-4 text-emerald-400" />
-                <span>Style Recommandé pour vous</span>
+                <span>Aanbevolen Stijl voor u</span>
               </div>
 
               <h3 className="font-display text-2xl sm:text-3xl font-bold text-white">
@@ -201,7 +201,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
                   {recommendedStyle.desc}
                 </p>
                 <div className="pt-2 flex items-center justify-between border-t border-slate-800 text-xs">
-                  <span className="text-slate-400">Prestation correspondante : <strong className="text-white">{recommendedStyle.serviceName}</strong></span>
+                  <span className="text-slate-400">Bijbehorende behandeling: <strong className="text-white">{recommendedStyle.serviceName}</strong></span>
                   <span className="text-amber-400 font-bold text-base">{recommendedStyle.price}€</span>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
                   className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-2"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Refaire le Quiz</span>
+                  <span>Quiz Opnieuw Doen</span>
                 </button>
 
                 <button
@@ -220,7 +220,7 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
                   className="gold-button px-6 py-3 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg"
                 >
                   <Scissors className="w-4 h-4" />
-                  <span>Réserver ce Style Recommandé</span>
+                  <span>Reserveer deze Aanbevolen Stijl</span>
                 </button>
               </div>
 

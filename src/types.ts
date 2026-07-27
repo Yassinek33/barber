@@ -51,7 +51,7 @@ export interface ConfirmedBooking {
   totalPrice: number;
   durationMinutes: number;
   createdAt: string;
-  status: 'confirmé' | 'terminé' | 'annulé';
+  status: 'bevestigd' | 'voltooid' | 'geannuleerd';
 }
 
 export interface CustomerReview {

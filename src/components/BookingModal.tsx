@@ -106,8 +106,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       extras: extrasData,
       totalPrice: calculateTotalPrice(),
       durationMinutes: selectedService.durationMinutes,
-      createdAt: new Date().toLocaleDateString('fr-FR'),
-      status: 'confirmé'
+      createdAt: new Date().toLocaleDateString('nl-NL'),
+      status: 'bevestigd'
     };
 
     setConfirmedBooking(booking);
@@ -144,8 +144,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-white">Réservation de Créneau Barber</h2>
-              <p className="text-xs text-slate-400">The Premium Barbershop Groningen • Instantané & Sans Attente</p>
+              <h2 className="font-display text-lg font-bold text-white">Reserveer een Tijdslot bij de Barbier</h2>
+              <p className="text-xs text-slate-400">The Premium Barbershop Groningen • Direct & Zonder Wachten</p>
             </div>
           </div>
           <button
@@ -161,7 +161,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="px-6 py-3 bg-slate-950/80 border-b border-slate-800/60 flex items-center justify-between text-xs font-semibold">
             <div className={`flex items-center gap-1.5 ${step >= 1 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">1</span>
-              <span className="hidden sm:inline">Service</span>
+              <span className="hidden sm:inline">Dienst</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 2 ? 'text-amber-400' : 'text-slate-600'}`}>
@@ -171,12 +171,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 3 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
-              <span className="hidden sm:inline">Date & Horaire</span>
+              <span className="hidden sm:inline">Datum & Tijd</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 4 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">4</span>
-              <span className="hidden sm:inline">Confirmation</span>
+              <span className="hidden sm:inline">Bevestiging</span>
             </div>
           </div>
         )}
@@ -187,7 +187,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 1: SELECT SERVICE */}
           {step === 1 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Étape 1 : Choisissez votre Prestation</h3>
+              <h3 className="font-display font-bold text-white text-base">Stap 1: Kies uw Behandeling</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {BARBER_SERVICES.map((srv) => (
                   <div
@@ -204,7 +204,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <span className="text-amber-400 font-extrabold text-base">{srv.price}€</span>
                     </div>
                     <p className="text-xs text-slate-400 line-clamp-2">{srv.description}</p>
-                    <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minutes</div>
+                    <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minuten</div>
                   </div>
                 ))}
               </div>
@@ -214,8 +214,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 2: SELECT BARBER */}
           {step === 2 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Étape 2 : Choisissez votre Barbier Favori</h3>
-              
+              <h3 className="font-display font-bold text-white text-base">Stap 2: Kies uw Favoriete Barbier</h3>
+
               {/* Option: Any available */}
               <div
                 onClick={() => setSelectedBarber(null)}
@@ -229,8 +229,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-white">N'importe quel Barbier Disponible</h4>
-                  <p className="text-xs text-slate-400">Attribution automatique selon la meilleure disponibilité</p>
+                  <h4 className="font-bold text-sm text-white">Elke Beschikbare Barbier</h4>
+                  <p className="text-xs text-slate-400">Automatische toewijzing op basis van de beste beschikbaarheid</p>
                 </div>
               </div>
 
@@ -266,11 +266,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 3: PICK DATE & TIME SLOT */}
           {step === 3 && (
             <div className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Étape 3 : Choisissez le Jour & l'Heure</h3>
-              
+              <h3 className="font-display font-bold text-white text-base">Stap 3: Kies de Dag & het Tijdstip</h3>
+
               {/* Date Input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">Date du rendez-vous :</label>
+                <label className="block text-xs font-semibold text-slate-300">Datum van de afspraak:</label>
                 <input
                   type="date"
                   min={todayStr}
@@ -283,7 +283,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Time Slots Categorized */}
               <div className="space-y-4 pt-2">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌅 Matinée</p>
+                  <p className="text-xs font-semibold text-slate-400 mb-2">🌅 Ochtend</p>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                     {timeSlotsMorning.map((slot) => (
                       <button
@@ -303,7 +303,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">☀️ Après-midi</p>
+                  <p className="text-xs font-semibold text-slate-400 mb-2">☀️ Middag</p>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                     {timeSlotsAfternoon.map((slot) => (
                       <button
@@ -323,7 +323,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌙 Fin de journée / Nocturne</p>
+                  <p className="text-xs font-semibold text-slate-400 mb-2">🌙 Avond / Late Uren</p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {timeSlotsEvening.map((slot) => (
                       <button
@@ -349,14 +349,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 4: CUSTOMER DETAILS & EXTRAS */}
           {step === 4 && (
             <form id="booking-form" onSubmit={handleConfirmSubmit} className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Étape 4 : Vos Coordonnées & Options VIP</h3>
+              <h3 className="font-display font-bold text-white text-base">Stap 4: Uw Gegevens & VIP Opties</h3>
 
               {/* Summary Bar */}
               <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
                 <div>
                   <p className="font-bold text-white">{selectedService.name}</p>
                   <p className="text-slate-400">
-                    Le {selectedDate} à {selectedSlot} • Avec {selectedBarber ? selectedBarber.name : 'Barbier Disponible'}
+                    Op {selectedDate} om {selectedSlot} • Bij {selectedBarber ? selectedBarber.name : 'Beschikbare Barbier'}
                   </p>
                 </div>
                 <span className="text-amber-400 font-extrabold text-lg">{calculateTotalPrice()}€</span>
@@ -365,11 +365,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Form Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Nom & Prénom * :</label>
+                  <label className="block text-slate-300 font-semibold mb-1">Voor- & Achternaam *:</label>
                   <input
                     type="text"
                     required
-                    placeholder="ex: Lucas Dupont"
+                    placeholder="bijv: Lucas Jansen"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -377,11 +377,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Numéro de Téléphone * :</label>
+                  <label className="block text-slate-300 font-semibold mb-1">Telefoonnummer *:</label>
                   <input
                     type="tel"
                     required
-                    placeholder="ex: +31 6 1234 5678"
+                    placeholder="bijv: +31 6 1234 5678"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -390,11 +390,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="text-xs">
-                <label className="block text-slate-300 font-semibold mb-1">Adresse Email (pour confirmation) * :</label>
+                <label className="block text-slate-300 font-semibold mb-1">E-mailadres (voor bevestiging) *:</label>
                 <input
                   type="email"
                   required
-                  placeholder="ex: lucas@example.com"
+                  placeholder="bijv: lucas@example.com"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -403,7 +403,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Optional Extras Checkboxes */}
               <div className="space-y-2 pt-2">
-                <label className="block text-xs font-semibold text-slate-300">Options Complémentaires Offertes ou VIP :</label>
+                <label className="block text-xs font-semibold text-slate-300">Extra of VIP Opties:</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   {BOOKING_EXTRAS.map((extra) => (
                     <div
@@ -416,7 +416,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       }`}
                     >
                       <span className="font-medium">{extra.name}</span>
-                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : 'Offert'}</span>
+                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : 'Gratis'}</span>
                     </div>
                   ))}
                 </div>
@@ -433,27 +433,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <h3 className="font-display text-2xl font-bold text-white">Réservation Confirmée !</h3>
-                <p className="text-xs text-amber-400 font-mono font-bold">Référence : #{confirmedBooking.id}</p>
-                <p className="text-xs text-slate-400">Un SMS & Email de confirmation a été généré pour {confirmedBooking.customerEmail}.</p>
+                <h3 className="font-display text-2xl font-bold text-white">Reservering Bevestigd!</h3>
+                <p className="text-xs text-amber-400 font-mono font-bold">Referentie: #{confirmedBooking.id}</p>
+                <p className="text-xs text-slate-400">Een SMS & e-mail ter bevestiging is verzonden naar {confirmedBooking.customerEmail}.</p>
               </div>
 
               {/* Receipt Card */}
               <div className="max-w-md mx-auto p-5 rounded-2xl bg-slate-950 border border-amber-500/30 text-left space-y-3 text-xs">
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Prestation :</span>
+                  <span className="text-slate-400">Behandeling:</span>
                   <span className="font-bold text-white">{confirmedBooking.service.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Barbier :</span>
+                  <span className="text-slate-400">Barbier:</span>
                   <span className="font-bold text-amber-300">{confirmedBooking.barber.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Date & Heure :</span>
-                  <span className="font-bold text-white">{confirmedBooking.date} à {confirmedBooking.timeSlot}</span>
+                  <span className="text-slate-400">Datum & Tijd:</span>
+                  <span className="font-bold text-white">{confirmedBooking.date} om {confirmedBooking.timeSlot}</span>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-sm">
-                  <span className="text-slate-300">Total à régler au salon :</span>
+                  <span className="text-slate-300">Totaal te betalen in de zaak:</span>
                   <span className="text-amber-400">{confirmedBooking.totalPrice}€</span>
                 </div>
               </div>
@@ -461,19 +461,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <a
-                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:RDV Barbershop Groningen%0ADESCRIPTION:Prestation ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
-                  download="rdv-barbershop.ics"
+                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:Afspraak Barbershop Groningen%0ADESCRIPTION:Behandeling ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
+                  download="afspraak-barbershop.ics"
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4 text-amber-400" />
-                  <span>Ajouter à mon Calendrier</span>
+                  <span>Toevoegen aan mijn Agenda</span>
                 </a>
 
                 <button
                   onClick={resetModal}
                   className="w-full sm:w-auto gold-button px-6 py-2.5 rounded-xl font-bold text-xs"
                 >
-                  Terminer
+                  Voltooien
                 </button>
               </div>
 
@@ -492,7 +492,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Retour</span>
+                <span>Terug</span>
               </button>
             ) : (
               <div />
@@ -504,7 +504,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 onClick={() => setStep(step + 1)}
                 className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md"
               >
-                <span>Continuer</span>
+                <span>Doorgaan</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
@@ -514,7 +514,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Confirmer ma Réservation ({calculateTotalPrice()}€)</span>
+                <span>Bevestig mijn Reservering ({calculateTotalPrice()}€)</span>
               </button>
             )}
           </div>

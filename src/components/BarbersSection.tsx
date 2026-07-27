@@ -15,13 +15,13 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Award className="w-3.5 h-3.5" />
-            <span>L'Équipe des Master Barbiers</span>
+            <span>Het Team van Master Barbiers</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Des Artistes du <span className="gold-text-gradient">Rasoir & Ciseaux</span>
+            Kunstenaars van <span className="gold-text-gradient">Scheermes & Schaar</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Chaque membre de notre équipe cumule plusieurs années d'expérience en salon haut de gamme pour vous offrir la coupe parfaite.
+            Elk teamlid heeft jarenlange ervaring in een hoogwaardige zaak om u de perfecte knipbeurt te bieden.
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
 
                   {/* Experience Badge */}
                   <div className="absolute bottom-4 left-4 px-2.5 py-1 rounded-lg bg-amber-500 text-black text-[11px] font-extrabold uppercase tracking-wider">
-                    {barber.experienceYears} Ans d'Expérience
+                    {barber.experienceYears} Jaar Ervaring
                   </div>
                 </div>
 
@@ -74,7 +74,7 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
 
                   {/* Specialty Tags */}
                   <div className="space-y-1.5">
-                    <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Spécialités :</p>
+                    <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Specialiteiten:</p>
                     <div className="flex flex-wrap gap-1.5">
                       {barber.specialties.map((spec, idx) => (
                         <span
@@ -97,7 +97,7 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
                   className="w-full gold-button py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-102 transition-transform"
                 >
                   <Scissors className="w-4 h-4" />
-                  <span>Réserver avec {barber.name}</span>
+                  <span>Reserveer bij {barber.name}</span>
                 </button>
               </div>
 

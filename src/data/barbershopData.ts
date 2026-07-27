@@ -5,14 +5,14 @@ export const MASTER_IMAGE_PATH = '/src/assets/images/barber_master_1785073753141
 
 export const SHOP_INFO = {
   name: "The Premium Barbershop Groningen",
-  tagline: "L'art de la haute coiffure & taille de barbe pour hommes exigeants à Groningen",
+  tagline: "De kunst van hoogwaardig kappen & baardverzorging voor de veeleisende heer in Groningen",
   address: "Gedempte Zuiderdiep 116, 9711 HM Groningen",
   phone: "06-84289005",
   email: "booking@thepremiumbarbershopgroningen.nl",
   instagram: "@thepremiumbarbershop_groningen",
   googleRating: 4.9,
   reviewsTotal: 488,
-  openingHoursSummary: "Maandag—Zaterdag (Donderdag nocturne tot 21:00)",
+  openingHoursSummary: "Maandag—Zaterdag (Donderdag koopavond tot 21:00)",
   openingHours: [
     { day: "Maandag", hours: "12.00 tot 18.00", open: true },
     { day: "Dinsdag", hours: "10.00 tot 18.00", open: true },
@@ -29,12 +29,12 @@ export const SHOP_INFO = {
 export const BARBER_SERVICES: BarberService[] = [
   {
     id: "skin-fade",
-    name: "Precision Skin Fade & Contour",
+    name: "Precisie Skin Fade & Contour",
     category: "haircut",
     price: 32,
     durationMinutes: 40,
-    description: "Dégradé à blanc ultra-précis au rasoir/shaver, dégradé progressif sur mesure, finition aux ciseaux et coiffage texturisé.",
-    badge: "Populaire",
+    description: "Ultra-precieze skin fade met tondeuse/scheermes, geleidelijke overgang op maat, afwerking met de schaar en getextureerd stylen.",
+    badge: "Populair",
     popular: true,
     icon: "Scissors"
   },
@@ -44,37 +44,37 @@ export const BARBER_SERVICES: BarberService[] = [
     category: "haircut",
     price: 28,
     durationMinutes: 35,
-    description: "Coupe classique aux ciseaux & tondeuse, finition nuque et contours propres, rinçage rafraîchissant et pommade premium.",
+    description: "Klassieke knipbeurt met schaar & tondeuse, nette afwerking in de nek en contouren, verfrissende spoeling en premium pomade.",
     icon: "Scissors"
   },
   {
     id: "beard-sculpt",
-    name: "Taille de Barbe & Tracé au Rasoir",
+    name: "Baardtrim & Contourlijn met Scheermes",
     category: "beard",
     price: 24,
     durationMinutes: 30,
-    description: "Sculpture de la barbe à la main, contours nets au coupe-choux, serviette chaude infusée à l'eucalyptus et huile nourissante.",
-    badge: "Best-Seller",
+    description: "Handmatig gesculpteerde baard, strakke contouren met het scheermes, warme handdoek met eucalyptus en voedende olie.",
+    badge: "Bestseller",
     icon: "Razor"
   },
   {
     id: "royal-combo",
-    name: "Royal Combo (Coupe + Barbe VIP)",
+    name: "Royal Combo (Knipbeurt + VIP Baard)",
     category: "combo",
     price: 49,
     durationMinutes: 65,
-    description: "L'expérience complète : Coupe dégradée sur-mesure + Taille de barbe VIP avec double serviette chaude, massage du cuir chevelu et soin.",
+    description: "De complete ervaring: op maat gemaakte fade + VIP baardverzorging met dubbele warme handdoek, hoofdhuidmassage en verzorging.",
     badge: "Signature",
     popular: true,
     icon: "Crown"
   },
   {
     id: "hot-towel-shave",
-    name: "Rasage Traditionnel à l'Ancienne",
+    name: "Traditioneel Ouderwets Scheren",
     category: "beard",
     price: 29,
     durationMinutes: 35,
-    description: "Véritable rasage au coupe-choux traditionnel, mousse chaude montée au blaireau, 2 serviettes chaudes et baume après-rasage apaisant.",
+    description: "Authentiek scheren met het rechte scheermes, warm scheerschuim met scheerkwast, 2 warme handdoeken en kalmerende aftershave balsem.",
     icon: "Flame"
   },
   {
@@ -83,18 +83,18 @@ export const BARBER_SERVICES: BarberService[] = [
     category: "combo",
     price: 68,
     durationMinutes: 80,
-    description: "Soin ultime : Coupe + Barbe + Shampooing massant + Epilation nez/oreilles à la cire + Masque du visage purifiant + Boisson offerte.",
+    description: "De ultieme verzorging: Knipbeurt + Baard + Ontspannende shampoo-massage + Neus-/oorharen wax + Reinigend gezichtsmasker + Gratis drankje.",
     badge: "VIP Luxe",
     popular: true,
     icon: "Sparkles"
   },
   {
     id: "junior-cut",
-    name: "Coupe Jeune Gentleman (-14 ans)",
+    name: "Jonge Gentleman Knipbeurt (-14 jaar)",
     category: "junior",
     price: 22,
     durationMinutes: 30,
-    description: "Coupe moderne et adaptée pour les plus jeunes, contours soignés et touche de cire coiffante.",
+    description: "Moderne en aangepaste knipbeurt voor de jongsten, verzorgde contouren en een vleugje stylingwax.",
     icon: "User"
   }
 ];
@@ -103,7 +103,7 @@ export const BARBERS: Barber[] = [
   {
     id: "majid",
     name: "Majid",
-    nickname: "Master Barber (18 ans exp.)",
+    nickname: "Master Barber (18 jaar ervaring)",
     role: "Senior Master Barber",
     experienceYears: 18,
     rating: 4.98,
@@ -116,13 +116,13 @@ export const BARBERS: Barber[] = [
   {
     id: "ayoub",
     name: "Ayoub",
-    nickname: "Master Barber (12+ ans exp.)",
+    nickname: "Master Barber (12+ jaar ervaring)",
     role: "Master Barber & Stylist",
     experienceYears: 12,
     rating: 4.96,
     reviewsCount: 198,
     avatarUrl: "/barbers/ayoub.png",
-    bio: "Ayoub is een ervaren Master Barber met meer dan 12 jaar in de kappersbranche. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonalisederde look.",
+    bio: "Ayoub is een ervaren Master Barber met meer dan 12 jaar in de kappersbranche. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonaliseerde look.",
     specialties: ["Precisie & Creativiteit", "Moderne Stijlen", "Baardverzorging"],
     instagram: "@ayoub_barber"
   },
@@ -142,10 +142,10 @@ export const BARBERS: Barber[] = [
 ];
 
 export const BOOKING_EXTRAS = [
-  { id: "wash", name: "Shampooing Massant & Relaxant", price: 5 },
-  { id: "wax", name: "Épilation Cire (Nez & Oreilles)", price: 6 },
-  { id: "mask", name: "Masque Purifiant Visage à l'Argile", price: 10 },
-  { id: "beverage", name: "Espresso Italien ou Whisky de Dégustation", price: 0 }
+  { id: "wash", name: "Ontspannende Shampoo-Massage", price: 5 },
+  { id: "wax", name: "Wax Ontharing (Neus & Oren)", price: 6 },
+  { id: "mask", name: "Reinigend Kleimasker Gezicht", price: 10 },
+  { id: "beverage", name: "Italiaanse Espresso of Whisky Proeverij", price: 0 }
 ];
 
 export const CLIENT_REVIEWS: CustomerReview[] = [
@@ -154,9 +154,9 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     author: "Daan Van Der Berg",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
     rating: 5,
-    date: "Il y a 2 jours",
-    text: "Sans doute le meilleur barber de Groningen sur Gedempte Zuiderdiep ! Majid a réalisé une coupe parfaite avec un soin du détail impressionnant. Le système de réservation est instantané.",
-    serviceName: "Royal Combo (Coupe + Barbe VIP)",
+    date: "2 dagen geleden",
+    text: "Zonder twijfel de beste barbier van Groningen aan de Gedempte Zuiderdiep! Majid leverde een perfecte knipbeurt met indrukwekkend oog voor detail. Het reserveringssysteem is direct.",
+    serviceName: "Royal Combo (Knipbeurt + VIP Baard)",
     barberName: "Majid - Senior Master Barber",
     verified: true
   },
@@ -165,9 +165,9 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     author: "Lars De Jong",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
     rating: 5,
-    date: "Il y a 4 jours",
-    text: "Ayoub a plus de 12 ans d'expérience et ça se voit direct ! Taille de barbe au coupe-choux ultra nette. Ambiance au top au salon.",
-    serviceName: "Taille de Barbe & Tracé",
+    date: "4 dagen geleden",
+    text: "Ayoub heeft meer dan 12 jaar ervaring en dat is meteen te zien! Baardtrim met het scheermes ultra netjes. Top sfeer in de zaak.",
+    serviceName: "Baardtrim & Contourlijn",
     barberName: "Ayoub - Master Barber",
     verified: true
   },
@@ -176,9 +176,9 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     author: "Thomas Miller",
     avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80",
     rating: 5,
-    date: "Il y a 1 semaine",
-    text: "Service exceptionnel avec Yanti. Son attention personnelle et la précision de sa coupe sont remarquables. Je recommande sans hésitation.",
-    serviceName: "Precision Skin Fade",
+    date: "1 week geleden",
+    text: "Uitzonderlijke service bij Yanti. Zijn persoonlijke aandacht en precisie zijn opmerkelijk. Ik raad het zonder twijfel aan.",
+    serviceName: "Precisie Skin Fade",
     barberName: "Yanti - Barber Specialist",
     verified: true
   }
@@ -190,7 +190,7 @@ export const LOOKBOOK_ITEMS: LookbookItem[] = [
     title: "Sharp Low Skin Fade & Textured Top",
     category: "fades",
     imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&auto=format&fit=crop&q=80",
-    description: "Dégradé bas très propre avec du relief texturisé sur le dessus. Finition mat naturelle.",
+    description: "Zeer strakke lage skin fade met getextureerd volume bovenop. Natuurlijke matte afwerking.",
     tags: ["Skin Fade", "Textured Crop", "Modern"],
     serviceIdToBook: "skin-fade"
   },
@@ -199,8 +199,8 @@ export const LOOKBOOK_ITEMS: LookbookItem[] = [
     title: "Full Beard Sculpt & Sharp Contour",
     category: "beards",
     imageUrl: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=600&auto=format&fit=crop&q=80",
-    description: "Barbe dense sculptée avec lignes de joues au tracé rasoir millimétré.",
-    tags: ["Taille Barbe", "Rasoir", "Gentleman"],
+    description: "Dichte, gesculpteerde baard met scherpe wanglijnen tot op de millimeter getekend met het scheermes.",
+    tags: ["Baardtrim", "Scheermes", "Gentleman"],
     serviceIdToBook: "beard-sculpt"
   },
   {
@@ -208,7 +208,7 @@ export const LOOKBOOK_ITEMS: LookbookItem[] = [
     title: "Mid Fade Pompadour & Taper",
     category: "combos",
     imageUrl: "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=600&auto=format&fit=crop&q=80",
-    description: "Style iconique revisité avec volume élégant et transition progressive.",
+    description: "Iconische stijl in een nieuw jasje met elegant volume en geleidelijke overgang.",
     tags: ["Pompadour", "Classic", "Premium"],
     serviceIdToBook: "royal-combo"
   },
@@ -217,47 +217,47 @@ export const LOOKBOOK_ITEMS: LookbookItem[] = [
     title: "Gentleman Side-Part & Sharp Beard",
     category: "classics",
     imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-    description: "Raie sur le côté sculptée aux ciseaux avec fondu temporel subtil.",
-    tags: ["Side Part", "Classique", "Business"],
+    description: "Met de schaar gesculpteerde zijscheiding met subtiele slapenfade.",
+    tags: ["Side Part", "Klassiek", "Business"],
     serviceIdToBook: "classic-cut"
   }
 ];
 
 export const AUDIT_BENCHMARKS: AuditComparisonItem[] = [
   {
-    feature: "Réservation en Ligne",
-    oldSite: "Formulaire externe lent ou redirection tierce",
-    newSite: "Module natif ultra-rapide 4 étapes avec choix du barbier et créneau direct",
+    feature: "Online Reserveren",
+    oldSite: "Traag extern formulier of omleiding naar derde partij",
+    newSite: "Razendsnelle native module in 4 stappen met keuze van barbier en direct tijdslot",
     status: "better"
   },
   {
-    feature: "Vitesse de chargement & Fluidité",
-    oldSite: "Page statique lourde (Score ~45/100)",
-    newSite: "Architecture React + Vite ultra-instantanée (Score ~99/100)",
+    feature: "Laadsnelheid & Soepelheid",
+    oldSite: "Zware statische pagina (Score ~45/100)",
+    newSite: "React + Vite architectuur, ultrasnel (Score ~99/100)",
     status: "better"
   },
   {
-    feature: "Expérience Mobile & Ergonomie",
-    oldSite: "Design basique non optimisé pour smartphones",
-    newSite: "Interface tactile dark luxury intuitive avec effets de transition fluides",
+    feature: "Mobiele Ervaring & Ergonomie",
+    oldSite: "Basic design, niet geoptimaliseerd voor smartphones",
+    newSite: "Intuïtieve dark-luxury touch-interface met vloeiende overgangseffecten",
     status: "better"
   },
   {
-    feature: "Quiz Recommandation de Style",
-    oldSite: "Absents - Choix de coupe à l'aveugle",
-    newSite: "Quiz interactif 3 questions pour trouver la coupe parfaite selon la morphologie",
+    feature: "Stijladvies Quiz",
+    oldSite: "Afwezig - Blind kiezen van een kapsel",
+    newSite: "Interactieve quiz met 3 vragen om het perfecte kapsel te vinden op basis van gezichtsvorm",
     status: "better"
   },
   {
-    feature: "Expérience Sensorielle & Effets",
-    oldSite: "Site vitrine passif sans animation",
-    newSite: "Simulateur Avant/Après, ambiance sonore ASMR barber et confirmation animée",
+    feature: "Sensorische Ervaring & Effecten",
+    oldSite: "Passieve website zonder animatie",
+    newSite: "Voor/Na-simulator, ASMR barber geluidssfeer en geanimeerde bevestiging",
     status: "better"
   },
   {
-    feature: "Gestion des Rendez-vous",
-    oldSite: "Pas d'historique ni de récapitulatif modifiable",
-    newSite: "Espace 'Mes Rendez-vous' avec code de suivi, possibilité de décaler/annuler",
+    feature: "Afsprakenbeheer",
+    oldSite: "Geen geschiedenis of aanpasbaar overzicht",
+    newSite: "'Mijn Afspraken'-omgeving met trackingcode, mogelijkheid om te verzetten/annuleren",
     status: "better"
   }
 ];

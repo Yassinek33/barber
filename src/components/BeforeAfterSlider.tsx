@@ -26,30 +26,30 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
           <div className="lg:col-span-5 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
               <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Simulateur Interactif de Transformation</span>
+              <span>Interactieve Transformatie Simulator</span>
             </div>
 
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight">
-              Glissez pour comparer <br />
-              <span className="gold-text-gradient">Avant vs Après</span>
+              Sleep om te vergelijken <br />
+              <span className="gold-text-gradient">Voor vs Na</span>
             </h2>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
-              Voyez la métamorphose en direct. Nos barbiers travaillent avec des techniques de coupe sur-mesure pour rééquilibrer la structure de votre visage et affûter votre ligne de barbe.
+              Zie de metamorfose live. Onze barbiers werken met op maat gemaakte kniptechnieken om de structuur van uw gezicht in balans te brengen en uw baardlijn aan te scherpen.
             </p>
 
             <ul className="space-y-3 text-xs text-slate-300">
               <li className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">✓</div>
-                <span>Dégradé progressif sans démarcation au millimètre près</span>
+                <span>Geleidelijke fade zonder scheidingslijn, tot op de millimeter</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">✓</div>
-                <span>Tracé de barbe au coupe-choux & serviette chaude apaisante</span>
+                <span>Baardlijn met het scheermes & kalmerende warme handdoek</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">✓</div>
-                <span>Styling naturel résistant toute la journée</span>
+                <span>Natuurlijke styling die de hele dag standhoudt</span>
               </li>
             </ul>
 
@@ -59,7 +59,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                 className="gold-button px-6 py-3.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all"
               >
                 <Scissors className="w-4 h-4" />
-                <span>Obtenir cette Transformation</span>
+                <span>Krijg deze Transformatie</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -78,12 +78,12 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                 {/* AFTER IMAGE (Underneath, Full) */}
                 <img
                   src="/barbers/apres.png"
-                  alt="Après Transformation Haircut Skin Fade"
+                  alt="Na Transformatie Knipbeurt Skin Fade"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover object-center filter contrast-105"
                 />
                 <div className="absolute top-4 right-4 bg-emerald-500/90 text-black px-3 py-1 rounded-full text-xs font-bold shadow-md uppercase tracking-wider">
-                  Après (Skin Fade & Barbe Clean)
+                  Na (Skin Fade & Nette Baard)
                 </div>
 
                 {/* BEFORE IMAGE (Clipped on top) */}
@@ -93,13 +93,13 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                 >
                   <img
                     src="/barbers/avant.png"
-                    alt="Avant Transformation"
+                    alt="Voor Transformatie"
                     referrerPolicy="no-referrer"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                     style={{ width: '100%', maxWidth: 'none' }}
                   />
                   <div className="absolute top-4 left-4 bg-slate-900/90 border border-slate-700 text-slate-200 px-3 py-1 rounded-full text-xs font-bold shadow-md uppercase tracking-wider">
-                    Avant (Non Coiffé)
+                    Voor (Ongestyled)
                   </div>
                 </div>
 
@@ -117,8 +117,8 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
 
               {/* Slider Instructional Bottom Bar */}
               <div className="bg-slate-900 px-4 py-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                <span>◀ Déplacez le curseur pour comparer ▶</span>
-                <span className="text-amber-400 font-medium hidden sm:inline">Modèle : Royal Combo Skin Fade</span>
+                <span>◀ Sleep de schuifregelaar om te vergelijken ▶</span>
+                <span className="text-amber-400 font-medium hidden sm:inline">Model: Royal Combo Skin Fade</span>
               </div>
 
             </div>

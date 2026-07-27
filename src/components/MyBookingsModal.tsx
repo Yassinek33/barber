@@ -30,8 +30,8 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-white">Mes Rendez-vous Barber</h2>
-              <p className="text-xs text-slate-400">Historique & Gestion des créneaux réservés</p>
+              <h2 className="font-display text-lg font-bold text-white">Mijn Afspraken bij de Barbier</h2>
+              <p className="text-xs text-slate-400">Geschiedenis & Beheer van gereserveerde tijdsloten</p>
             </div>
           </div>
           <button
@@ -49,7 +49,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
               <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500">
                 <Scissors className="w-8 h-8" />
               </div>
-              <p className="text-slate-300 font-medium text-sm">Vous n'avez aucun rendez-vous actif pour le moment.</p>
+              <p className="text-slate-300 font-medium text-sm">U heeft momenteel geen actieve afspraken.</p>
               <button
                 onClick={() => {
                   onClose();
@@ -57,7 +57,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                 }}
                 className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs"
               >
-                Prendre un Premier Rendez-vous
+                Maak uw Eerste Afspraak
               </button>
             </div>
           ) : (
@@ -76,12 +76,12 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                     </div>
                     <p className="text-xs text-slate-300 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{b.date} à {b.timeSlot}</span>
+                      <span>{b.date} om {b.timeSlot}</span>
                       <span className="text-slate-500">•</span>
-                      <span>Barbier : {b.barber.name}</span>
+                      <span>Barbier: {b.barber.name}</span>
                     </p>
                     <p className="text-[11px] text-slate-400">
-                      Client : {b.customerName} ({b.customerPhone})
+                      Klant: {b.customerName} ({b.customerPhone})
                     </p>
                   </div>
 
@@ -90,7 +90,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                     <button
                       onClick={() => onCancelBooking(b.id)}
                       className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
-                      title="Annuler ce rendez-vous"
+                      title="Deze afspraak annuleren"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -103,12 +103,12 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-xs text-slate-400">Total : {bookings.length} rendez-vous</span>
+          <span className="text-xs text-slate-400">Totaal: {bookings.length} afspraken</span>
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold"
           >
-            Fermer
+            Sluiten
           </button>
         </div>
 

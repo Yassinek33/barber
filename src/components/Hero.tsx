@@ -35,20 +35,23 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)]">
             <img
               src={HERO_IMAGE_PATH}
-              alt="Intérieur du salon The Premium Barbershop Groningen"
+              alt="Interieur van The Premium Barbershop Groningen"
               referrerPolicy="no-referrer"
-              className="w-full h-64 sm:h-80 lg:h-[420px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 flex items-end justify-between">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/15 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 flex items-end justify-between">
               <div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
                   <Sparkles className="w-3 h-3" />
-                  Notre Salon
+                  Onze Zaak
                 </span>
-                <h2 className="text-xl sm:text-2xl font-black text-white uppercase italic tracking-tight drop-shadow-lg">
+                <h2 className="text-2xl sm:text-4xl font-black text-white uppercase italic tracking-tight drop-shadow-lg mb-2">
                   {SHOP_INFO.name}
                 </h2>
+                <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
+                  Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.
+                </p>
               </div>
               <div className="hidden sm:flex items-center gap-1 text-amber-400 text-xs font-bold bg-black/40 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
                 <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -80,14 +83,14 @@ export const Hero: React.FC<HeroProps> = ({
 
               {/* Ultra Impactful Title */}
               <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-6 italic text-white uppercase">
-                SHARP<br />
-                <span className="text-zinc-500">CUTS.</span><br />
-                ZERO<br />
-                <span className="gold-text-gradient">FEAR.</span>
+                SCHERP<br />
+                <span className="text-zinc-500">GEKNIPT.</span><br />
+                ZONDER<br />
+                <span className="gold-text-gradient">ZORGEN.</span>
               </h1>
 
               <p className="text-zinc-400 max-w-lg text-sm leading-relaxed mb-8">
-                L'excellence du soin masculin au cœur de Groningen. Skin fade millimétré, taille de barbe au coupe-chou & serviette chaude. Rapide, professionnel, sans compromis.
+                Uitmuntende mannenverzorging in het hart van Groningen. Skin fade tot op de millimeter, baardtrim met het scheermes & warme handdoek. Snel, professioneel, zonder compromissen.
               </p>
 
               {/* Action Buttons */}
@@ -97,7 +100,7 @@ export const Hero: React.FC<HeroProps> = ({
                   className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2"
                 >
                   <Scissors className="w-4 h-4" />
-                  <span>Réserver en Ligne</span>
+                  <span>Online Reserveren</span>
                 </button>
 
                 <button
@@ -105,7 +108,7 @@ export const Hero: React.FC<HeroProps> = ({
                   className="px-6 py-3.5 border border-white/20 hover:bg-white/10 text-white transition-colors text-xs uppercase tracking-widest font-bold flex items-center gap-2"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Quiz Recommandation</span>
+                  <span>Stijl Quiz</span>
                 </button>
               </div>
 
@@ -115,7 +118,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors"
               >
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>Rapport comparatif vs ancien site (Performance & Vitesse)</span>
+                <span>Vergelijkingsrapport vs oude site (Prestaties & Snelheid)</span>
               </button>
 
               {/* Customer Rating Metric */}
@@ -128,9 +131,9 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="text-left">
                   <div className="flex items-center gap-1 text-amber-400 text-xs">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <span className="font-bold">4.9/5 RATING</span>
+                    <span className="font-bold">4.9/5 BEOORDELING</span>
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">488+ Avis Google Vérifiés</span>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">488+ Geverifieerde Google Reviews</span>
                 </div>
               </div>
             </div>
@@ -139,13 +142,13 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6 mt-8">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-amber-400" /> Localisation
+                  <MapPin className="w-3 h-3 text-amber-400" /> Locatie
                 </p>
                 <p className="text-xs font-bold text-white">{SHOP_INFO.address}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-400" /> Horaires
+                  <Clock className="w-3 h-3 text-amber-400" /> Openingstijden
                 </p>
                 <p className="text-xs font-bold text-white">{SHOP_INFO.openingHoursSummary}</p>
               </div>
@@ -158,26 +161,26 @@ export const Hero: React.FC<HeroProps> = ({
               <div>
                 <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                   <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">Module de Réservation</span>
-                    <h2 className="text-lg font-black uppercase tracking-tight text-white italic">Instant Booking</h2>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">Reserveringsmodule</span>
+                    <h2 className="text-lg font-black uppercase tracking-tight text-white italic">Direct Boeken</h2>
                   </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
                     <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span>Disponible</span>
+                    <span>Beschikbaar</span>
                   </div>
                 </div>
 
                 <div className="space-y-5">
                   <div>
                     <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      Prestations Recommandées
+                      Aanbevolen Behandelingen
                     </label>
                     <div className="grid grid-cols-2 gap-2.5">
                       <button
                         onClick={() => onOpenBooking('barber-cut')}
                         className="p-3 border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all text-left text-xs group"
                       >
-                        <span className="block font-bold text-white group-hover:text-black">Cut & Style</span>
+                        <span className="block font-bold text-white group-hover:text-black">Knippen & Stylen</span>
                         <span className="text-zinc-400 group-hover:text-zinc-800 text-[10px]">30 min • €32</span>
                       </button>
                       <button
@@ -192,23 +195,23 @@ export const Hero: React.FC<HeroProps> = ({
 
                   <div>
                     <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      Prochains Créneaux Disponibles
+                      Eerstvolgende Beschikbare Tijden
                     </label>
                     <div className="grid grid-cols-4 gap-2">
                       <div className="p-2.5 border border-amber-400/50 bg-amber-400/10 text-center cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-amber-300 uppercase font-bold">Aujourd'hui</span>
+                        <span className="block text-[9px] text-amber-300 uppercase font-bold">Vandaag</span>
                         <span className="font-bold text-xs text-white">14:30</span>
                       </div>
                       <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Aujourd'hui</span>
+                        <span className="block text-[9px] text-zinc-500 uppercase">Vandaag</span>
                         <span className="font-bold text-xs text-zinc-300">16:00</span>
                       </div>
                       <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Demain</span>
+                        <span className="block text-[9px] text-zinc-500 uppercase">Morgen</span>
                         <span className="font-bold text-xs text-zinc-300">10:00</span>
                       </div>
                       <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Demain</span>
+                        <span className="block text-[9px] text-zinc-500 uppercase">Morgen</span>
                         <span className="font-bold text-xs text-zinc-300">11:15</span>
                       </div>
                     </div>
@@ -217,8 +220,8 @@ export const Hero: React.FC<HeroProps> = ({
                   <div className="p-3 border border-zinc-800 bg-zinc-900/50 flex items-center gap-3">
                     <Award className="w-5 h-5 text-amber-400 shrink-0" />
                     <div className="text-left">
-                      <p className="text-[10px] uppercase tracking-wider text-white font-bold">Satisfait ou Retouché</p>
-                      <p className="text-[10px] text-zinc-400">Si la coupe ne vous convient pas à 100%, retouche offerte sous 7 jours.</p>
+                      <p className="text-[10px] uppercase tracking-wider text-white font-bold">Tevreden of Gratis Retouche</p>
+                      <p className="text-[10px] text-zinc-400">Als de knipbeurt niet 100% naar wens is, bieden we binnen 7 dagen een gratis retouche.</p>
                     </div>
                   </div>
                 </div>
@@ -228,7 +231,7 @@ export const Hero: React.FC<HeroProps> = ({
                 onClick={onOpenBooking}
                 className="w-full bg-white text-black py-3.5 font-black uppercase tracking-[0.2em] text-xs mt-6 hover:bg-zinc-200 transition-colors"
               >
-                Choisir ma Date & Heure
+                Kies mijn Datum & Tijd
               </button>
             </div>
           </div>

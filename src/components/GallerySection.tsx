@@ -12,11 +12,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
   const [selectedLook, setSelectedLook] = useState<LookbookItem | null>(null);
 
   const categories = [
-    { id: 'all', label: 'Tous les Styles' },
+    { id: 'all', label: 'Alle Stijlen' },
     { id: 'fades', label: 'Skin Fades' },
-    { id: 'beards', label: 'Taille de Barbe' },
-    { id: 'combos', label: 'Packs Combo' },
-    { id: 'classics', label: 'Coupes Classiques' },
+    { id: 'beards', label: 'Baardtrim' },
+    { id: 'combos', label: 'Combo Pakketten' },
+    { id: 'classics', label: 'Klassieke Knipbeurten' },
   ];
 
   const filteredItems = activeCategory === 'all'
@@ -31,13 +31,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Camera className="w-3.5 h-3.5" />
-            <span>Lookbook & Inspirations Barberie</span>
+            <span>Lookbook & Barbier Inspiratie</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Galerie de nos <span className="gold-text-gradient">Créations</span>
+            Galerij van onze <span className="gold-text-gradient">Creaties</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            Toutes les coupes affichées sont réalisées sur nos clients au salon de Groningen.
+            Alle getoonde kapsels zijn gemaakt bij onze klanten in de zaak in Groningen.
           </p>
         </div>
 
@@ -125,7 +125,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
               </div>
 
               <div className="pt-2 flex items-center justify-between border-t border-slate-800">
-                <span className="text-xs text-slate-400">Prêt pour cette coupe ?</span>
+                <span className="text-xs text-slate-400">Klaar voor dit kapsel?</span>
                 <button
                   onClick={() => {
                     const sId = selectedLook.serviceIdToBook;
@@ -135,7 +135,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
                   className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
                 >
                   <Scissors className="w-4 h-4" />
-                  <span>Réserver cette Coupe</span>
+                  <span>Reserveer dit Kapsel</span>
                 </button>
               </div>
             </div>

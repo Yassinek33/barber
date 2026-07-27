@@ -11,11 +11,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>('all');
 
   const categories: { id: ServiceCategory; label: string }[] = [
-    { id: 'all', label: 'Tous les Services' },
-    { id: 'haircut', label: 'Coupes & Skin Fades' },
-    { id: 'beard', label: 'Taille de Barbe & Rasage' },
-    { id: 'combo', label: 'Packs Signature VIP' },
-    { id: 'junior', label: 'Jeune Gentleman' },
+    { id: 'all', label: 'Alle Diensten' },
+    { id: 'haircut', label: 'Knipbeurten & Skin Fades' },
+    { id: 'beard', label: 'Baardtrim & Scheren' },
+    { id: 'combo', label: 'Signature VIP Pakketten' },
+    { id: 'junior', label: 'Jonge Gentleman' },
   ];
 
   const filteredServices = activeCategory === 'all'
@@ -40,13 +40,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Scissors className="w-3.5 h-3.5" />
-            <span>Menu & Prestations Haute Coiffure</span>
+            <span>Menu & Behandelingen Hoogwaardig Kappen</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Tarifs & Prestations <span className="gold-text-gradient">Barbering</span>
+            Tarieven & <span className="gold-text-gradient">Barbering</span> Behandelingen
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Chaque prestation comprend un diagnostic personnalisé, des produits de soin masculins haut de gamme et une boisson offerte.
+            Elke behandeling omvat een persoonlijke diagnose, hoogwaardige verzorgingsproducten voor mannen en een gratis drankje.
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 {/* Duration */}
                 <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
                   <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Durée approximative : {service.durationMinutes} min</span>
+                  <span>Geschatte duur: {service.durationMinutes} min</span>
                 </div>
 
                 {/* Description */}
@@ -124,7 +124,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 }`}
               >
                 <Scissors className="w-4 h-4" />
-                <span>Réserver ce Service</span>
+                <span>Reserveer deze Dienst</span>
               </button>
             </div>
           ))}
