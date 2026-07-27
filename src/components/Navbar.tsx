@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Scissors, Calendar, Volume2, VolumeX, Menu, X, Sparkles, Clock, ShieldCheck } from 'lucide-react';
+import { Scissors, Calendar, Volume2, VolumeX, Menu, X, Sparkles } from 'lucide-react';
 import { SHOP_INFO } from '../data/barbershopData';
 import { audioSynth } from '../utils/audioSynth';
 
@@ -91,37 +91,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
             <a href="#services" className="hover:text-white transition-colors">Services</a>
             <a href="#barbers" className="hover:text-white transition-colors">Barbiers</a>
-            <a href="#before-after" className="hover:text-white transition-colors">
-              Avant / Après
-            </a>
-            <a href="#quiz" className="hover:text-white transition-colors flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              Quiz Style
-            </a>
             <a href="#lookbook" className="hover:text-white transition-colors">Galerie</a>
-            <a href="#reviews" className="hover:text-white transition-colors">Avis (4.9★)</a>
-            <a href="#location" className="hover:text-white transition-colors">Accès</a>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
           <div className="hidden sm:flex items-center gap-3">
             
-            {/* Live Status Badge */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 border border-zinc-800 bg-zinc-900/50 text-[10px] uppercase tracking-wider">
-              <span className={`w-1.5 h-1.5 rounded-full ${isOpenNow ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
-              <span className="text-zinc-300 font-bold">{isOpenNow ? 'Ouvert' : 'Fermé'}</span>
-            </div>
-
-            {/* Audit Benchmark Trigger */}
-            <button
-              onClick={onOpenAuditModal}
-              className="text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 transition-colors flex items-center gap-1.5"
-              title="Comparer avec l'ancien site"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>Audit vs Ancien</span>
-            </button>
-
             {/* ASMR Sound Ambient Toggle */}
             <button
               onClick={toggleSound}
