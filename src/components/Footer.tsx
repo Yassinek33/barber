@@ -18,8 +18,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal 
       {/* Footer Running Ticker Marquee (Professional Polish Signature) */}
       <div className="bg-white text-black py-2.5 overflow-hidden border-b border-white/20 select-none">
         <div className="animate-ticker font-black uppercase text-[10px] tracking-[0.4em] space-x-12">
-          <span>Modern Fast Premium Grooming • Groningen Westerhaven • Book Now • Sharp Cuts • Zero Fear • Est. 2018 • Premium Beard Detail • 4.9/5 Google Rating • </span>
-          <span>Modern Fast Premium Grooming • Groningen Westerhaven • Book Now • Sharp Cuts • Zero Fear • Est. 2018 • Premium Beard Detail • 4.9/5 Google Rating • </span>
+          <span>Moderne Snelle Premium Verzorging • Groningen Westerhaven • Boek Nu • Scherp Geknipt • Zonder Zorgen • Sinds 2018 • Premium Baard Detail • 4.9/5 Google Beoordeling • </span>
+          <span>Moderne Snelle Premium Verzorging • Groningen Westerhaven • Boek Nu • Scherp Geknipt • Zonder Zorgen • Sinds 2018 • Premium Baard Detail • 4.9/5 Google Beoordeling • </span>
         </div>
       </div>
 

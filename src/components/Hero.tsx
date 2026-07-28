@@ -74,7 +74,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div>
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <span className="px-3 py-1 border border-zinc-700 text-[10px] tracking-[0.2em] uppercase font-bold text-zinc-400">
-                  ESTABLISHED 2018
+                  SINDS 2018
                 </span>
                 <span className="px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-[10px] tracking-[0.2em] uppercase font-bold text-amber-300">
                   GRONINGEN WESTERHAVEN
