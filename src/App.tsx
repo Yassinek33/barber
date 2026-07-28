@@ -12,6 +12,7 @@ import { AuditComparisonModal } from './components/AuditComparisonModal';
 import { BookingModal } from './components/BookingModal';
 import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
+import { SplashScreen } from './components/SplashScreen';
 import { ConfirmedBooking } from './types';
 
 // Scrolls to top on every route change, or to a #hash target if present
@@ -33,6 +34,7 @@ function ScrollManager() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [preselectedServiceId, setPreselectedServiceId] = useState<string | undefined>();
   const [preselectedBarberId, setPreselectedBarberId] = useState<string | undefined>();
@@ -75,6 +77,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
+
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
 
       <ScrollManager />
 

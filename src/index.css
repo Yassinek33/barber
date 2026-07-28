@@ -133,3 +133,22 @@
   pointer-events: none;
 }
 
+/* Intro splash screen — logo mark flourish + staggered wordmark reveal */
+@keyframes splash-icon-in {
+  0% { transform: rotate(-160deg) scale(0.4); opacity: 0; }
+  70% { transform: rotate(-30deg) scale(1.08); opacity: 1; }
+  100% { transform: rotate(-45deg) scale(1); opacity: 1; }
+}
+
+.splash-icon {
+  animation: splash-icon-in 900ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
+}
+
+@keyframes splash-text-in {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.splash-text-1 { animation: splash-text-in 600ms ease-out 500ms both; }
+.splash-text-2 { animation: splash-text-in 600ms ease-out 650ms both; }
+

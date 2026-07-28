@@ -1,6 +1,6 @@
 import React from 'react';
 import { BARBERS } from '../data/barbershopData';
-import { Star, Instagram, Award, Scissors, CheckCircle } from 'lucide-react';
+import { Award, Scissors } from 'lucide-react';
 import { TiltCard } from './TiltCard';
 import { Reveal } from './Reveal';
 
@@ -47,13 +47,6 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-
-                  {/* Rating Tag */}
-                  <div className="absolute top-4 right-4 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-amber-500/30 text-xs font-bold text-amber-400 flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span>{barber.rating}</span>
-                    <span className="text-slate-400 font-normal">({barber.reviewsCount})</span>
-                  </div>
                 </div>
 
                 {/* Content */}
