@@ -152,3 +152,13 @@
 .splash-text-1 { animation: splash-text-in 600ms ease-out 500ms both; }
 .splash-text-2 { animation: splash-text-in 600ms ease-out 650ms both; }
 
+/* Subtle neon-gold breathing glow for the primary booking CTA — visible without being a harsh blink */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(212, 175, 55, 0.55), 0 0 16px rgba(212, 175, 55, 0.25); }
+  50% { box-shadow: 0 0 14px rgba(212, 175, 55, 0.95), 0 0 32px rgba(212, 175, 55, 0.5); }
+}
+
+.neon-cta {
+  animation: neon-pulse 2.4s ease-in-out infinite;
+}
+

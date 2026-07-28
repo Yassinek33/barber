@@ -61,10 +61,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `transition-colors ${isActive ? 'text-amber-400' : 'hover:text-white'}`;
+    `relative pb-1 transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:bg-gradient-to-r after:from-amber-400 after:to-amber-200 after:transition-all after:duration-300 ${
+      isActive ? 'text-amber-400 after:w-full' : 'hover:text-amber-300 after:w-0 hover:after:w-full'
+    }`;
 
   const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `py-1 text-left ${isActive ? 'text-amber-400' : 'hover:text-amber-400'}`;
+    `py-1 text-left transition-colors duration-300 ${isActive ? 'text-amber-400' : 'hover:text-amber-300'}`;
 
   return (
     <header
@@ -141,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Magnetic strength={14}>
               <button
                 onClick={() => onOpenBooking()}
-                className="px-5 py-2 border border-white/20 bg-white text-black hover:bg-zinc-200 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
+                className="neon-cta px-5 py-2 border border-amber-300 bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black hover:from-amber-300 hover:to-amber-300 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
               >
                 <Scissors className="w-3.5 h-3.5" />
                 <span>Afspraak Maken</span>
@@ -153,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={() => onOpenBooking()}
-              className="gold-button px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+              className="gold-button neon-cta px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
             >
               <Scissors className="w-3.5 h-3.5" />
               <span>Reserveren</span>
@@ -235,7 +237,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenBooking();
               }}
-              className="w-full gold-button py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-lg"
+              className="w-full gold-button neon-cta py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-lg"
             >
               <Scissors className="w-4 h-4" />
               <span>Reserveer een Tijdslot</span>

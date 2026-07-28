@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Scissors, Star, MapPin, Sparkles, ShieldCheck, ChevronRight, Clock, Award } from 'lucide-react';
+import { Scissors, MapPin, ShieldCheck, Clock, Award, Star } from 'lucide-react';
 import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
-import { ParticleField } from './ParticleField';
 import { Magnetic } from './Magnetic';
 
 interface HeroProps {
@@ -76,32 +75,22 @@ export const Hero: React.FC<HeroProps> = ({
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-[#0a0a0a]/30 pointer-events-none" />
 
-        {/* Drifting 3D gold-dust particle field for a futuristic, immersive feel */}
-        <ParticleField className="absolute inset-0 pointer-events-none mix-blend-screen opacity-70" />
-
-        {/* Hover hint badge */}
-        <div className="absolute top-6 right-6 sm:top-8 sm:right-8 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm transition-opacity duration-500 pointer-events-none" style={{ opacity: isSpotlightActive ? 1 : 0 }}>
-          <Sparkles className="w-3 h-3" />
-          Gouden Sfeer
+        {/* Slow, gentle ambient glow — replaces the old rising particle field with something calmer */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen opacity-60">
+          <div className="ambient-glow w-72 h-72 bg-amber-400/30 -top-10 -left-10" />
+          <div className="ambient-glow w-80 h-80 bg-amber-500/25 -bottom-16 -right-10" style={{ animationDelay: '5s' }} />
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 lg:px-12 flex items-end justify-between">
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
-              <Sparkles className="w-3 h-3" />
-              Onze Zaak
-            </span>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white uppercase italic tracking-tight drop-shadow-lg mb-2">
-              {SHOP_INFO.name}
-            </h2>
-            <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
-              Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.
-            </p>
-          </div>
-          <div className="hidden sm:flex items-center gap-1 text-amber-400 text-xs font-bold bg-black/40 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-            <Star className="w-3.5 h-3.5 fill-amber-400" />
-            <span>{SHOP_INFO.googleRating}/5</span>
-          </div>
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 lg:px-12">
+          <h2
+            className="font-display text-4xl sm:text-6xl lg:text-7xl font-black gold-text-gradient uppercase italic tracking-tight mb-2"
+            style={{ textShadow: '0 0 50px rgba(212,175,55,0.35)' }}
+          >
+            {SHOP_INFO.name}
+          </h2>
+          <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
+            Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.
+          </p>
         </div>
       </div>
 
