@@ -1,13 +1,43 @@
 import React, { useState } from 'react';
-import { SlidersHorizontal, Sparkles, Scissors, ChevronRight } from 'lucide-react';
+import { SlidersHorizontal, Sparkles, Scissors, ChevronRight, Repeat } from 'lucide-react';
 import { Reveal } from './Reveal';
 
 interface BeforeAfterSliderProps {
   onOpenBooking: () => void;
 }
 
+interface TransformationExample {
+  id: string;
+  beforeSrc: string;
+  afterSrc: string;
+  beforeLabel: string;
+  afterLabel: string;
+  modelLabel: string;
+}
+
+const EXAMPLES: TransformationExample[] = [
+  {
+    id: 'krullen-fade',
+    beforeSrc: '/barbers/avant-2.png',
+    afterSrc: '/barbers/apres-2.png',
+    beforeLabel: 'Voor (Ongestyled)',
+    afterLabel: 'Na (Low Fade & Krullen)',
+    modelLabel: 'Model: Curly Taper Fade',
+  },
+  {
+    id: 'skin-fade',
+    beforeSrc: '/barbers/avant.png',
+    afterSrc: '/barbers/apres.png',
+    beforeLabel: 'Voor (Ongestyled)',
+    afterLabel: 'Na (Skin Fade & Nette Baard)',
+    modelLabel: 'Model: Royal Combo Skin Fade',
+  },
+];
+
 export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBooking }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const example = EXAMPLES[exampleIndex];
 
   const handleSliderMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -15,6 +45,11 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
     const percent = (x / rect.width) * 100;
     setSliderPosition(percent);
+  };
+
+  const handleSwitchExample = () => {
+    setExampleIndex((prev) => (prev + 1) % EXAMPLES.length);
+    setSliderPosition(50);
   };
 
   return (
@@ -69,7 +104,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
           {/* Right Interactive Drag Slider Container */}
           <Reveal className="lg:col-span-7" delayMs={150}>
             <div className="relative rounded-2xl overflow-hidden border border-amber-500/30 shadow-2xl gold-border-glow select-none bg-slate-950">
-              
+
               {/* Interactive Area */}
               <div
                 className="relative h-80 sm:h-[420px] w-full cursor-ew-resize overflow-hidden touch-none"
@@ -78,13 +113,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
               >
                 {/* AFTER IMAGE (Underneath, Full) */}
                 <img
-                  src="/barbers/apres.png"
-                  alt="Na Transformatie Knipbeurt Skin Fade"
+                  key={`after-${example.id}`}
+                  src={example.afterSrc}
+                  alt="Na Transformatie Knipbeurt"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover object-center filter contrast-105"
                 />
                 <div className="absolute top-4 right-4 bg-emerald-500/90 text-black px-3 py-1 rounded-full text-xs font-bold shadow-md uppercase tracking-wider">
-                  Na (Skin Fade & Nette Baard)
+                  {example.afterLabel}
                 </div>
 
                 {/* BEFORE IMAGE (Clipped on top) */}
@@ -93,14 +129,15 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                   style={{ width: `${sliderPosition}%` }}
                 >
                   <img
-                    src="/barbers/avant.png"
+                    key={`before-${example.id}`}
+                    src={example.beforeSrc}
                     alt="Voor Transformatie"
                     referrerPolicy="no-referrer"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                     style={{ width: '100%', maxWidth: 'none' }}
                   />
                   <div className="absolute top-4 left-4 bg-slate-900/90 border border-slate-700 text-slate-200 px-3 py-1 rounded-full text-xs font-bold shadow-md uppercase tracking-wider">
-                    Voor (Ongestyled)
+                    {example.beforeLabel}
                   </div>
                 </div>
 
@@ -114,12 +151,21 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                   </div>
                 </div>
 
+                {/* Switch Example Button */}
+                <button
+                  onClick={handleSwitchExample}
+                  className="absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/70 backdrop-blur-md border border-amber-500/40 text-amber-400 text-[11px] font-bold uppercase tracking-wider hover:bg-amber-500 hover:text-black transition-colors shadow-lg"
+                >
+                  <Repeat className="w-3.5 h-3.5" />
+                  <span>Ander Voorbeeld</span>
+                </button>
+
               </div>
 
               {/* Slider Instructional Bottom Bar */}
               <div className="bg-slate-900 px-4 py-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
                 <span>◀ Sleep de schuifregelaar om te vergelijken ▶</span>
-                <span className="text-amber-400 font-medium hidden sm:inline">Model: Royal Combo Skin Fade</span>
+                <span className="text-amber-400 font-medium hidden sm:inline">{example.modelLabel}</span>
               </div>
 
             </div>
