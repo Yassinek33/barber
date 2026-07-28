@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Scissors, Star, MapPin, Sparkles, ShieldCheck, ChevronRight, Clock, Award } from 'lucide-react';
 import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
 
@@ -13,6 +13,17 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenQuiz,
   onOpenAuditModal
 }) => {
+  const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
+  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
+
+  const handlePhotoMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setSpotlight({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    });
+  };
+
   return (
     <section className="relative min-h-screen pt-24 pb-12 flex items-center justify-center overflow-hidden bg-[#0a0a0a] border-b border-white/10">
       
@@ -30,32 +41,48 @@ export const Hero: React.FC<HeroProps> = ({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
 
-        {/* Framed Showcase Photo - The Salon (crossfades to a golden-hour variant on hover) */}
+        {/* Framed Showcase Photo - The Salon (golden-hour variant revealed in a spotlight that follows the cursor) */}
         <div className="relative mb-10 group">
-          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)] group-hover:shadow-[0_0_110px_-10px_rgba(212,175,55,0.75)] transition-shadow duration-700">
+          <div
+            className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)] group-hover:shadow-[0_0_110px_-10px_rgba(212,175,55,0.75)] transition-shadow duration-700"
+            onMouseMove={handlePhotoMouseMove}
+            onMouseEnter={() => setIsSpotlightActive(true)}
+            onMouseLeave={() => setIsSpotlightActive(false)}
+          >
             {/* Base photo */}
             <img
               src={HERO_IMAGE_PATH}
               alt="Interieur van The Premium Barbershop Groningen"
               referrerPolicy="no-referrer"
-              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-[1200ms] ease-out"
+              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center"
             />
 
-            {/* Golden-hour photo — fades in on hover */}
+            {/* Golden-hour photo — only revealed inside a spotlight that follows the cursor */}
             <img
               src="/barbers/home-gold.png"
               alt="The Premium Barbershop Groningen in gouden sfeer"
               referrerPolicy="no-referrer"
-              className="absolute inset-0 w-full h-full object-cover object-center scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
+              className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"
+              style={{
+                opacity: isSpotlightActive ? 1 : 0,
+                maskImage: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, black 0%, black 55%, transparent 100%)`,
+                WebkitMaskImage: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, black 0%, black 55%, transparent 100%)`
+              }}
             />
 
-            {/* Diagonal shine sweep on hover */}
-            <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-[1400ms] ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg] pointer-events-none" />
+            {/* Soft ring outlining the spotlight edge */}
+            <div
+              className="absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out"
+              style={{
+                opacity: isSpotlightActive ? 1 : 0,
+                background: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, transparent 62%, rgba(212,175,55,0.35) 64%, transparent 68%)`
+              }}
+            />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/15 to-transparent pointer-events-none" />
 
             {/* Hover hint badge */}
-            <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
               <Sparkles className="w-3 h-3" />
               Gouden Sfeer
             </div>
