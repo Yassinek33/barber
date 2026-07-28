@@ -103,10 +103,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 </div>
 
                 {/* Duration */}
-                <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
-                  <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Geschatte duur: {service.durationMinutes} min</span>
-                </div>
+                {service.durationMinutes && (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
+                    <Clock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Geschatte duur: {service.durationMinutes} min</span>
+                  </div>
+                )}
 
                 {/* Description */}
                 <p className="text-slate-300 text-xs leading-relaxed mb-6">

@@ -51,27 +51,27 @@ export const StyleFinderQuiz: React.FC<StyleFinderQuizProps> = ({ onSelectServic
     if (ans.faceShape === 'round' || ans.hairType === 'curly') {
       setRecommendedStyle({
         title: "Precision Low Skin Fade & Textured Top",
-        serviceId: "skin-fade",
-        serviceName: "Precisie Skin Fade & Contour",
-        price: 32,
+        serviceId: "knippen",
+        serviceName: "Knippen",
+        price: 27.50,
         desc: "Deze stijl geeft hoogte en verfijnt de contouren van uw gezicht, met een strakke structuur aan de zijkanten.",
         imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&auto=format&fit=crop&q=80"
       });
     } else if (ans.maintenance === 'high' || ans.hairType === 'wavy') {
       setRecommendedStyle({
         title: "Royal Combo (Pompadour Knipbeurt + VIP Baard)",
-        serviceId: "royal-combo",
-        serviceName: "Royal Combo (Knipbeurt + VIP Baard)",
-        price: 49,
+        serviceId: "knippen-baard",
+        serviceName: "Knippen met Baard",
+        price: 37.50,
         desc: "De perfecte combinatie: een gesculpteerde knipbeurt met elegant volume samen met een millimeter-precieze baardlijn met warme handdoek.",
         imageUrl: "https://images.unsplash.com/photo-[#503443207922]?w=600&auto=format&fit=crop&q=80"
       });
     } else {
       setRecommendedStyle({
         title: "Gentleman Classic Cut & Beard Lineup",
-        serviceId: "classic-cut",
-        serviceName: "Gentleman Classic Cut",
-        price: 28,
+        serviceId: "knippen",
+        serviceName: "Knippen",
+        price: 27.50,
         desc: "Een tijdloze, verzorgde knipbeurt die dagelijks makkelijk te onderhouden is met een natuurlijk resultaat.",
         imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
       });

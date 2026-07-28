@@ -5,9 +5,10 @@ import { SHOP_INFO } from '../data/barbershopData';
 interface FooterProps {
   onOpenBooking: () => void;
   onOpenAuditModal: () => void;
+  onSelectSection: (section: 'services' | 'barbers' | 'gallery') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal, onSelectSection }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -68,11 +69,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal 
           <div className="space-y-3 text-xs">
             <h4 className="text-[11px] uppercase tracking-widest font-black text-white">Navigatie</h4>
             <ul className="space-y-2 text-zinc-400">
-              <li><a href="#services" className="hover:text-white transition-colors">Diensten & Tarieven</a></li>
-              <li><a href="#barbers" className="hover:text-white transition-colors">Onze Master Barbiers</a></li>
+              <li><button onClick={() => onSelectSection('services')} className="hover:text-white transition-colors">Diensten & Tarieven</button></li>
+              <li><button onClick={() => onSelectSection('barbers')} className="hover:text-white transition-colors">Onze Master Barbiers</button></li>
               <li><a href="#before-after" className="hover:text-white transition-colors">Voor / Na</a></li>
               <li><a href="#quiz" className="hover:text-white transition-colors">Stijl Quiz</a></li>
-              <li><a href="#lookbook" className="hover:text-white transition-colors">Fotogalerij</a></li>
+              <li><button onClick={() => onSelectSection('gallery')} className="hover:text-white transition-colors">Fotogalerij</button></li>
               <li><a href="#reviews" className="hover:text-white transition-colors">Klantbeoordelingen</a></li>
             </ul>
           </div>

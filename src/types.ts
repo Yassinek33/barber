@@ -5,7 +5,7 @@ export interface BarberService {
   name: string;
   category: ServiceCategory;
   price: number;
-  durationMinutes: number;
+  durationMinutes?: number;
   description: string;
   badge?: string;
   icon: string;
@@ -49,7 +49,7 @@ export interface ConfirmedBooking {
   customerEmail: string;
   extras: { name: string; price: number }[];
   totalPrice: number;
-  durationMinutes: number;
+  durationMinutes?: number;
   createdAt: string;
   status: 'bevestigd' | 'voltooid' | 'geannuleerd';
 }

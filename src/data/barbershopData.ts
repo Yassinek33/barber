@@ -28,74 +28,90 @@ export const SHOP_INFO = {
 
 export const BARBER_SERVICES: BarberService[] = [
   {
-    id: "skin-fade",
-    name: "Precisie Skin Fade & Contour",
+    id: "knippen",
+    name: "Knippen",
     category: "haircut",
-    price: 32,
-    durationMinutes: 40,
-    description: "Ultra-precieze skin fade met tondeuse/scheermes, geleidelijke overgang op maat, afwerking met de schaar en getextureerd stylen.",
+    price: 27.50,
+    durationMinutes: 30,
+    description: "Klassieke knipbeurt op maat met schaar & tondeuse, nette afwerking in de nek en contouren voor een fris en verzorgd resultaat.",
     badge: "Populair",
     popular: true,
     icon: "Scissors"
   },
   {
-    id: "classic-cut",
-    name: "Gentleman Classic Cut",
-    category: "haircut",
-    price: 28,
-    durationMinutes: 35,
-    description: "Klassieke knipbeurt met schaar & tondeuse, nette afwerking in de nek en contouren, verfrissende spoeling en premium pomade.",
-    icon: "Scissors"
-  },
-  {
-    id: "beard-sculpt",
-    name: "Baardtrim & Contourlijn met Scheermes",
-    category: "beard",
-    price: 24,
-    durationMinutes: 30,
-    description: "Handmatig gesculpteerde baard, strakke contouren met het scheermes, warme handdoek met eucalyptus en voedende olie.",
-    badge: "Bestseller",
-    icon: "Razor"
-  },
-  {
-    id: "royal-combo",
-    name: "Royal Combo (Knipbeurt + VIP Baard)",
+    id: "knippen-baard",
+    name: "Knippen met Baard",
     category: "combo",
-    price: 49,
-    durationMinutes: 65,
-    description: "De complete ervaring: op maat gemaakte fade + VIP baardverzorging met dubbele warme handdoek, hoofdhuidmassage en verzorging.",
-    badge: "Signature",
+    price: 37.50,
+    durationMinutes: 30,
+    description: "De complete combinatie: een precieze knipbeurt gevolgd door een strakke baardverzorging, voor een verzorgde look van top tot teen.",
+    badge: "Bestseller",
     popular: true,
     icon: "Crown"
   },
   {
-    id: "hot-towel-shave",
-    name: "Traditioneel Ouderwets Scheren",
+    id: "studenten",
+    name: "Studenten",
+    category: "haircut",
+    price: 25.00,
+    durationMinutes: 30,
+    description: "Dezelfde vakkundige knipbeurt tegen een voordelig studententarief, altijd met oog voor detail en een frisse, moderne afwerking.",
+    icon: "User"
+  },
+  {
+    id: "kinderen-tot-12",
+    name: "Kinderen t/m 12 jaar",
+    category: "junior",
+    price: 19.00,
+    durationMinutes: 30,
+    description: "Een geduldige en zorgvuldige knipbeurt speciaal voor de jongsten, in een ontspannen sfeer met een net en modern resultaat.",
+    icon: "User"
+  },
+  {
+    id: "kinderen-12-16",
+    name: "Kinderen 12 t/m 16 jaar",
+    category: "junior",
+    price: 22.50,
+    durationMinutes: 30,
+    description: "Een moderne knipbeurt op maat voor tieners, met verzorgde contouren en een stijl die aansluit bij de laatste trends.",
+    icon: "User"
+  },
+  {
+    id: "lijnen",
+    name: "Lijnen",
     category: "beard",
-    price: 29,
-    durationMinutes: 35,
-    description: "Authentiek scheren met het rechte scheermes, warm scheerschuim met scheerkwast, 2 warme handdoeken en kalmerende aftershave balsem.",
+    price: 12.50,
+    durationMinutes: 15,
+    description: "Scherpe contourlijnen bij de haargrens en baard, voor een messcherpe en verzorgde afwerking tussen twee knipbeurten door.",
+    icon: "Razor"
+  },
+  {
+    id: "baard",
+    name: "Baard",
+    category: "beard",
+    price: 17.50,
+    durationMinutes: 15,
+    description: "Vakkundige baardtrim en -verzorging, netjes bijgewerkt met het scheermes voor een strakke en verzorgde uitstraling.",
     icon: "Flame"
   },
   {
-    id: "deluxe-grooming",
-    name: "The Premium Deluxe Experience",
+    id: "vip-thuis",
+    name: "VIP Knipbeurt aan Huis",
     category: "combo",
-    price: 68,
-    durationMinutes: 80,
-    description: "De ultieme verzorging: Knipbeurt + Baard + Ontspannende shampoo-massage + Neus-/oorharen wax + Reinigend gezichtsmasker + Gratis drankje.",
+    price: 150,
+    description: "De premium ervaring bij u thuis: onze master barber komt naar u toe voor een volledige knip- en baardbehandeling in het comfort van uw eigen woning.",
     badge: "VIP Luxe",
     popular: true,
     icon: "Sparkles"
   },
   {
-    id: "junior-cut",
-    name: "Jonge Gentleman Knipbeurt (-14 jaar)",
-    category: "junior",
-    price: 22,
-    durationMinutes: 30,
-    description: "Moderne en aangepaste knipbeurt voor de jongsten, verzorgde contouren en een vleugje stylingwax.",
-    icon: "User"
+    id: "weekend-thuis",
+    name: "Knipbeurt aan Huis (Weekend)",
+    category: "combo",
+    price: 250,
+    description: "Onze exclusieve weekendservice aan huis: een uitgebreide knip- en verzorgingssessie op het tijdstip dat u het beste uitkomt.",
+    badge: "Signature",
+    icon: "Crown"
   }
 ];
 
@@ -116,13 +132,13 @@ export const BARBERS: Barber[] = [
   {
     id: "ayoub",
     name: "Ayoub",
-    nickname: "Master Barber (12+ jaar ervaring)",
+    nickname: "Master Barber & Stylist",
     role: "Master Barber & Stylist",
     experienceYears: 12,
     rating: 4.96,
     reviewsCount: 198,
     avatarUrl: "/barbers/ayoub.png",
-    bio: "Ayoub is een ervaren Master Barber met meer dan 12 jaar in de kappersbranche. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonaliseerde look.",
+    bio: "Ayoub is een ervaren Master Barber. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonaliseerde look.",
     specialties: ["Precisie & Creativiteit", "Moderne Stijlen", "Baardverzorging"],
     instagram: "@ayoub_barber"
   },
@@ -156,7 +172,7 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     rating: 5,
     date: "2 dagen geleden",
     text: "Zonder twijfel de beste barbier van Groningen aan de Gedempte Zuiderdiep! Majid leverde een perfecte knipbeurt met indrukwekkend oog voor detail. Het reserveringssysteem is direct.",
-    serviceName: "Royal Combo (Knipbeurt + VIP Baard)",
+    serviceName: "Knippen met Baard",
     barberName: "Majid - Senior Master Barber",
     verified: true
   },
@@ -167,7 +183,7 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     rating: 5,
     date: "4 dagen geleden",
     text: "Ayoub heeft meer dan 12 jaar ervaring en dat is meteen te zien! Baardtrim met het scheermes ultra netjes. Top sfeer in de zaak.",
-    serviceName: "Baardtrim & Contourlijn",
+    serviceName: "Baard",
     barberName: "Ayoub - Master Barber",
     verified: true
   },
@@ -178,7 +194,7 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     rating: 5,
     date: "1 week geleden",
     text: "Uitzonderlijke service bij Yanti. Zijn persoonlijke aandacht en precisie zijn opmerkelijk. Ik raad het zonder twijfel aan.",
-    serviceName: "Precisie Skin Fade",
+    serviceName: "Knippen",
     barberName: "Yanti - Barber Specialist",
     verified: true
   }

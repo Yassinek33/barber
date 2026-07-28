@@ -14,6 +14,8 @@ import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
 import { ConfirmedBooking } from './types';
 
+type MenuSection = 'services' | 'barbers' | 'gallery' | null;
+
 export default function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [preselectedServiceId, setPreselectedServiceId] = useState<string | undefined>();
@@ -21,6 +23,22 @@ export default function App() {
 
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+
+  // Only one of Services / Barbers / Gallery is shown at a time, and only
+  // once the user picks it from the nav — keeps the home page uncluttered.
+  const [visibleSection, setVisibleSection] = useState<MenuSection>(null);
+
+  const handleSelectSection = (section: Exclude<MenuSection, null>) => {
+    setVisibleSection(prev => (prev === section ? null : section));
+  };
+
+  useEffect(() => {
+    if (!visibleSection) return;
+    const anchorId = visibleSection === 'gallery' ? 'lookbook' : visibleSection === 'services' ? 'services' : 'barbers';
+    requestAnimationFrame(() => {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [visibleSection]);
 
   // LocalStorage state for persistent client appointments
   const [bookings, setBookings] = useState<ConfirmedBooking[]>(() => {
@@ -64,6 +82,8 @@ export default function App() {
         onOpenMyBookings={() => setIsMyBookingsOpen(true)}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
         myBookingsCount={bookings.length}
+        activeSection={visibleSection}
+        onSelectSection={handleSelectSection}
       />
 
       {/* Main Content Sections */}
@@ -78,15 +98,19 @@ export default function App() {
           onOpenAuditModal={() => setIsAuditModalOpen(true)}
         />
 
-        {/* 2. Services & Tarifs */}
-        <ServicesSection
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
-        />
+        {/* 2. Services & Tarifs — shown only when picked from the nav */}
+        {visibleSection === 'services' && (
+          <ServicesSection
+            onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+          />
+        )}
 
-        {/* 3. Barbers Team */}
-        <BarbersSection
-          onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)}
-        />
+        {/* 3. Barbers Team — shown only when picked from the nav */}
+        {visibleSection === 'barbers' && (
+          <BarbersSection
+            onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)}
+          />
+        )}
 
         {/* 4. Interactive Before/After Transformation Slider */}
         <BeforeAfterSlider
@@ -98,10 +122,12 @@ export default function App() {
           onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
         />
 
-        {/* 6. Gallery & Lookbook */}
-        <GallerySection
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
-        />
+        {/* 6. Gallery & Lookbook — shown only when picked from the nav */}
+        {visibleSection === 'gallery' && (
+          <GallerySection
+            onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+          />
+        )}
 
         {/* 7. Reviews Section */}
         <ReviewsSection />
@@ -114,6 +140,7 @@ export default function App() {
       <Footer
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
+        onSelectSection={handleSelectSection}
       />
 
       {/* Modals & Overlays */}

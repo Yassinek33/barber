@@ -204,7 +204,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <span className="text-amber-400 font-extrabold text-base">{srv.price}€</span>
                     </div>
                     <p className="text-xs text-slate-400 line-clamp-2">{srv.description}</p>
-                    <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minuten</div>
+                    {srv.durationMinutes && (
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minuten</div>
+                    )}
                   </div>
                 ))}
               </div>

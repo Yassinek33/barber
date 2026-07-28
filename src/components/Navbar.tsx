@@ -3,18 +3,24 @@ import { Scissors, Calendar, Volume2, VolumeX, Menu, X, Sparkles } from 'lucide-
 import { SHOP_INFO } from '../data/barbershopData';
 import { audioSynth } from '../utils/audioSynth';
 
+type MenuSection = 'services' | 'barbers' | 'gallery' | null;
+
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
   onOpenMyBookings: () => void;
   onOpenAuditModal: () => void;
   myBookingsCount: number;
+  activeSection: MenuSection;
+  onSelectSection: (section: Exclude<MenuSection, null>) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenMyBookings,
   onOpenAuditModal,
-  myBookingsCount
+  myBookingsCount,
+  activeSection,
+  onSelectSection
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -89,9 +95,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
-            <a href="#services" className="hover:text-white transition-colors">Diensten</a>
-            <a href="#barbers" className="hover:text-white transition-colors">Barbiers</a>
-            <a href="#lookbook" className="hover:text-white transition-colors">Galerij</a>
+            <button
+              onClick={() => onSelectSection('services')}
+              className={`transition-colors ${activeSection === 'services' ? 'text-amber-400' : 'hover:text-white'}`}
+            >
+              Diensten
+            </button>
+            <button
+              onClick={() => onSelectSection('barbers')}
+              className={`transition-colors ${activeSection === 'barbers' ? 'text-amber-400' : 'hover:text-white'}`}
+            >
+              Barbiers
+            </button>
+            <button
+              onClick={() => onSelectSection('gallery')}
+              className={`transition-colors ${activeSection === 'gallery' ? 'text-amber-400' : 'hover:text-white'}`}
+            >
+              Galerij
+            </button>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
@@ -171,20 +192,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav className="flex flex-col gap-3 font-medium text-base">
-            <a
-              href="#services"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onSelectSection('services');
+              }}
+              className={`py-1 text-left ${activeSection === 'services' ? 'text-amber-400' : 'hover:text-amber-400'}`}
             >
               Diensten & Tarieven
-            </a>
-            <a
-              href="#barbers"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
+            </button>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onSelectSection('barbers');
+              }}
+              className={`py-1 text-left ${activeSection === 'barbers' ? 'text-amber-400' : 'hover:text-amber-400'}`}
             >
               Onze Barbiers
-            </a>
+            </button>
             <a
               href="#before-after"
               onClick={() => setMobileMenuOpen(false)}
@@ -200,13 +225,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Sparkles className="w-4 h-4 text-amber-400" />
               Stijl Quiz op Maat
             </a>
-            <a
-              href="#lookbook"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onSelectSection('gallery');
+              }}
+              className={`py-1 text-left ${activeSection === 'gallery' ? 'text-amber-400' : 'hover:text-amber-400'}`}
             >
               Galerij & Lookbook
-            </a>
+            </button>
             <a
               href="#reviews"
               onClick={() => setMobileMenuOpen(false)}
