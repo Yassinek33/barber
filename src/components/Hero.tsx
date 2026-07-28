@@ -1,20 +1,33 @@
-import React from 'react';
-import { Scissors, Star, MapPin, Sparkles, ShieldCheck, ChevronRight, Clock, Award } from 'lucide-react';
-import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
+import React, { useState } from 'react';
+import { Scissors, MapPin, ShieldCheck, Clock, Award, Star } from 'lucide-react';
+import { HERO_IMAGE_PATH, SHOP_INFO, SHOP_INFO_EN } from '../data/barbershopData';
+import { Magnetic } from './Magnetic';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface HeroProps {
   onOpenBooking: () => void;
-  onOpenQuiz: () => void;
   onOpenAuditModal: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onOpenBooking,
-  onOpenQuiz,
   onOpenAuditModal
 }) => {
+  const { t, lang } = useLanguage();
+  const openingHoursSummary = lang === 'en' ? SHOP_INFO_EN.openingHoursSummary : SHOP_INFO.openingHoursSummary;
+  const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
+  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
+
+  const handlePhotoMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setSpotlight({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    });
+  };
+
   return (
-    <section className="relative min-h-screen pt-24 pb-12 flex items-center justify-center overflow-hidden bg-[#0a0a0a] border-b border-white/10">
+    <section className="relative min-h-screen pt-24 pb-12 flex flex-col overflow-hidden bg-[#0a0a0a] border-b border-white/10">
       
       {/* Dark overlay & subtle ambient backdrop */}
       <div className="absolute inset-0 z-0">
@@ -28,15 +41,154 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/80" />
       </div>
 
+      {/* Ambient glow blobs + tech grid for a futuristic backdrop behind the content */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="ambient-glow w-[420px] h-[420px] bg-amber-500/25 -bottom-24 -left-24" />
+        <div className="ambient-glow w-[380px] h-[380px] bg-amber-400/15 top-1/3 -right-20" style={{ animationDelay: '4s' }} />
+        <div className="tech-grid absolute inset-x-0 bottom-0 h-[60%]" />
+      </div>
+
+      {/* Full-bleed Showcase Photo - The Salon (golden-hour variant revealed in a spotlight that follows the cursor) */}
+      <div
+        className="relative z-10 w-full mb-10"
+        onMouseMove={handlePhotoMouseMove}
+        onMouseEnter={() => setIsSpotlightActive(true)}
+        onMouseLeave={() => setIsSpotlightActive(false)}
+      >
+        {/* Base photo */}
+        <img
+          src={HERO_IMAGE_PATH}
+          alt="Interieur van The Premium Barbershop Groningen"
+          referrerPolicy="no-referrer"
+          className="w-full h-[420px] sm:h-[560px] lg:h-[720px] object-cover object-center"
+        />
+
+        {/* Golden-hour photo — only revealed in a soft glow that follows the cursor, no visible edge */}
+        <img
+          src="/barbers/home-gold.png"
+          alt="The Premium Barbershop Groningen in gouden sfeer"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"
+          style={{
+            opacity: isSpotlightActive ? 1 : 0,
+            maskImage: `radial-gradient(circle 320px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`,
+            WebkitMaskImage: `radial-gradient(circle 320px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`
+          }}
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-[#0a0a0a]/30 pointer-events-none" />
+
+        {/* Slow, gentle ambient glow — replaces the old rising particle field with something calmer */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen opacity-60">
+          <div className="ambient-glow w-72 h-72 bg-amber-400/30 -top-10 -left-10" />
+          <div className="ambient-glow w-80 h-80 bg-amber-500/25 -bottom-16 -right-10" style={{ animationDelay: '5s' }} />
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 lg:px-12">
+          <h2
+            className="font-display text-4xl sm:text-6xl lg:text-7xl font-black gold-text-gradient uppercase italic tracking-tight mb-2"
+            style={{ textShadow: '0 0 50px rgba(212,175,55,0.35)' }}
+          >
+            {SHOP_INFO.name}
+          </h2>
+          <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
+            {t.hero.photoTagline}
+          </p>
+        </div>
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
-          {/* Left Hero Section (Professional Polish Design) */}
-          <div className="lg:col-span-7 flex flex-col justify-between py-4 pr-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
+
+          {/* Booking System Widget — shown first, directly after the photo, on mobile and desktop */}
+          <div className="lg:col-span-5 flex flex-col justify-center pb-8 lg:pb-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="bg-[#111111] p-7 sm:p-10 border border-amber-500/30 shadow-2xl gold-border-glow flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-center mb-7 border-b border-white/10 pb-5">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">{t.hero.reserveringsmodule}</span>
+                    <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white italic">{t.hero.directBoeken}</h2>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                    <span>{t.hero.beschikbaar}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-5">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
+                      {t.hero.aanbevolenBehandelingen}
+                    </label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        onClick={() => onOpenBooking('barber-cut')}
+                        className="p-3 border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all text-left text-xs group"
+                      >
+                        <span className="block font-bold text-white group-hover:text-black">{t.hero.knippenStylen}</span>
+                        <span className="text-zinc-400 group-hover:text-zinc-800 text-[10px]">30 {t.services.minutesShort} • €32</span>
+                      </button>
+                      <button
+                        onClick={() => onOpenBooking('skin-fade')}
+                        className="p-3 border border-white/10 hover:border-white/30 text-left text-xs hover:bg-white/5 transition-all group"
+                      >
+                        <span className="block font-bold text-white">{t.hero.skinFade}</span>
+                        <span className="text-zinc-500 group-hover:text-zinc-400 text-[10px]">45 {t.services.minutesShort} • €35</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
+                      {t.hero.eerstvolgendeTijden}
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <div className="p-2.5 border border-amber-400/50 bg-amber-400/10 text-center cursor-pointer" onClick={onOpenBooking}>
+                        <span className="block text-[9px] text-amber-300 uppercase font-bold">{t.hero.vandaag}</span>
+                        <span className="font-bold text-xs text-white">14:30</span>
+                      </div>
+                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
+                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.vandaag}</span>
+                        <span className="font-bold text-xs text-zinc-300">16:00</span>
+                      </div>
+                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
+                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
+                        <span className="font-bold text-xs text-zinc-300">10:00</span>
+                      </div>
+                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
+                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
+                        <span className="font-bold text-xs text-zinc-300">11:15</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border border-zinc-800 bg-zinc-900/50 flex items-center gap-3">
+                    <Award className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div className="text-left">
+                      <p className="text-[10px] uppercase tracking-wider text-white font-bold">{t.hero.tevredenGratis}</p>
+                      <p className="text-[10px] text-zinc-400">{t.hero.tevredenDesc}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={onOpenBooking}
+                className="neon-cta w-full bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black py-5 font-black uppercase tracking-[0.2em] text-sm mt-7 hover:from-amber-300 hover:to-amber-300 transition-colors flex items-center justify-center gap-2"
+              >
+                <Scissors className="w-4 h-4" />
+                <span>{t.hero.kiesDatum}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Hero Text Section (Professional Polish Design) */}
+          <div className="lg:col-span-7 flex flex-col justify-between py-4 lg:pl-6">
             <div>
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <span className="px-3 py-1 border border-zinc-700 text-[10px] tracking-[0.2em] uppercase font-bold text-zinc-400">
-                  ESTABLISHED 2018
+                  {t.hero.sinds2018}
                 </span>
                 <span className="px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-[10px] tracking-[0.2em] uppercase font-bold text-amber-300">
                   GRONINGEN WESTERHAVEN
@@ -45,33 +197,27 @@ export const Hero: React.FC<HeroProps> = ({
 
               {/* Ultra Impactful Title */}
               <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-6 italic text-white uppercase">
-                SHARP<br />
-                <span className="text-zinc-500">CUTS.</span><br />
-                ZERO<br />
-                <span className="gold-text-gradient">FEAR.</span>
+                {t.hero.titleLine1}<br />
+                <span className="text-zinc-500">{t.hero.titleLine2}</span><br />
+                {t.hero.titleLine3}<br />
+                <span className="gold-text-gradient">{t.hero.titleLine4}</span>
               </h1>
 
               <p className="text-zinc-400 max-w-lg text-sm leading-relaxed mb-8">
-                L'excellence du soin masculin au cœur de Groningen. Skin fade millimétré, taille de barbe au coupe-chou & serviette chaude. Rapide, professionnel, sans compromis.
+                {t.hero.subtitle}
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 mb-8">
-                <button
-                  onClick={onOpenBooking}
-                  className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2"
-                >
-                  <Scissors className="w-4 h-4" />
-                  <span>Réserver en Ligne</span>
-                </button>
-
-                <button
-                  onClick={onOpenQuiz}
-                  className="px-6 py-3.5 border border-white/20 hover:bg-white/10 text-white transition-colors text-xs uppercase tracking-widest font-bold flex items-center gap-2"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Quiz Recommandation</span>
-                </button>
+                <Magnetic strength={12}>
+                  <button
+                    onClick={onOpenBooking}
+                    className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+                  >
+                    <Scissors className="w-4 h-4" />
+                    <span>{t.hero.onlineReserveren}</span>
+                  </button>
+                </Magnetic>
               </div>
 
               {/* Audit Benchmark Link */}
@@ -80,7 +226,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors"
               >
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>Rapport comparatif vs ancien site (Performance & Vitesse)</span>
+                <span>{t.hero.auditLink}</span>
               </button>
 
               {/* Customer Rating Metric */}
@@ -93,9 +239,9 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="text-left">
                   <div className="flex items-center gap-1 text-amber-400 text-xs">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <span className="font-bold">4.9/5 RATING</span>
+                    <span className="font-bold">{t.hero.ratingLabel}</span>
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">488+ Avis Google Vérifiés</span>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">{t.hero.reviewsCountLabel}</span>
                 </div>
               </div>
             </div>
@@ -104,97 +250,16 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6 mt-8">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-amber-400" /> Localisation
+                  <MapPin className="w-3 h-3 text-amber-400" /> {t.hero.locatieLabel}
                 </p>
                 <p className="text-xs font-bold text-white">{SHOP_INFO.address}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-400" /> Horaires
+                  <Clock className="w-3 h-3 text-amber-400" /> {t.hero.openingstijdenLabel}
                 </p>
-                <p className="text-xs font-bold text-white">{SHOP_INFO.openingHoursSummary}</p>
+                <p className="text-xs font-bold text-white">{openingHoursSummary}</p>
               </div>
-            </div>
-          </div>
-
-          {/* Right Interaction Section: Integrated Booking System Widget */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
-            <div className="bg-[#111111] p-6 sm:p-8 border border-white/10 shadow-2xl flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">Module de Réservation</span>
-                    <h2 className="text-lg font-black uppercase tracking-tight text-white italic">Instant Booking</h2>
-                  </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span>Disponible</span>
-                  </div>
-                </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      Prestations Recommandées
-                    </label>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        onClick={() => onOpenBooking('barber-cut')}
-                        className="p-3 border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all text-left text-xs group"
-                      >
-                        <span className="block font-bold text-white group-hover:text-black">Cut & Style</span>
-                        <span className="text-zinc-400 group-hover:text-zinc-800 text-[10px]">30 min • €32</span>
-                      </button>
-                      <button
-                        onClick={() => onOpenBooking('skin-fade')}
-                        className="p-3 border border-white/10 hover:border-white/30 text-left text-xs hover:bg-white/5 transition-all group"
-                      >
-                        <span className="block font-bold text-white">Skin Fade</span>
-                        <span className="text-zinc-500 group-hover:text-zinc-400 text-[10px]">45 min • €35</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      Prochains Créneaux Disponibles
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="p-2.5 border border-amber-400/50 bg-amber-400/10 text-center cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-amber-300 uppercase font-bold">Aujourd'hui</span>
-                        <span className="font-bold text-xs text-white">14:30</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Aujourd'hui</span>
-                        <span className="font-bold text-xs text-zinc-300">16:00</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Demain</span>
-                        <span className="font-bold text-xs text-zinc-300">10:00</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">Demain</span>
-                        <span className="font-bold text-xs text-zinc-300">11:15</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 border border-zinc-800 bg-zinc-900/50 flex items-center gap-3">
-                    <Award className="w-5 h-5 text-amber-400 shrink-0" />
-                    <div className="text-left">
-                      <p className="text-[10px] uppercase tracking-wider text-white font-bold">Satisfait ou Retouché</p>
-                      <p className="text-[10px] text-zinc-400">Si la coupe ne vous convient pas à 100%, retouche offerte sous 7 jours.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={onOpenBooking}
-                className="w-full bg-white text-black py-3.5 font-black uppercase tracking-[0.2em] text-xs mt-6 hover:bg-zinc-200 transition-colors"
-              >
-                Choisir ma Date & Heure
-              </button>
             </div>
           </div>
 

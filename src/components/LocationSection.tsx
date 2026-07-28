@@ -1,33 +1,39 @@
 import React from 'react';
-import { SHOP_INFO } from '../data/barbershopData';
-import { MapPin, Phone, Mail, Clock, Navigation, Car, ShieldCheck } from 'lucide-react';
+import { SHOP_INFO, translateDayName, translateHoursLabel } from '../data/barbershopData';
+import { MapPin, Phone, Clock, Navigation, Car, ShieldCheck } from 'lucide-react';
+import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const LocationSection: React.FC = () => {
-  const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
+  const { t, lang } = useLanguage();
+  const todayName = new Date().toLocaleDateString('nl-NL', { weekday: 'long' });
 
   return (
-    <section id="location" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section id="location" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[440px] h-[440px] bg-amber-500/10 top-10 -right-24" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <MapPin className="w-3.5 h-3.5" />
-            <span>Adresse & Horaires d'Ouverture</span>
+            <span>{t.location.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Au Cœur du Centre-Ville de <span className="gold-text-gradient">Groningen</span>
+            {t.location.title} <span className="gold-text-gradient">{t.location.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            Retrouvez-nous facilement dans la rue commerçante d'Oosterstraat à quelques minutes du Grote Markt.
+            {t.location.subtitle}
           </p>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Info & Opening Hours Card */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Contact Cards */}
             <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
               <div className="flex items-start gap-3">
@@ -35,7 +41,7 @@ export const LocationSection: React.FC = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Adresse du Salon</h3>
+                  <h3 className="font-bold text-white text-sm">{t.location.addressTitle}</h3>
                   <p className="text-xs text-slate-300 mt-0.5">{SHOP_INFO.address}</p>
                   <a
                     href={`https://maps.google.com/?q=${encodeURIComponent(SHOP_INFO.address)}`}
@@ -44,7 +50,7 @@ export const LocationSection: React.FC = () => {
                     className="inline-flex items-center gap-1 text-xs font-bold text-amber-400 hover:underline mt-2"
                   >
                     <Navigation className="w-3.5 h-3.5" />
-                    <span>Ouvrir dans Google Maps</span>
+                    <span>{t.location.openInMaps}</span>
                   </a>
                 </div>
               </div>
@@ -54,7 +60,7 @@ export const LocationSection: React.FC = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Téléphone</h3>
+                  <h3 className="font-bold text-white text-sm">{t.location.phoneTitle}</h3>
                   <a href={`tel:${SHOP_INFO.phone}`} className="text-xs text-slate-300 hover:text-amber-400 transition-colors">
                     {SHOP_INFO.phone}
                   </a>
@@ -66,8 +72,8 @@ export const LocationSection: React.FC = () => {
                   <Car className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Parking à proximité</h3>
-                  <p className="text-xs text-slate-300">Q-Park Rademarkt & Damsterdiep (3 min à pied)</p>
+                  <h3 className="font-bold text-white text-sm">{t.location.parkingTitle}</h3>
+                  <p className="text-xs text-slate-300">{t.location.parkingDesc}</p>
                 </div>
               </div>
             </div>
@@ -76,7 +82,7 @@ export const LocationSection: React.FC = () => {
             <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
               <div className="flex items-center gap-2 text-white font-display font-bold text-base">
                 <Clock className="w-5 h-5 text-amber-400" />
-                <span>Horaires d'Ouverture</span>
+                <span>{t.location.openingHours}</span>
               </div>
 
               <div className="space-y-2 text-xs">
@@ -91,8 +97,8 @@ export const LocationSection: React.FC = () => {
                           : 'text-slate-300 hover:bg-slate-800/50'
                       }`}
                     >
-                      <span className="capitalize">{item.day} {isToday && '(Aujourd\'hui)'}</span>
-                      <span>{item.hours}</span>
+                      <span className="capitalize">{translateDayName(item.day, lang)} {isToday && t.location.today}</span>
+                      <span>{translateHoursLabel(item.hours, lang)}</span>
                     </div>
                   );
                 })}
@@ -120,7 +126,7 @@ export const LocationSection: React.FC = () => {
               <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Accès PMR & Climatisation Haute Performance</span>
+                  <span>{t.location.accessible}</span>
                 </span>
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent(SHOP_INFO.address)}`}
@@ -128,7 +134,7 @@ export const LocationSection: React.FC = () => {
                   rel="noreferrer"
                   className="gold-button px-3.5 py-1.5 rounded-lg text-xs font-bold"
                 >
-                  Calculer l'Itinéraire
+                  {t.location.getDirections}
                 </a>
               </div>
             </div>

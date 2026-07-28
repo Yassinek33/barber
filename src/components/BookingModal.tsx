@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { BARBER_SERVICES, BARBERS, BOOKING_EXTRAS } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBER_SERVICES_EN, BARBERS, BARBERS_EN, BOOKING_EXTRAS, BOOKING_EXTRAS_EN, SHOP_INFO } from '../data/barbershopData';
 import { BarberService, Barber, ConfirmedBooking } from '../types';
-import { X, Scissors, Calendar, Clock, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, CreditCard, Download, ExternalLink, Plus } from 'lucide-react';
+import { X, Scissors, Calendar, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, ExternalLink } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -12,6 +13,102 @@ interface BookingModalProps {
   onBookingConfirmed: (booking: ConfirmedBooking) => void;
 }
 
+const WEEKDAY_HEADERS_NL = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+const WEEKDAY_HEADERS_EN = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const WEEKEND_SERVICE_ID = 'weekend-thuis';
+
+const toDateStr = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+const startOfToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const getNextWeekendDate = () => {
+  const d = startOfToday();
+  while (d.getDay() !== 0 && d.getDay() !== 6) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+};
+
+const formatDateLong = (dateStr: string, lang: 'nl' | 'en') => {
+  const d = new Date(`${dateStr}T00:00:00`);
+  const formatted = d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+const parseSlotMinutes = (slot: string) => {
+  const [h, m] = slot.split(':').map(Number);
+  return h * 60 + m;
+};
+
+// Dutch day names indexed the same way as Date#getDay() (0 = Sunday) — this
+// is the canonical business-logic source and stays Dutch regardless of the
+// display language, since it must match SHOP_INFO.openingHours entries.
+const DAY_NAMES = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+
+const getOpeningEntry = (dateStr: string) => {
+  const dayName = DAY_NAMES[new Date(`${dateStr}T00:00:00`).getDay()];
+  return SHOP_INFO.openingHours.find(h => h.day === dayName);
+};
+
+// "12.00 tot 18.00" -> { openMin: 720, closeMin: 1080 }
+const parseOpeningRange = (hoursStr: string) => {
+  const [openStr, closeStr] = hoursStr.split(' tot ');
+  const toMinutes = (s: string) => {
+    const [h, m] = s.split('.').map(Number);
+    return h * 60 + (m || 0);
+  };
+  return { openMin: toMinutes(openStr), closeMin: toMinutes(closeStr) };
+};
+
+const buildHalfHourSlots = (openMin: number, closeMin: number): string[] => {
+  const slots: string[] = [];
+  for (let t = openMin; t < closeMin; t += 30) {
+    const h = Math.floor(t / 60);
+    const m = t % 60;
+    slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+  }
+  return slots;
+};
+
+// Every half hour between opening and closing time for that specific day
+const generateDaySlots = (dateStr: string): string[] => {
+  const entry = getOpeningEntry(dateStr);
+  if (!entry || !entry.open) return [];
+  const { openMin, closeMin } = parseOpeningRange(entry.hours);
+  return buildHalfHourSlots(openMin, closeMin);
+};
+
+// The at-home weekend service isn't tied to the shop's own hours — the barber
+// travels to the client, so it runs 09:00–18:00 on both Saturday and Sunday.
+const WEEKEND_SERVICE_OPEN_MIN = 9 * 60;
+const WEEKEND_SERVICE_CLOSE_MIN = 18 * 60;
+
+// Drops any slot that overlaps a busy range from the barber's real,
+// connected Google Calendar — this is what makes something they book on
+// their phone disappear from the site.
+const filterSlotsAgainstCalendar = (
+  slots: string[],
+  dateStr: string,
+  durationMinutes: number,
+  busyRanges: { start: string; end: string }[]
+): string[] => {
+  if (busyRanges.length === 0) return slots;
+  return slots.filter(slot => {
+    const slotStart = new Date(`${dateStr}T${slot}:00`);
+    const slotEnd = new Date(slotStart.getTime() + durationMinutes * 60000);
+    return !busyRanges.some(b => slotStart < new Date(b.end) && new Date(b.start) < slotEnd);
+  });
+};
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
@@ -19,51 +116,179 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   preselectedBarberId,
   onBookingConfirmed
 }) => {
+  const { t, lang } = useLanguage();
+  const services = lang === 'en' ? BARBER_SERVICES_EN : BARBER_SERVICES;
+  const barbers = lang === 'en' ? BARBERS_EN : BARBERS;
+  const extras = lang === 'en' ? BOOKING_EXTRAS_EN : BOOKING_EXTRAS;
+  const weekdayHeaders = lang === 'en' ? WEEKDAY_HEADERS_EN : WEEKDAY_HEADERS_NL;
+
   const [step, setStep] = useState(1);
 
   // Form Selections
   const [selectedService, setSelectedService] = useState<BarberService>(
-    BARBER_SERVICES.find(s => s.id === preselectedServiceId) || BARBER_SERVICES[0]
+    services.find(s => s.id === preselectedServiceId) || services[0]
   );
   const [selectedBarber, setSelectedBarber] = useState<Barber | null>(
-    BARBERS.find(b => b.id === preselectedBarberId) || null
+    barbers.find(b => b.id === preselectedBarberId) || null
   );
 
-  // Date selection (defaults to tomorrow if today is past hours)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Date & time selection — a real month calendar, live-aware of the current time
+  const [now, setNow] = useState(() => new Date());
+  const todayStr = toDateStr(startOfToday());
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
-  const [selectedSlot, setSelectedSlot] = useState<string>('11:00');
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
+  const [calendarMonth, setCalendarMonth] = useState<Date>(() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
 
   // Customer info
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
-  const [customerNotes, setCustomerNotes] = useState('');
 
   // Confirmation result
   const [confirmedBooking, setConfirmedBooking] = useState<ConfirmedBooking | null>(null);
+  const [submitError, setSubmitError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Real busy ranges pulled from the selected barber's connected Google
+  // Calendar for the selected day — empty when no barber is chosen yet, the
+  // barber hasn't connected a calendar, or the backend isn't reachable (e.g.
+  // running locally without Netlify Functions), so the site degrades
+  // gracefully back to plain opening-hours availability.
+  const [busyRanges, setBusyRanges] = useState<{ start: string; end: string }[]>([]);
+
+  useEffect(() => {
+    if (!selectedBarber) {
+      setBusyRanges([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/availability?barberId=${encodeURIComponent(selectedBarber.id)}&date=${encodeURIComponent(selectedDate)}`)
+      .then(res => (res.ok ? res.json() : { busy: [] }))
+      .then(data => { if (!cancelled) setBusyRanges(data.busy || []); })
+      .catch(() => { if (!cancelled) setBusyRanges([]); });
+    return () => { cancelled = true; };
+  }, [selectedBarber, selectedDate]);
+
+  // Keep "now" live so past time slots drop away automatically while the modal stays open
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (preselectedServiceId) {
-      const match = BARBER_SERVICES.find(s => s.id === preselectedServiceId);
+      const match = services.find(s => s.id === preselectedServiceId);
       if (match) setSelectedService(match);
     }
-  }, [preselectedServiceId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedServiceId, lang]);
 
   useEffect(() => {
     if (preselectedBarberId) {
-      const match = BARBERS.find(b => b.id === preselectedBarberId);
+      const match = barbers.find(b => b.id === preselectedBarberId);
       if (match) setSelectedBarber(match);
     }
-  }, [preselectedBarberId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedBarberId, lang]);
+
+  // The weekend home-visit service can only be booked on a Saturday or Sunday —
+  // jump the calendar to the nearest upcoming weekend date when it's selected.
+  useEffect(() => {
+    if (selectedService.id !== WEEKEND_SERVICE_ID) return;
+    const current = new Date(`${selectedDate}T00:00:00`);
+    if (current.getDay() === 0 || current.getDay() === 6) return;
+    const weekendDate = getNextWeekendDate();
+    setSelectedDate(toDateStr(weekendDate));
+    setCalendarMonth(new Date(weekendDate.getFullYear(), weekendDate.getMonth(), 1));
+  }, [selectedService]);
+
+  // Time Slots — generated every 30 minutes from the real opening hours of the selected day,
+  // then narrowed further by whatever the barber's own connected Google Calendar reports as busy.
+  const rawDaySlots = selectedService.id === WEEKEND_SERVICE_ID
+    ? buildHalfHourSlots(WEEKEND_SERVICE_OPEN_MIN, WEEKEND_SERVICE_CLOSE_MIN)
+    : generateDaySlots(selectedDate);
+  const daySlots = filterSlotsAgainstCalendar(rawDaySlots, selectedDate, selectedService.durationMinutes || 60, busyRanges);
+
+  const isSelectedDateToday = selectedDate === toDateStr(now);
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const filterPastSlots = (slots: string[]) =>
+    isSelectedDateToday ? slots.filter(s => parseSlotMinutes(s) > nowMinutes) : slots;
+
+  const morningSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) < 12 * 60));
+  const afternoonSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) >= 12 * 60 && parseSlotMinutes(s) < 17 * 60));
+  const eveningSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) >= 17 * 60));
+  const allAvailableSlots = [...morningSlots, ...afternoonSlots, ...eveningSlots];
+
+  // If the currently selected slot fell out of the available list (date changed,
+  // or time simply passed), snap to the first slot that is still valid.
+  useEffect(() => {
+    if (allAvailableSlots.length === 0) {
+      if (selectedSlot !== '') setSelectedSlot('');
+      return;
+    }
+    if (!allAvailableSlots.includes(selectedSlot)) {
+      setSelectedSlot(allAvailableSlots[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, isSelectedDateToday, nowMinutes]);
 
   if (!isOpen) return null;
 
-  // Time Slots Generation
-  const timeSlotsMorning = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30'];
-  const timeSlotsAfternoon = ['12:30', '13:15', '14:00', '14:45', '15:30', '16:15'];
-  const timeSlotsEvening = ['17:00', '17:45', '18:30', '19:15'];
+  const isWeekendOnly = selectedService.id === WEEKEND_SERVICE_ID;
+  const todayMidnight = startOfToday();
+
+  const buildCalendarCells = (monthDate: Date) => {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const leadingBlanks = (firstDay.getDay() + 6) % 7; // Monday-start week
+    const cells: (Date | null)[] = [];
+    for (let i = 0; i < leadingBlanks; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+    return cells;
+  };
+
+  const isDayDisabled = (d: Date) => {
+    if (d < todayMidnight) return true;
+    if (isWeekendOnly) {
+      // The at-home weekend service runs independently of the shop's hours.
+      const dow = d.getDay();
+      return dow !== 0 && dow !== 6;
+    }
+    const entry = getOpeningEntry(toDateStr(d));
+    return !entry || !entry.open;
+  };
+
+  const canGoPrevMonth = () => {
+    const prev = new Date(calendarMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    const currentMonthStart = new Date(todayMidnight.getFullYear(), todayMidnight.getMonth(), 1);
+    return prev >= currentMonthStart;
+  };
+
+  const goPrevMonth = () => {
+    if (!canGoPrevMonth()) return;
+    const prev = new Date(calendarMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    setCalendarMonth(prev);
+  };
+
+  const goNextMonth = () => {
+    const next = new Date(calendarMonth);
+    next.setMonth(next.getMonth() + 1);
+    setCalendarMonth(next);
+  };
+
+  const monthLabel = calendarMonth.toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL', { month: 'long', year: 'numeric' });
+  const calendarCells = buildCalendarCells(calendarMonth);
 
   const toggleExtra = (extraId: string) => {
     if (selectedExtras.includes(extraId)) {
@@ -76,21 +301,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const calculateTotalPrice = () => {
     let total = selectedService.price;
     selectedExtras.forEach(extId => {
-      const match = BOOKING_EXTRAS.find(e => e.id === extId);
+      const match = extras.find(e => e.id === extId);
       if (match) total += match.price;
     });
     return total;
   };
 
-  const handleConfirmSubmit = (e: React.FormEvent) => {
+  const handleConfirmSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone || !customerEmail) return;
+    if (!customerName || !customerPhone || !customerEmail || !selectedSlot) return;
 
     // Pick barber if null
-    const finalBarber = selectedBarber || BARBERS[0];
+    const finalBarber = selectedBarber || barbers[0];
 
     const extrasData = selectedExtras.map(id => {
-      const ex = BOOKING_EXTRAS.find(e => e.id === id);
+      const ex = extras.find(e => e.id === id);
       return { name: ex ? ex.name : id, price: ex ? ex.price : 0 };
     });
 
@@ -106,10 +331,48 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       extras: extrasData,
       totalPrice: calculateTotalPrice(),
       durationMinutes: selectedService.durationMinutes,
-      createdAt: new Date().toLocaleDateString('fr-FR'),
-      status: 'confirmé'
+      createdAt: new Date().toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL'),
+      status: 'bevestigd'
     };
 
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    // Best-effort sync to the barber's Google Calendar via the backend. If
+    // the backend isn't deployed/reachable (e.g. local dev without Netlify
+    // Functions running), this fails silently and the booking still goes
+    // through locally exactly like before — only a real 409 "someone just
+    // took this slot" response blocks confirmation.
+    try {
+      const res = await fetch('/api/create-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: booking.id,
+          barberId: finalBarber.id,
+          barberName: finalBarber.name,
+          serviceId: selectedService.id,
+          serviceName: selectedService.name,
+          date: selectedDate,
+          timeSlot: selectedSlot,
+          durationMinutes: selectedService.durationMinutes,
+          customerName,
+          customerPhone,
+          customerEmail,
+          extras: extrasData,
+          totalPrice: booking.totalPrice,
+        }),
+      });
+      if (res.status === 409) {
+        setIsSubmitting(false);
+        setSubmitError(t.booking.slotTaken);
+        return;
+      }
+    } catch {
+      // Backend unreachable — proceed with the local-only booking flow.
+    }
+
+    setIsSubmitting(false);
     setConfirmedBooking(booking);
     onBookingConfirmed(booking);
 
@@ -130,13 +393,40 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const resetModal = () => {
     setStep(1);
     setConfirmedBooking(null);
+    setSubmitError('');
     onClose();
   };
+
+  const renderSlotGrid = (label: string, emoji: string, slots: string[], colsClass: string) => (
+    <div>
+      <p className="text-xs font-semibold text-slate-400 mb-2">{emoji} {label}</p>
+      {slots.length > 0 ? (
+        <div className={`grid ${colsClass} gap-2.5`}>
+          {slots.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              onClick={() => setSelectedSlot(slot)}
+              className={`py-3.5 rounded-xl text-base font-bold border transition-all ${
+                selectedSlot === slot
+                  ? 'bg-amber-500 text-black border-amber-500 shadow-md'
+                  : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+              }`}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-[11px] text-slate-600 italic">{t.booking.noSlotsLeft}</p>
+      )}
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
       <div className="relative w-full max-w-3xl bg-[#0F0F14] border border-amber-500/30 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        
+
         {/* Header */}
         <div className="p-5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -144,8 +434,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-white">Réservation de Créneau Barber</h2>
-              <p className="text-xs text-slate-400">The Premium Barbershop Groningen • Instantané & Sans Attente</p>
+              <h2 className="font-display text-lg font-bold text-white">{t.booking.modalTitle}</h2>
+              <p className="text-xs text-slate-400">{t.booking.modalSubtitle}</p>
             </div>
           </div>
           <button
@@ -161,35 +451,35 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="px-6 py-3 bg-slate-950/80 border-b border-slate-800/60 flex items-center justify-between text-xs font-semibold">
             <div className={`flex items-center gap-1.5 ${step >= 1 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">1</span>
-              <span className="hidden sm:inline">Service</span>
+              <span className="hidden sm:inline">{t.booking.stepService}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 2 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">2</span>
-              <span className="hidden sm:inline">Barbier</span>
+              <span className="hidden sm:inline">{t.booking.stepBarber}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 3 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
-              <span className="hidden sm:inline">Date & Horaire</span>
+              <span className="hidden sm:inline">{t.booking.stepDateTime}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 4 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">4</span>
-              <span className="hidden sm:inline">Confirmation</span>
+              <span className="hidden sm:inline">{t.booking.stepConfirmation}</span>
             </div>
           </div>
         )}
 
         {/* Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
-          
+
           {/* STEP 1: SELECT SERVICE */}
           {step === 1 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Étape 1 : Choisissez votre Prestation</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step1Title}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {BARBER_SERVICES.map((srv) => (
+                {services.map((srv) => (
                   <div
                     key={srv.id}
                     onClick={() => setSelectedService(srv)}
@@ -204,7 +494,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <span className="text-amber-400 font-extrabold text-base">{srv.price}€</span>
                     </div>
                     <p className="text-xs text-slate-400 line-clamp-2">{srv.description}</p>
-                    <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minutes</div>
+                    {srv.durationMinutes && (
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} {t.booking.minutes}</div>
+                    )}
+                    {srv.id === WEEKEND_SERVICE_ID && (
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">📅 {t.booking.weekendOnlyNote}</div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -214,8 +509,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 2: SELECT BARBER */}
           {step === 2 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Étape 2 : Choisissez votre Barbier Favori</h3>
-              
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step2Title}</h3>
+
               {/* Option: Any available */}
               <div
                 onClick={() => setSelectedBarber(null)}
@@ -229,14 +524,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-white">N'importe quel Barbier Disponible</h4>
-                  <p className="text-xs text-slate-400">Attribution automatique selon la meilleure disponibilité</p>
+                  <h4 className="font-bold text-sm text-white">{t.booking.anyBarberTitle}</h4>
+                  <p className="text-xs text-slate-400">{t.booking.anyBarberDesc}</p>
                 </div>
               </div>
 
               {/* Specific Barbers */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {BARBERS.map((b) => (
+                {barbers.map((b) => (
                   <div
                     key={b.id}
                     onClick={() => setSelectedBarber(b)}
@@ -266,97 +561,106 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 3: PICK DATE & TIME SLOT */}
           {step === 3 && (
             <div className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Étape 3 : Choisissez le Jour & l'Heure</h3>
-              
-              {/* Date Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">Date du rendez-vous :</label>
-                <input
-                  type="date"
-                  min={todayStr}
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full sm:w-64 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-medium text-sm focus:outline-none focus:border-amber-400"
-                />
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step3Title}</h3>
+
+              {isWeekendOnly && (
+                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 font-medium">
+                  {t.booking.weekendOnlyBanner}
+                </div>
+              )}
+
+              {/* Month Calendar */}
+              <div className="max-w-xs mx-auto rounded-xl border border-slate-800 bg-slate-950 p-3">
+                <div className="flex items-center justify-between mb-2.5">
+                  <button
+                    type="button"
+                    onClick={goPrevMonth}
+                    disabled={!canGoPrevMonth()}
+                    className="p-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <p className="text-xs font-bold text-white capitalize">{monthLabel}</p>
+                  <button
+                    type="button"
+                    onClick={goNextMonth}
+                    className="p-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-0.5 mb-1">
+                  {weekdayHeaders.map((wd) => (
+                    <div key={wd} className="text-center text-[9px] font-bold text-slate-500 uppercase py-0.5">
+                      {wd}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-0.5">
+                  {calendarCells.map((cell, idx) => {
+                    if (!cell) return <div key={`blank-${idx}`} />;
+                    const dateStr = toDateStr(cell);
+                    const disabled = isDayDisabled(cell);
+                    const isSelected = dateStr === selectedDate;
+                    const isToday = dateStr === todayStr;
+                    return (
+                      <button
+                        key={dateStr}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => setSelectedDate(dateStr)}
+                        className={`aspect-square rounded-md text-[11px] font-semibold flex items-center justify-center transition-all ${
+                          disabled
+                            ? 'text-slate-700 cursor-not-allowed'
+                            : isSelected
+                              ? 'bg-amber-500 text-black shadow-md'
+                              : isToday
+                                ? 'border border-amber-500/50 text-amber-300 hover:bg-slate-800'
+                                : 'text-slate-300 hover:bg-slate-800'
+                        }`}
+                      >
+                        {cell.getDate()}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Time Slots Categorized */}
+              <p className="text-xs text-slate-400 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                <span>{t.booking.selected} <strong className="text-white">{formatDateLong(selectedDate, lang)}</strong></span>
+              </p>
+
+              {/* Time Slots Categorized — automatically excludes times already passed today */}
               <div className="space-y-4 pt-2">
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌅 Matinée</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {timeSlotsMorning.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">☀️ Après-midi</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {timeSlotsAfternoon.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌙 Fin de journée / Nocturne</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {timeSlotsEvening.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {renderSlotGrid(t.booking.morning, '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid(t.booking.afternoon, '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid(t.booking.evening, '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-3')}
               </div>
 
+              {allAvailableSlots.length === 0 && (
+                <p className="text-xs text-rose-400 font-medium">{t.booking.noSlotsForDay}</p>
+              )}
             </div>
           )}
 
           {/* STEP 4: CUSTOMER DETAILS & EXTRAS */}
           {step === 4 && (
             <form id="booking-form" onSubmit={handleConfirmSubmit} className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Étape 4 : Vos Coordonnées & Options VIP</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step4Title}</h3>
+
+              {submitError && (
+                <p className="text-xs text-rose-400 font-medium bg-rose-500/10 border border-rose-500/30 rounded-xl px-3.5 py-2.5">{submitError}</p>
+              )}
 
               {/* Summary Bar */}
               <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
                 <div>
                   <p className="font-bold text-white">{selectedService.name}</p>
                   <p className="text-slate-400">
-                    Le {selectedDate} à {selectedSlot} • Avec {selectedBarber ? selectedBarber.name : 'Barbier Disponible'}
+                    {formatDateLong(selectedDate, lang)} {t.booking.at} {selectedSlot || '—'} • {t.booking.withBarber} {selectedBarber ? selectedBarber.name : t.booking.availableBarber}
                   </p>
                 </div>
                 <span className="text-amber-400 font-extrabold text-lg">{calculateTotalPrice()}€</span>
@@ -365,11 +669,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Form Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Nom & Prénom * :</label>
+                  <label className="block text-slate-300 font-semibold mb-1">{t.booking.fullNameLabel}</label>
                   <input
                     type="text"
                     required
-                    placeholder="ex: Lucas Dupont"
+                    placeholder={t.booking.fullNamePlaceholder}
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -377,11 +681,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Numéro de Téléphone * :</label>
+                  <label className="block text-slate-300 font-semibold mb-1">{t.booking.phoneLabel}</label>
                   <input
                     type="tel"
                     required
-                    placeholder="ex: +31 6 1234 5678"
+                    placeholder={t.booking.phonePlaceholder}
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -390,11 +694,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="text-xs">
-                <label className="block text-slate-300 font-semibold mb-1">Adresse Email (pour confirmation) * :</label>
+                <label className="block text-slate-300 font-semibold mb-1">{t.booking.emailLabel}</label>
                 <input
                   type="email"
                   required
-                  placeholder="ex: lucas@example.com"
+                  placeholder={t.booking.emailPlaceholder}
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -403,9 +707,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Optional Extras Checkboxes */}
               <div className="space-y-2 pt-2">
-                <label className="block text-xs font-semibold text-slate-300">Options Complémentaires Offertes ou VIP :</label>
+                <label className="block text-xs font-semibold text-slate-300">{t.booking.extrasLabel}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {BOOKING_EXTRAS.map((extra) => (
+                  {extras.map((extra) => (
                     <div
                       key={extra.id}
                       onClick={() => toggleExtra(extra.id)}
@@ -416,7 +720,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       }`}
                     >
                       <span className="font-medium">{extra.name}</span>
-                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : 'Offert'}</span>
+                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : t.booking.free}</span>
                     </div>
                   ))}
                 </div>
@@ -433,27 +737,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <h3 className="font-display text-2xl font-bold text-white">Réservation Confirmée !</h3>
-                <p className="text-xs text-amber-400 font-mono font-bold">Référence : #{confirmedBooking.id}</p>
-                <p className="text-xs text-slate-400">Un SMS & Email de confirmation a été généré pour {confirmedBooking.customerEmail}.</p>
+                <h3 className="font-display text-2xl font-bold text-white">{t.booking.confirmedTitle}</h3>
+                <p className="text-xs text-amber-400 font-mono font-bold">{t.booking.referenceLabel} #{confirmedBooking.id}</p>
+                <p className="text-xs text-slate-400">{t.booking.confirmationSent} {confirmedBooking.customerEmail}.</p>
               </div>
 
               {/* Receipt Card */}
               <div className="max-w-md mx-auto p-5 rounded-2xl bg-slate-950 border border-amber-500/30 text-left space-y-3 text-xs">
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Prestation :</span>
+                  <span className="text-slate-400">{t.booking.receiptTreatment}</span>
                   <span className="font-bold text-white">{confirmedBooking.service.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Barbier :</span>
+                  <span className="text-slate-400">{t.booking.receiptBarber}</span>
                   <span className="font-bold text-amber-300">{confirmedBooking.barber.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Date & Heure :</span>
-                  <span className="font-bold text-white">{confirmedBooking.date} à {confirmedBooking.timeSlot}</span>
+                  <span className="text-slate-400">{t.booking.receiptDateTime}</span>
+                  <span className="font-bold text-white">{formatDateLong(confirmedBooking.date, lang)} {t.booking.at} {confirmedBooking.timeSlot}</span>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-sm">
-                  <span className="text-slate-300">Total à régler au salon :</span>
+                  <span className="text-slate-300">{t.booking.receiptTotal}</span>
                   <span className="text-amber-400">{confirmedBooking.totalPrice}€</span>
                 </div>
               </div>
@@ -461,19 +765,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <a
-                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:RDV Barbershop Groningen%0ADESCRIPTION:Prestation ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
-                  download="rdv-barbershop.ics"
+                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${lang === 'en' ? 'Appointment' : 'Afspraak'} Barbershop Groningen%0ADESCRIPTION:${lang === 'en' ? 'Treatment' : 'Behandeling'} ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
+                  download="afspraak-barbershop.ics"
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4 text-amber-400" />
-                  <span>Ajouter à mon Calendrier</span>
+                  <span>{t.booking.addToCalendar}</span>
                 </a>
 
                 <button
                   onClick={resetModal}
                   className="w-full sm:w-auto gold-button px-6 py-2.5 rounded-xl font-bold text-xs"
                 >
-                  Terminer
+                  {t.booking.done}
                 </button>
               </div>
 
@@ -492,7 +796,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Retour</span>
+                <span>{t.booking.back}</span>
               </button>
             ) : (
               <div />
@@ -502,19 +806,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md"
+                disabled={step === 3 && !selectedSlot}
+                className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <span>Continuer</span>
+                <span>{t.booking.continueBtn}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button
                 type="submit"
                 form="booking-form"
-                className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2"
+                disabled={isSubmitting}
+                className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Confirmer ma Réservation ({calculateTotalPrice()}€)</span>
+                <span>{isSubmitting ? t.booking.submitting : `${t.booking.confirmBooking} (${calculateTotalPrice()}€)`}</span>
               </button>
             )}
           </div>

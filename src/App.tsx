@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { AboutSection } from './components/AboutSection';
 import { ServicesSection } from './components/ServicesSection';
 import { BarbersSection } from './components/BarbersSection';
 import { BeforeAfterSlider } from './components/BeforeAfterSlider';
-import { StyleFinderQuiz } from './components/StyleFinderQuiz';
 import { GallerySection } from './components/GallerySection';
 import { ReviewsSection } from './components/ReviewsSection';
 import { LocationSection } from './components/LocationSection';
@@ -12,9 +13,34 @@ import { AuditComparisonModal } from './components/AuditComparisonModal';
 import { BookingModal } from './components/BookingModal';
 import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
+import { SplashScreen } from './components/SplashScreen';
+import { BarberConnectPage } from './components/BarberConnectPage';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { ConfirmedBooking } from './types';
 
+// Scrolls to top on every route change, or to a #hash target if present
+// (used by links that point back to a home-page section, e.g. /#reviews).
+function ScrollManager() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      requestAnimationFrame(() => {
+        document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } else {
+      window.scrollTo({ top: 0 });
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
+
 export default function App() {
+  const location = useLocation();
+  const isBarberConnectRoute = location.pathname.startsWith('/team/');
+
+  const [showSplash, setShowSplash] = useState(true);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [preselectedServiceId, setPreselectedServiceId] = useState<string | undefined>();
   const [preselectedBarberId, setPreselectedBarberId] = useState<string | undefined>();
@@ -52,93 +78,130 @@ export default function App() {
   };
 
   const handleCancelBooking = (bookingId: string) => {
+    // Best-effort: also free the slot on the barber's Google Calendar. If
+    // the backend isn't reachable this just no-ops — the local cancellation
+    // below still goes through either way.
+    fetch('/api/cancel-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId }),
+    }).catch(() => { /* backend unreachable — local cancellation still applies */ });
+
     setBookings(bookings.filter(b => b.id !== bookingId));
   };
 
-  return (
-    <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
-      
-      {/* Top Fixed Header */}
-      <Navbar
-        onOpenBooking={(sId) => handleOpenBooking(sId)}
-        onOpenMyBookings={() => setIsMyBookingsOpen(true)}
+  const homeContent = (
+    <>
+      <Hero
+        onOpenBooking={() => handleOpenBooking()}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
-        myBookingsCount={bookings.length}
       />
+      <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
+      <ReviewsSection />
+      <LocationSection />
+    </>
+  );
 
-      {/* Main Content Sections */}
-      <main>
-        {/* 1. Hero Section */}
-        <Hero
+  const servicesContent = (
+    <div className="pt-24">
+      <ServicesSection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+    </div>
+  );
+
+  const barbersContent = (
+    <div className="pt-24">
+      <BarbersSection onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)} />
+    </div>
+  );
+
+  const galleryContent = (
+    <div className="pt-24">
+      <GallerySection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+    </div>
+  );
+
+  const aboutContent = (
+    <div className="pt-24">
+      <AboutSection onOpenBooking={() => handleOpenBooking()} />
+      <LocationSection />
+    </div>
+  );
+
+  // Private per-barber calendar-connect page — deliberately outside the
+  // public site chrome (no navbar/footer/language switcher, just the tool).
+  if (isBarberConnectRoute) {
+    return (
+      <Routes>
+        <Route path="/team/:barberId/agenda" element={<BarberConnectPage />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <LanguageProvider>
+      <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
+
+        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+
+        <ScrollManager />
+
+        {/* Top Fixed Header */}
+        <Navbar
+          onOpenBooking={(sId) => handleOpenBooking(sId)}
+          onOpenMyBookings={() => setIsMyBookingsOpen(true)}
+          myBookingsCount={bookings.length}
+        />
+
+        {/* Routed Page Content — Dutch routes are canonical, /en/* mirrors them for the English version */}
+        <main>
+          <Routes>
+            <Route path="/" element={homeContent} />
+            <Route path="/en" element={homeContent} />
+
+            <Route path="/diensten" element={servicesContent} />
+            <Route path="/en/services" element={servicesContent} />
+
+            <Route path="/barbiers" element={barbersContent} />
+            <Route path="/en/barbers" element={barbersContent} />
+
+            <Route path="/galerij" element={galleryContent} />
+            <Route path="/en/gallery" element={galleryContent} />
+
+            <Route path="/over-ons" element={aboutContent} />
+            <Route path="/en/about" element={aboutContent} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <Footer
           onOpenBooking={() => handleOpenBooking()}
-          onOpenQuiz={() => {
-            const el = document.getElementById('quiz');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
           onOpenAuditModal={() => setIsAuditModalOpen(true)}
         />
 
-        {/* 2. Services & Tarifs */}
-        <ServicesSection
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+        {/* Modals & Overlays */}
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          preselectedServiceId={preselectedServiceId}
+          preselectedBarberId={preselectedBarberId}
+          onBookingConfirmed={handleBookingConfirmed}
         />
 
-        {/* 3. Barbers Team */}
-        <BarbersSection
-          onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)}
-        />
-
-        {/* 4. Interactive Before/After Transformation Slider */}
-        <BeforeAfterSlider
+        <MyBookingsModal
+          isOpen={isMyBookingsOpen}
+          onClose={() => setIsMyBookingsOpen(false)}
+          bookings={bookings}
+          onCancelBooking={handleCancelBooking}
           onOpenBooking={() => handleOpenBooking()}
         />
 
-        {/* 5. Style Recommendation Quiz */}
-        <StyleFinderQuiz
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+        <AuditComparisonModal
+          isOpen={isAuditModalOpen}
+          onClose={() => setIsAuditModalOpen(false)}
+          onOpenBooking={() => handleOpenBooking()}
         />
 
-        {/* 6. Gallery & Lookbook */}
-        <GallerySection
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
-        />
-
-        {/* 7. Reviews Section */}
-        <ReviewsSection />
-
-        {/* 8. Location & Opening Hours */}
-        <LocationSection />
-      </main>
-
-      {/* Footer */}
-      <Footer
-        onOpenBooking={() => handleOpenBooking()}
-        onOpenAuditModal={() => setIsAuditModalOpen(true)}
-      />
-
-      {/* Modals & Overlays */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        preselectedServiceId={preselectedServiceId}
-        preselectedBarberId={preselectedBarberId}
-        onBookingConfirmed={handleBookingConfirmed}
-      />
-
-      <MyBookingsModal
-        isOpen={isMyBookingsOpen}
-        onClose={() => setIsMyBookingsOpen(false)}
-        bookings={bookings}
-        onCancelBooking={handleCancelBooking}
-        onOpenBooking={() => handleOpenBooking()}
-      />
-
-      <AuditComparisonModal
-        isOpen={isAuditModalOpen}
-        onClose={() => setIsAuditModalOpen(false)}
-        onOpenBooking={() => handleOpenBooking()}
-      />
-
-    </div>
+      </div>
+    </LanguageProvider>
   );
 }

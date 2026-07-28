@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { BARBER_SERVICES } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBER_SERVICES_EN } from '../data/barbershopData';
 import { ServiceCategory } from '../types';
-import { Scissors, Crown, Flame, Sparkles, Clock, Check, User } from 'lucide-react';
+import { Scissors, Crown, Flame, Sparkles, Clock, User } from 'lucide-react';
+import { TiltCard } from './TiltCard';
+import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ServicesSectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServiceToBook }) => {
+  const { t, lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>('all');
 
+  const services = lang === 'en' ? BARBER_SERVICES_EN : BARBER_SERVICES;
+
   const categories: { id: ServiceCategory; label: string }[] = [
-    { id: 'all', label: 'Tous les Services' },
-    { id: 'haircut', label: 'Coupes & Skin Fades' },
-    { id: 'beard', label: 'Taille de Barbe & Rasage' },
-    { id: 'combo', label: 'Packs Signature VIP' },
-    { id: 'junior', label: 'Jeune Gentleman' },
+    { id: 'all', label: t.services.catAll },
+    { id: 'haircut', label: t.services.catHaircut },
+    { id: 'beard', label: t.services.catBeard },
+    { id: 'combo', label: t.services.catCombo },
+    { id: 'junior', label: t.services.catJunior },
   ];
 
   const filteredServices = activeCategory === 'all'
-    ? BARBER_SERVICES
-    : BARBER_SERVICES.filter(s => s.category === activeCategory);
+    ? services
+    : services.filter(s => s.category === activeCategory);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -33,22 +39,25 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   };
 
   return (
-    <section id="services" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section id="services" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[500px] h-[500px] bg-amber-500/10 -top-40 left-1/4" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Scissors className="w-3.5 h-3.5" />
-            <span>Menu & Prestations Haute Coiffure</span>
+            <span>{t.services.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Tarifs & Prestations <span className="gold-text-gradient">Barbering</span>
+            {t.services.title} <span className="gold-text-gradient">{t.services.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Chaque prestation comprend un diagnostic personnalisé, des produits de soin masculins haut de gamme et une boisson offerte.
+            {t.services.subtitle}
           </p>
-        </div>
+        </Reveal>
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
@@ -69,10 +78,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
         {/* Services Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <div
-              key={service.id}
-              className={`relative rounded-2xl p-6 bg-slate-900/80 border transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 ${
+          {filteredServices.map((service, idx) => (
+            <Reveal key={service.id} delayMs={(idx % 3) * 90}>
+            <TiltCard
+              className={`rounded-2xl p-6 bg-slate-900/80 border transition-colors duration-300 flex flex-col justify-between group h-full ${
                 service.popular
                   ? 'border-amber-500/50 shadow-xl gold-border-glow'
                   : 'border-slate-800 hover:border-slate-700'
@@ -103,10 +112,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 </div>
 
                 {/* Duration */}
-                <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
-                  <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Durée approximative : {service.durationMinutes} min</span>
-                </div>
+                {service.durationMinutes && (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
+                    <Clock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{t.services.durationLabel} {service.durationMinutes} {t.services.minutesShort}</span>
+                  </div>
+                )}
 
                 {/* Description */}
                 <p className="text-slate-300 text-xs leading-relaxed mb-6">
@@ -124,9 +135,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 }`}
               >
                 <Scissors className="w-4 h-4" />
-                <span>Réserver ce Service</span>
+                <span>{t.services.bookThis}</span>
               </button>
-            </div>
+            </TiltCard>
+            </Reveal>
           ))}
         </div>
 

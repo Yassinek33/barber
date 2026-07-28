@@ -5,7 +5,7 @@ export interface BarberService {
   name: string;
   category: ServiceCategory;
   price: number;
-  durationMinutes: number;
+  durationMinutes?: number;
   description: string;
   badge?: string;
   icon: string;
@@ -49,9 +49,9 @@ export interface ConfirmedBooking {
   customerEmail: string;
   extras: { name: string; price: number }[];
   totalPrice: number;
-  durationMinutes: number;
+  durationMinutes?: number;
   createdAt: string;
-  status: 'confirmé' | 'terminé' | 'annulé';
+  status: 'bevestigd' | 'voltooid' | 'geannuleerd';
 }
 
 export interface CustomerReview {
@@ -66,14 +66,10 @@ export interface CustomerReview {
   verified: boolean;
 }
 
-export interface LookbookItem {
+export interface GalleryMediaItem {
   id: string;
-  title: string;
-  category: 'fades' | 'beards' | 'classics' | 'combos';
-  imageUrl: string;
-  description: string;
-  tags: string[];
-  serviceIdToBook: string;
+  type: 'image' | 'video';
+  src: string;
 }
 
 export interface AuditComparisonItem {
