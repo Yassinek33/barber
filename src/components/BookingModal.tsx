@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { BARBER_SERVICES, BARBERS, BOOKING_EXTRAS } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBERS, BOOKING_EXTRAS, SHOP_INFO } from '../data/barbershopData';
 import { BarberService, Barber, ConfirmedBooking } from '../types';
 import { X, Scissors, Calendar, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, ExternalLink } from 'lucide-react';
 
@@ -46,6 +46,47 @@ const parseSlotMinutes = (slot: string) => {
   const [h, m] = slot.split(':').map(Number);
   return h * 60 + m;
 };
+
+// Dutch day names indexed the same way as Date#getDay() (0 = Sunday)
+const DAY_NAMES = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+
+const getOpeningEntry = (dateStr: string) => {
+  const dayName = DAY_NAMES[new Date(`${dateStr}T00:00:00`).getDay()];
+  return SHOP_INFO.openingHours.find(h => h.day === dayName);
+};
+
+// "12.00 tot 18.00" -> { openMin: 720, closeMin: 1080 }
+const parseOpeningRange = (hoursStr: string) => {
+  const [openStr, closeStr] = hoursStr.split(' tot ');
+  const toMinutes = (s: string) => {
+    const [h, m] = s.split('.').map(Number);
+    return h * 60 + (m || 0);
+  };
+  return { openMin: toMinutes(openStr), closeMin: toMinutes(closeStr) };
+};
+
+const buildHalfHourSlots = (openMin: number, closeMin: number): string[] => {
+  const slots: string[] = [];
+  for (let t = openMin; t < closeMin; t += 30) {
+    const h = Math.floor(t / 60);
+    const m = t % 60;
+    slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+  }
+  return slots;
+};
+
+// Every half hour between opening and closing time for that specific day
+const generateDaySlots = (dateStr: string): string[] => {
+  const entry = getOpeningEntry(dateStr);
+  if (!entry || !entry.open) return [];
+  const { openMin, closeMin } = parseOpeningRange(entry.hours);
+  return buildHalfHourSlots(openMin, closeMin);
+};
+
+// The at-home weekend service isn't tied to the shop's own hours — the barber
+// travels to the client, so it runs 09:00–18:00 on both Saturday and Sunday.
+const WEEKEND_SERVICE_OPEN_MIN = 9 * 60;
+const WEEKEND_SERVICE_CLOSE_MIN = 18 * 60;
 
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
@@ -116,10 +157,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setCalendarMonth(new Date(weekendDate.getFullYear(), weekendDate.getMonth(), 1));
   }, [selectedService]);
 
-  // Time Slots
-  const timeSlotsMorning = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30'];
-  const timeSlotsAfternoon = ['12:30', '13:15', '14:00', '14:45', '15:30', '16:15'];
-  const timeSlotsEvening = ['17:00', '17:45', '18:30', '19:15'];
+  // Time Slots — generated every 30 minutes from the real opening hours of the selected day
+  const daySlots = selectedService.id === WEEKEND_SERVICE_ID
+    ? buildHalfHourSlots(WEEKEND_SERVICE_OPEN_MIN, WEEKEND_SERVICE_CLOSE_MIN)
+    : generateDaySlots(selectedDate);
 
   const isSelectedDateToday = selectedDate === toDateStr(now);
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -127,9 +168,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const filterPastSlots = (slots: string[]) =>
     isSelectedDateToday ? slots.filter(s => parseSlotMinutes(s) > nowMinutes) : slots;
 
-  const morningSlots = filterPastSlots(timeSlotsMorning);
-  const afternoonSlots = filterPastSlots(timeSlotsAfternoon);
-  const eveningSlots = filterPastSlots(timeSlotsEvening);
+  const morningSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) < 12 * 60));
+  const afternoonSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) >= 12 * 60 && parseSlotMinutes(s) < 17 * 60));
+  const eveningSlots = filterPastSlots(daySlots.filter(s => parseSlotMinutes(s) >= 17 * 60));
   const allAvailableSlots = [...morningSlots, ...afternoonSlots, ...eveningSlots];
 
   // If the currently selected slot fell out of the available list (date changed,
@@ -165,10 +206,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const isDayDisabled = (d: Date) => {
     if (d < todayMidnight) return true;
     if (isWeekendOnly) {
+      // The at-home weekend service runs independently of the shop's hours.
       const dow = d.getDay();
-      if (dow !== 0 && dow !== 6) return true;
+      return dow !== 0 && dow !== 6;
     }
-    return false;
+    const entry = getOpeningEntry(toDateStr(d));
+    return !entry || !entry.open;
   };
 
   const canGoPrevMonth = () => {
