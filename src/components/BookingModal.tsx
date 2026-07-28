@@ -92,6 +92,23 @@ const generateDaySlots = (dateStr: string): string[] => {
 const WEEKEND_SERVICE_OPEN_MIN = 9 * 60;
 const WEEKEND_SERVICE_CLOSE_MIN = 18 * 60;
 
+// Drops any slot that overlaps a busy range from the barber's real,
+// connected Google Calendar — this is what makes something they book on
+// their phone disappear from the site.
+const filterSlotsAgainstCalendar = (
+  slots: string[],
+  dateStr: string,
+  durationMinutes: number,
+  busyRanges: { start: string; end: string }[]
+): string[] => {
+  if (busyRanges.length === 0) return slots;
+  return slots.filter(slot => {
+    const slotStart = new Date(`${dateStr}T${slot}:00`);
+    const slotEnd = new Date(slotStart.getTime() + durationMinutes * 60000);
+    return !busyRanges.some(b => slotStart < new Date(b.end) && new Date(b.start) < slotEnd);
+  });
+};
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
@@ -135,6 +152,28 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Confirmation result
   const [confirmedBooking, setConfirmedBooking] = useState<ConfirmedBooking | null>(null);
+  const [submitError, setSubmitError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Real busy ranges pulled from the selected barber's connected Google
+  // Calendar for the selected day — empty when no barber is chosen yet, the
+  // barber hasn't connected a calendar, or the backend isn't reachable (e.g.
+  // running locally without Netlify Functions), so the site degrades
+  // gracefully back to plain opening-hours availability.
+  const [busyRanges, setBusyRanges] = useState<{ start: string; end: string }[]>([]);
+
+  useEffect(() => {
+    if (!selectedBarber) {
+      setBusyRanges([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/availability?barberId=${encodeURIComponent(selectedBarber.id)}&date=${encodeURIComponent(selectedDate)}`)
+      .then(res => (res.ok ? res.json() : { busy: [] }))
+      .then(data => { if (!cancelled) setBusyRanges(data.busy || []); })
+      .catch(() => { if (!cancelled) setBusyRanges([]); });
+    return () => { cancelled = true; };
+  }, [selectedBarber, selectedDate]);
 
   // Keep "now" live so past time slots drop away automatically while the modal stays open
   useEffect(() => {
@@ -169,10 +208,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setCalendarMonth(new Date(weekendDate.getFullYear(), weekendDate.getMonth(), 1));
   }, [selectedService]);
 
-  // Time Slots — generated every 30 minutes from the real opening hours of the selected day
-  const daySlots = selectedService.id === WEEKEND_SERVICE_ID
+  // Time Slots — generated every 30 minutes from the real opening hours of the selected day,
+  // then narrowed further by whatever the barber's own connected Google Calendar reports as busy.
+  const rawDaySlots = selectedService.id === WEEKEND_SERVICE_ID
     ? buildHalfHourSlots(WEEKEND_SERVICE_OPEN_MIN, WEEKEND_SERVICE_CLOSE_MIN)
     : generateDaySlots(selectedDate);
+  const daySlots = filterSlotsAgainstCalendar(rawDaySlots, selectedDate, selectedService.durationMinutes || 60, busyRanges);
 
   const isSelectedDateToday = selectedDate === toDateStr(now);
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -266,7 +307,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     return total;
   };
 
-  const handleConfirmSubmit = (e: React.FormEvent) => {
+  const handleConfirmSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerPhone || !customerEmail || !selectedSlot) return;
 
@@ -294,6 +335,44 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       status: 'bevestigd'
     };
 
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    // Best-effort sync to the barber's Google Calendar via the backend. If
+    // the backend isn't deployed/reachable (e.g. local dev without Netlify
+    // Functions running), this fails silently and the booking still goes
+    // through locally exactly like before — only a real 409 "someone just
+    // took this slot" response blocks confirmation.
+    try {
+      const res = await fetch('/api/create-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: booking.id,
+          barberId: finalBarber.id,
+          barberName: finalBarber.name,
+          serviceId: selectedService.id,
+          serviceName: selectedService.name,
+          date: selectedDate,
+          timeSlot: selectedSlot,
+          durationMinutes: selectedService.durationMinutes,
+          customerName,
+          customerPhone,
+          customerEmail,
+          extras: extrasData,
+          totalPrice: booking.totalPrice,
+        }),
+      });
+      if (res.status === 409) {
+        setIsSubmitting(false);
+        setSubmitError(t.booking.slotTaken);
+        return;
+      }
+    } catch {
+      // Backend unreachable — proceed with the local-only booking flow.
+    }
+
+    setIsSubmitting(false);
     setConfirmedBooking(booking);
     onBookingConfirmed(booking);
 
@@ -314,6 +393,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const resetModal = () => {
     setStep(1);
     setConfirmedBooking(null);
+    setSubmitError('');
     onClose();
   };
 
@@ -571,6 +651,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <form id="booking-form" onSubmit={handleConfirmSubmit} className="space-y-5">
               <h3 className="font-display font-bold text-white text-base">{t.booking.step4Title}</h3>
 
+              {submitError && (
+                <p className="text-xs text-rose-400 font-medium bg-rose-500/10 border border-rose-500/30 rounded-xl px-3.5 py-2.5">{submitError}</p>
+              )}
+
               {/* Summary Bar */}
               <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
                 <div>
@@ -732,10 +816,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="submit"
                 form="booking-form"
-                className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2"
+                disabled={isSubmitting}
+                className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{t.booking.confirmBooking} ({calculateTotalPrice()}€)</span>
+                <span>{isSubmitting ? t.booking.submitting : `${t.booking.confirmBooking} (${calculateTotalPrice()}€)`}</span>
               </button>
             )}
           </div>

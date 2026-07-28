@@ -14,6 +14,7 @@ import { BookingModal } from './components/BookingModal';
 import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
 import { SplashScreen } from './components/SplashScreen';
+import { BarberConnectPage } from './components/BarberConnectPage';
 import { LanguageProvider } from './i18n/LanguageContext';
 import { ConfirmedBooking } from './types';
 
@@ -36,6 +37,9 @@ function ScrollManager() {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isBarberConnectRoute = location.pathname.startsWith('/team/');
+
   const [showSplash, setShowSplash] = useState(true);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [preselectedServiceId, setPreselectedServiceId] = useState<string | undefined>();
@@ -74,6 +78,15 @@ export default function App() {
   };
 
   const handleCancelBooking = (bookingId: string) => {
+    // Best-effort: also free the slot on the barber's Google Calendar. If
+    // the backend isn't reachable this just no-ops — the local cancellation
+    // below still goes through either way.
+    fetch('/api/cancel-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId }),
+    }).catch(() => { /* backend unreachable — local cancellation still applies */ });
+
     setBookings(bookings.filter(b => b.id !== bookingId));
   };
 
@@ -113,6 +126,16 @@ export default function App() {
       <LocationSection />
     </div>
   );
+
+  // Private per-barber calendar-connect page — deliberately outside the
+  // public site chrome (no navbar/footer/language switcher, just the tool).
+  if (isBarberConnectRoute) {
+    return (
+      <Routes>
+        <Route path="/team/:barberId/agenda" element={<BarberConnectPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <LanguageProvider>

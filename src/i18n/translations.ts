@@ -193,6 +193,8 @@ export interface Translations {
     back: string;
     continueBtn: string;
     confirmBooking: string;
+    slotTaken: string;
+    submitting: string;
   };
   myBookings: {
     title: string;
@@ -425,6 +427,8 @@ export const translations: Record<'nl' | 'en', Translations> = {
       back: 'Terug',
       continueBtn: 'Doorgaan',
       confirmBooking: 'Bevestig mijn Reservering',
+      slotTaken: 'Dit tijdstip is net bezet geraakt — kies een ander tijdstip.',
+      submitting: 'Bezig met bevestigen...',
     },
     myBookings: {
       title: 'Mijn Afspraken bij de Barbier',
@@ -655,6 +659,8 @@ export const translations: Record<'nl' | 'en', Translations> = {
       back: 'Back',
       continueBtn: 'Continue',
       confirmBooking: 'Confirm my Booking',
+      slotTaken: 'This time slot was just taken — please pick another one.',
+      submitting: 'Confirming...',
     },
     myBookings: {
       title: 'My Appointments with the Barber',
