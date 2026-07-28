@@ -30,16 +30,36 @@ export const Hero: React.FC<HeroProps> = ({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
 
-        {/* Framed Showcase Photo - The Salon */}
+        {/* Framed Showcase Photo - The Salon (crossfades to a golden-hour variant on hover) */}
         <div className="relative mb-10 group">
-          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)]">
+          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)] group-hover:shadow-[0_0_110px_-10px_rgba(212,175,55,0.75)] transition-shadow duration-700">
+            {/* Base photo */}
             <img
               src={HERO_IMAGE_PATH}
               alt="Interieur van The Premium Barbershop Groningen"
               referrerPolicy="no-referrer"
-              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-[1200ms] ease-out"
             />
+
+            {/* Golden-hour photo — fades in on hover */}
+            <img
+              src="/barbers/home-gold.png"
+              alt="The Premium Barbershop Groningen in gouden sfeer"
+              referrerPolicy="no-referrer"
+              className="absolute inset-0 w-full h-full object-cover object-center scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
+            />
+
+            {/* Diagonal shine sweep on hover */}
+            <div className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-[1400ms] ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg] pointer-events-none" />
+
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/15 to-transparent" />
+
+            {/* Hover hint badge */}
+            <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <Sparkles className="w-3 h-3" />
+              Gouden Sfeer
+            </div>
+
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 flex items-end justify-between">
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
@@ -61,10 +81,10 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           {/* Decorative corner frame accents */}
-          <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-amber-400 rounded-tl-lg pointer-events-none" />
-          <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-amber-400 rounded-tr-lg pointer-events-none" />
-          <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 border-amber-400 rounded-bl-lg pointer-events-none" />
-          <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-amber-400 rounded-br-lg pointer-events-none" />
+          <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-amber-400 rounded-tl-lg pointer-events-none transition-all duration-500 group-hover:-top-3 group-hover:-left-3 group-hover:w-10 group-hover:h-10" />
+          <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-amber-400 rounded-tr-lg pointer-events-none transition-all duration-500 group-hover:-top-3 group-hover:-right-3 group-hover:w-10 group-hover:h-10" />
+          <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 border-amber-400 rounded-bl-lg pointer-events-none transition-all duration-500 group-hover:-bottom-3 group-hover:-left-3 group-hover:w-10 group-hover:h-10" />
+          <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-amber-400 rounded-br-lg pointer-events-none transition-all duration-500 group-hover:-bottom-3 group-hover:-right-3 group-hover:w-10 group-hover:h-10" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
