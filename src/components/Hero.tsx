@@ -98,88 +98,8 @@ export const Hero: React.FC<HeroProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-          {/* Left Hero Section (Professional Polish Design) */}
-          <div className="lg:col-span-7 flex flex-col justify-between py-4 pr-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
-            <div>
-              <div className="mb-6 flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 border border-zinc-700 text-[10px] tracking-[0.2em] uppercase font-bold text-zinc-400">
-                  SINDS 2018
-                </span>
-                <span className="px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-[10px] tracking-[0.2em] uppercase font-bold text-amber-300">
-                  GRONINGEN WESTERHAVEN
-                </span>
-              </div>
-
-              {/* Ultra Impactful Title */}
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-6 italic text-white uppercase">
-                SCHERP<br />
-                <span className="text-zinc-500">GEKNIPT.</span><br />
-                ZONDER<br />
-                <span className="gold-text-gradient">ZORGEN.</span>
-              </h1>
-
-              <p className="text-zinc-400 max-w-lg text-sm leading-relaxed mb-8">
-                Uitmuntende mannenverzorging in het hart van Groningen. Skin fade tot op de millimeter, baardtrim met het scheermes & warme handdoek. Snel, professioneel, zonder compromissen.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4 mb-8">
-                <Magnetic strength={12}>
-                  <button
-                    onClick={onOpenBooking}
-                    className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
-                  >
-                    <Scissors className="w-4 h-4" />
-                    <span>Online Reserveren</span>
-                  </button>
-                </Magnetic>
-              </div>
-
-              {/* Audit Benchmark Link */}
-              <button
-                onClick={onOpenAuditModal}
-                className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>Vergelijkingsrapport vs oude site (Prestaties & Snelheid)</span>
-              </button>
-
-              {/* Customer Rating Metric */}
-              <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-                <div className="flex -space-x-2">
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-amber-400">4.9</div>
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-700 flex items-center justify-center text-[10px] font-bold text-white">M</div>
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-600 flex items-center justify-center text-[10px] font-bold text-white">K</div>
-                </div>
-                <div className="text-left">
-                  <div className="flex items-center gap-1 text-amber-400 text-xs">
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <span className="font-bold">4.9/5 BEOORDELING</span>
-                  </div>
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">488+ Geverifieerde Google Reviews</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Location & Hours Strip */}
-            <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6 mt-8">
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-amber-400" /> Locatie
-                </p>
-                <p className="text-xs font-bold text-white">{SHOP_INFO.address}</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-400" /> Openingstijden
-                </p>
-                <p className="text-xs font-bold text-white">{SHOP_INFO.openingHoursSummary}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Interaction Section: Integrated Booking System Widget */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
+          {/* Booking System Widget — shown first, directly after the photo, on mobile and desktop */}
+          <div className="lg:col-span-5 flex flex-col justify-center pb-8 lg:pb-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
             <div className="bg-[#111111] p-6 sm:p-8 border border-white/10 shadow-2xl flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
@@ -256,6 +176,86 @@ export const Hero: React.FC<HeroProps> = ({
               >
                 Kies mijn Datum & Tijd
               </button>
+            </div>
+          </div>
+
+          {/* Hero Text Section (Professional Polish Design) */}
+          <div className="lg:col-span-7 flex flex-col justify-between py-4 lg:pl-6">
+            <div>
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <span className="px-3 py-1 border border-zinc-700 text-[10px] tracking-[0.2em] uppercase font-bold text-zinc-400">
+                  SINDS 2018
+                </span>
+                <span className="px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-[10px] tracking-[0.2em] uppercase font-bold text-amber-300">
+                  GRONINGEN WESTERHAVEN
+                </span>
+              </div>
+
+              {/* Ultra Impactful Title */}
+              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-6 italic text-white uppercase">
+                SCHERP<br />
+                <span className="text-zinc-500">GEKNIPT.</span><br />
+                ZONDER<br />
+                <span className="gold-text-gradient">ZORGEN.</span>
+              </h1>
+
+              <p className="text-zinc-400 max-w-lg text-sm leading-relaxed mb-8">
+                Uitmuntende mannenverzorging in het hart van Groningen. Skin fade tot op de millimeter, baardtrim met het scheermes & warme handdoek. Snel, professioneel, zonder compromissen.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-4 mb-8">
+                <Magnetic strength={12}>
+                  <button
+                    onClick={onOpenBooking}
+                    className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+                  >
+                    <Scissors className="w-4 h-4" />
+                    <span>Online Reserveren</span>
+                  </button>
+                </Magnetic>
+              </div>
+
+              {/* Audit Benchmark Link */}
+              <button
+                onClick={onOpenAuditModal}
+                className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>Vergelijkingsrapport vs oude site (Prestaties & Snelheid)</span>
+              </button>
+
+              {/* Customer Rating Metric */}
+              <div className="flex items-center gap-4 pt-6 border-t border-white/10">
+                <div className="flex -space-x-2">
+                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-amber-400">4.9</div>
+                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-700 flex items-center justify-center text-[10px] font-bold text-white">M</div>
+                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-600 flex items-center justify-center text-[10px] font-bold text-white">K</div>
+                </div>
+                <div className="text-left">
+                  <div className="flex items-center gap-1 text-amber-400 text-xs">
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <span className="font-bold">4.9/5 BEOORDELING</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">488+ Geverifieerde Google Reviews</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Location & Hours Strip */}
+            <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6 mt-8">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-amber-400" /> Locatie
+                </p>
+                <p className="text-xs font-bold text-white">{SHOP_INFO.address}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-amber-400" /> Openingstijden
+                </p>
+                <p className="text-xs font-bold text-white">{SHOP_INFO.openingHoursSummary}</p>
+              </div>
             </div>
           </div>
 

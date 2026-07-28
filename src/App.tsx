@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { AboutSection } from './components/AboutSection';
 import { ServicesSection } from './components/ServicesSection';
 import { BarbersSection } from './components/BarbersSection';
 import { BeforeAfterSlider } from './components/BeforeAfterSlider';
@@ -101,6 +102,7 @@ export default function App() {
                   onOpenBooking={() => handleOpenBooking()}
                   onOpenAuditModal={() => setIsAuditModalOpen(true)}
                 />
+                <AboutSection onOpenBooking={() => handleOpenBooking()} />
                 <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
                 <ReviewsSection />
                 <LocationSection />

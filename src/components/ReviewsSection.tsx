@@ -106,9 +106,8 @@ export const ReviewsSection: React.FC = () => {
               </div>
 
               {/* Service Tag */}
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
                 <span>{rev.serviceName}</span>
-                <span className="text-amber-400 font-medium">bij {rev.barberName}</span>
               </div>
             </div>
             </Reveal>
