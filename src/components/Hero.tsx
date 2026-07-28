@@ -25,7 +25,7 @@ export const Hero: React.FC<HeroProps> = ({
   };
 
   return (
-    <section className="relative min-h-screen pt-24 pb-12 flex items-center justify-center overflow-hidden bg-[#0a0a0a] border-b border-white/10">
+    <section className="relative min-h-screen pt-24 pb-12 flex flex-col overflow-hidden bg-[#0a0a0a] border-b border-white/10">
       
       {/* Dark overlay & subtle ambient backdrop */}
       <div className="absolute inset-0 z-0">
@@ -39,71 +39,63 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/80" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+      {/* Full-bleed Showcase Photo - The Salon (golden-hour variant revealed in a spotlight that follows the cursor) */}
+      <div
+        className="relative z-10 w-full mb-10"
+        onMouseMove={handlePhotoMouseMove}
+        onMouseEnter={() => setIsSpotlightActive(true)}
+        onMouseLeave={() => setIsSpotlightActive(false)}
+      >
+        {/* Base photo */}
+        <img
+          src={HERO_IMAGE_PATH}
+          alt="Interieur van The Premium Barbershop Groningen"
+          referrerPolicy="no-referrer"
+          className="w-full h-[420px] sm:h-[560px] lg:h-[720px] object-cover object-center"
+        />
 
-        {/* Framed Showcase Photo - The Salon (golden-hour variant revealed in a spotlight that follows the cursor) */}
-        <div className="relative mb-10 group">
-          <div
-            className="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_70px_-15px_rgba(212,175,55,0.45)] group-hover:shadow-[0_0_110px_-10px_rgba(212,175,55,0.75)] transition-shadow duration-700"
-            onMouseMove={handlePhotoMouseMove}
-            onMouseEnter={() => setIsSpotlightActive(true)}
-            onMouseLeave={() => setIsSpotlightActive(false)}
-          >
-            {/* Base photo */}
-            <img
-              src={HERO_IMAGE_PATH}
-              alt="Interieur van The Premium Barbershop Groningen"
-              referrerPolicy="no-referrer"
-              className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center"
-            />
+        {/* Golden-hour photo — only revealed in a soft glow that follows the cursor, no visible edge */}
+        <img
+          src="/barbers/home-gold.png"
+          alt="The Premium Barbershop Groningen in gouden sfeer"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"
+          style={{
+            opacity: isSpotlightActive ? 1 : 0,
+            maskImage: `radial-gradient(circle 320px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`,
+            WebkitMaskImage: `radial-gradient(circle 320px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`
+          }}
+        />
 
-            {/* Golden-hour photo — only revealed in a soft glow that follows the cursor, no visible edge */}
-            <img
-              src="/barbers/home-gold.png"
-              alt="The Premium Barbershop Groningen in gouden sfeer"
-              referrerPolicy="no-referrer"
-              className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"
-              style={{
-                opacity: isSpotlightActive ? 1 : 0,
-                maskImage: `radial-gradient(circle 260px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`,
-                WebkitMaskImage: `radial-gradient(circle 260px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`
-              }}
-            />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-[#0a0a0a]/30 pointer-events-none" />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/15 to-transparent pointer-events-none" />
-
-            {/* Hover hint badge */}
-            <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-              <Sparkles className="w-3 h-3" />
-              Gouden Sfeer
-            </div>
-
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 flex items-end justify-between">
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
-                  <Sparkles className="w-3 h-3" />
-                  Onze Zaak
-                </span>
-                <h2 className="text-2xl sm:text-4xl font-black text-white uppercase italic tracking-tight drop-shadow-lg mb-2">
-                  {SHOP_INFO.name}
-                </h2>
-                <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
-                  Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.
-                </p>
-              </div>
-              <div className="hidden sm:flex items-center gap-1 text-amber-400 text-xs font-bold bg-black/40 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                <Star className="w-3.5 h-3.5 fill-amber-400" />
-                <span>{SHOP_INFO.googleRating}/5</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Decorative corner frame accents */}
-          <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-amber-400 rounded-tl-lg pointer-events-none transition-all duration-500 group-hover:-top-3 group-hover:-left-3 group-hover:w-10 group-hover:h-10" />
-          <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-amber-400 rounded-tr-lg pointer-events-none transition-all duration-500 group-hover:-top-3 group-hover:-right-3 group-hover:w-10 group-hover:h-10" />
-          <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 border-amber-400 rounded-bl-lg pointer-events-none transition-all duration-500 group-hover:-bottom-3 group-hover:-left-3 group-hover:w-10 group-hover:h-10" />
-          <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-amber-400 rounded-br-lg pointer-events-none transition-all duration-500 group-hover:-bottom-3 group-hover:-right-3 group-hover:w-10 group-hover:h-10" />
+        {/* Hover hint badge */}
+        <div className="absolute top-6 right-6 sm:top-8 sm:right-8 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm transition-opacity duration-500 pointer-events-none" style={{ opacity: isSpotlightActive ? 1 : 0 }}>
+          <Sparkles className="w-3 h-3" />
+          Gouden Sfeer
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-9 lg:px-12 flex items-end justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+              <Sparkles className="w-3 h-3" />
+              Onze Zaak
+            </span>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white uppercase italic tracking-tight drop-shadow-lg mb-2">
+              {SHOP_INFO.name}
+            </h2>
+            <p className="hidden sm:block text-zinc-300 text-sm max-w-md font-light drop-shadow-lg">
+              Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.
+            </p>
+          </div>
+          <div className="hidden sm:flex items-center gap-1 text-amber-400 text-xs font-bold bg-black/40 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <span>{SHOP_INFO.googleRating}/5</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
