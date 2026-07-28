@@ -72,7 +72,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal 
               <li><Link to="/diensten" className="hover:text-white transition-colors">Diensten & Tarieven</Link></li>
               <li><Link to="/barbiers" className="hover:text-white transition-colors">Onze Master Barbiers</Link></li>
               <li><Link to="/#before-after" className="hover:text-white transition-colors">Voor / Na</Link></li>
-              <li><Link to="/#quiz" className="hover:text-white transition-colors">Stijl Quiz</Link></li>
               <li><Link to="/galerij" className="hover:text-white transition-colors">Fotogalerij</Link></li>
               <li><Link to="/#reviews" className="hover:text-white transition-colors">Klantbeoordelingen</Link></li>
             </ul>

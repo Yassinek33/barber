@@ -62,7 +62,7 @@ export const BARBER_SERVICES: BarberService[] = [
     id: "kinderen-tot-12",
     name: "Kinderen t/m 12 jaar",
     category: "junior",
-    price: 19.00,
+    price: 20.00,
     durationMinutes: 30,
     description: "Een geduldige en zorgvuldige knipbeurt speciaal voor de jongsten, in een ontspannen sfeer met een net en modern resultaat.",
     icon: "User"
@@ -171,7 +171,7 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
     rating: 5,
     date: "2 dagen geleden",
-    text: "Zonder twijfel de beste barbier van Groningen aan de Gedempte Zuiderdiep! Majid leverde een perfecte knipbeurt met indrukwekkend oog voor detail. Het reserveringssysteem is direct.",
+    text: "Top geknipt zoals altijd. Majid weet precies wat ik wil zonder dat ik veel hoef uit te leggen.",
     serviceName: "Knippen met Baard",
     barberName: "Majid - Senior Master Barber",
     verified: true
@@ -182,7 +182,7 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
     rating: 5,
     date: "4 dagen geleden",
-    text: "Ayoub heeft meer dan 12 jaar ervaring en dat is meteen te zien! Baardtrim met het scheermes ultra netjes. Top sfeer in de zaak.",
+    text: "Ayoub weet gewoon wat ie doet. Baard weer strak en recht, geen gezeur.",
     serviceName: "Baard",
     barberName: "Ayoub - Master Barber",
     verified: true
@@ -193,9 +193,64 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
     avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80",
     rating: 5,
     date: "1 week geleden",
-    text: "Uitzonderlijke service bij Yanti. Zijn persoonlijke aandacht en precisie zijn opmerkelijk. Ik raad het zonder twijfel aan.",
+    text: "Rustig baasje, netjes werk. Kom hier nu al een tijdje en het blijft goed.",
     serviceName: "Knippen",
     barberName: "Yanti - Barber Specialist",
+    verified: true
+  },
+  {
+    id: "rev-4",
+    author: "Sven Bakker",
+    avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "3 dagen geleden",
+    text: "Studententarief maar geen studentenwerk. Prima knipbeurt voor een normale prijs.",
+    serviceName: "Studenten",
+    barberName: "Majid - Senior Master Barber",
+    verified: true
+  },
+  {
+    id: "rev-5",
+    author: "Milan de Wit",
+    avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "5 dagen geleden",
+    text: "Even binnenlopen voor de lijnen en zo weer strak de deur uit. Handig tussendoor.",
+    serviceName: "Lijnen",
+    barberName: "Ayoub - Master Barber",
+    verified: true
+  },
+  {
+    id: "rev-6",
+    author: "Kevin Postma",
+    avatar: "https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?w=100&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "1 dag geleden",
+    text: "Mijn zoon vond het meteen leuk hier. Geduldig met kinderen, dat is niet overal zo.",
+    serviceName: "Kinderen 12 t/m 16 jaar",
+    barberName: "Yanti - Barber Specialist",
+    verified: true
+  },
+  {
+    id: "rev-7",
+    author: "Rik Jansen",
+    avatar: "https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?w=100&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "2 weken geleden",
+    text: "Kom hier al jaren en nog nooit voor niks gegaan. Gewoon elke keer goed.",
+    serviceName: "Knippen met Baard",
+    barberName: "Majid - Senior Master Barber",
+    verified: true
+  },
+  {
+    id: "rev-8",
+    author: "Bram Vermeulen",
+    avatar: "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?w=100&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "6 dagen geleden",
+    text: "Hij kwam gewoon bij mij thuis knippen. Superhandig, zeker doen als je weinig tijd hebt.",
+    serviceName: "VIP Knipbeurt aan Huis",
+    barberName: "Ayoub - Master Barber",
     verified: true
   }
 ];
@@ -259,9 +314,9 @@ export const AUDIT_BENCHMARKS: AuditComparisonItem[] = [
     status: "better"
   },
   {
-    feature: "Stijladvies Quiz",
-    oldSite: "Afwezig - Blind kiezen van een kapsel",
-    newSite: "Interactieve quiz met 3 vragen om het perfecte kapsel te vinden op basis van gezichtsvorm",
+    feature: "Aan-Huis Service",
+    oldSite: "Niet beschikbaar",
+    newSite: "VIP knipbeurt of weekendservice gewoon bij u thuis",
     status: "better"
   },
   {

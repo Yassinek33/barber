@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Scissors, Calendar, Volume2, VolumeX, Menu, X, Sparkles } from 'lucide-react';
+import { Scissors, Calendar, Volume2, VolumeX, Menu, X } from 'lucide-react';
 import { audioSynth } from '../utils/audioSynth';
 
 interface NavbarProps {
@@ -195,14 +195,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="py-1 hover:text-amber-400"
             >
               Voor/Na Simulator
-            </Link>
-            <Link
-              to="/#quiz"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400 flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              Stijl Quiz op Maat
             </Link>
             <NavLink to="/galerij" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               Galerij & Lookbook

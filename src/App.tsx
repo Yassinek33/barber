@@ -5,7 +5,6 @@ import { Hero } from './components/Hero';
 import { ServicesSection } from './components/ServicesSection';
 import { BarbersSection } from './components/BarbersSection';
 import { BeforeAfterSlider } from './components/BeforeAfterSlider';
-import { StyleFinderQuiz } from './components/StyleFinderQuiz';
 import { GallerySection } from './components/GallerySection';
 import { ReviewsSection } from './components/ReviewsSection';
 import { LocationSection } from './components/LocationSection';
@@ -16,7 +15,7 @@ import { Footer } from './components/Footer';
 import { ConfirmedBooking } from './types';
 
 // Scrolls to top on every route change, or to a #hash target if present
-// (used by links that point back to a home-page section, e.g. /#quiz).
+// (used by links that point back to a home-page section, e.g. /#reviews).
 function ScrollManager() {
   const { pathname, hash } = useLocation();
 
@@ -96,14 +95,9 @@ export default function App() {
               <>
                 <Hero
                   onOpenBooking={() => handleOpenBooking()}
-                  onOpenQuiz={() => {
-                    const el = document.getElementById('quiz');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
                   onOpenAuditModal={() => setIsAuditModalOpen(true)}
                 />
                 <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
-                <StyleFinderQuiz onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
                 <ReviewsSection />
                 <LocationSection />
               </>

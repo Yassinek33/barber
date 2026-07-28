@@ -108,7 +108,7 @@ export const AuditComparisonModal: React.FC<AuditComparisonModalProps> = ({
             <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-5">
               <li><strong>Direct reserveringssysteem zonder de site te verlaten</strong>: Hiermee kiest u precies het type fade, de favoriete barbier en het exacte tijdslot.</li>
               <li><strong>Interactieve Voor/Na Module</strong>: Laat klanten het precisiewerk zien voordat ze een afspraak maken.</li>
-              <li><strong>Slimme Stijl Quiz</strong>: Beveelt het juiste type kapsel aan op basis van gezichtsvorm en haartextuur.</li>
+              <li><strong>VIP Service aan Huis</strong>: Boek een knipbeurt of weekendafspraak gewoon bij u thuis, zonder de deur uit te hoeven.</li>
               <li><strong>'Mijn Afspraken' Beheeromgeving</strong>: Slaat reserveringen lokaal op met de mogelijkheid om in 1 klik te annuleren of te verzetten.</li>
             </ul>
           </div>

@@ -4,13 +4,11 @@ import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
 
 interface HeroProps {
   onOpenBooking: () => void;
-  onOpenQuiz: () => void;
   onOpenAuditModal: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onOpenBooking,
-  onOpenQuiz,
   onOpenAuditModal
 }) => {
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
@@ -131,14 +129,6 @@ export const Hero: React.FC<HeroProps> = ({
                 >
                   <Scissors className="w-4 h-4" />
                   <span>Online Reserveren</span>
-                </button>
-
-                <button
-                  onClick={onOpenQuiz}
-                  className="px-6 py-3.5 border border-white/20 hover:bg-white/10 text-white transition-colors text-xs uppercase tracking-widest font-bold flex items-center gap-2"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Stijl Quiz</span>
                 </button>
               </div>
 
