@@ -1,4 +1,4 @@
-import { BarberService, Barber, CustomerReview, LookbookItem, AuditComparisonItem } from '../types';
+import { BarberService, Barber, CustomerReview, GalleryMediaItem, AuditComparisonItem } from '../types';
 
 export const HERO_IMAGE_PATH = '/barbers/home.png';
 export const MASTER_IMAGE_PATH = '/src/assets/images/barber_master_1785073753141.jpg';
@@ -255,43 +255,22 @@ export const CLIENT_REVIEWS: CustomerReview[] = [
   }
 ];
 
-export const LOOKBOOK_ITEMS: LookbookItem[] = [
-  {
-    id: "look-1",
-    title: "Sharp Low Skin Fade & Textured Top",
-    category: "fades",
-    imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&auto=format&fit=crop&q=80",
-    description: "Zeer strakke lage skin fade met getextureerd volume bovenop. Natuurlijke matte afwerking.",
-    tags: ["Skin Fade", "Textured Crop", "Modern"],
-    serviceIdToBook: "skin-fade"
-  },
-  {
-    id: "look-2",
-    title: "Full Beard Sculpt & Sharp Contour",
-    category: "beards",
-    imageUrl: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=600&auto=format&fit=crop&q=80",
-    description: "Dichte, gesculpteerde baard met scherpe wanglijnen tot op de millimeter getekend met het scheermes.",
-    tags: ["Baardtrim", "Scheermes", "Gentleman"],
-    serviceIdToBook: "beard-sculpt"
-  },
-  {
-    id: "look-3",
-    title: "Mid Fade Pompadour & Taper",
-    category: "combos",
-    imageUrl: "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=600&auto=format&fit=crop&q=80",
-    description: "Iconische stijl in een nieuw jasje met elegant volume en geleidelijke overgang.",
-    tags: ["Pompadour", "Classic", "Premium"],
-    serviceIdToBook: "royal-combo"
-  },
-  {
-    id: "look-4",
-    title: "Gentleman Side-Part & Sharp Beard",
-    category: "classics",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-    description: "Met de schaar gesculpteerde zijscheiding met subtiele slapenfade.",
-    tags: ["Side Part", "Klassiek", "Business"],
-    serviceIdToBook: "classic-cut"
-  }
+// Real photos & clips from the shop floor, uploaded directly by the owner.
+export const GALLERY_MEDIA: GalleryMediaItem[] = [
+  { id: "im1", type: "image", src: "/barbers/IM1.jpeg" },
+  { id: "im2", type: "image", src: "/barbers/IM2.jpeg" },
+  { id: "im3", type: "image", src: "/barbers/IM3.jpeg" },
+  { id: "im4", type: "image", src: "/barbers/IM4.jpeg" },
+  { id: "im5", type: "image", src: "/barbers/IM5.jpeg" },
+  { id: "v1", type: "video", src: "/barbers/V1.mp4" },
+  { id: "v2", type: "video", src: "/barbers/V2.mp4" },
+  { id: "v3", type: "video", src: "/barbers/V3.mp4" },
+  { id: "v4", type: "video", src: "/barbers/V4.mp4" },
+  { id: "v5", type: "video", src: "/barbers/V5.mp4" },
+  { id: "v6", type: "video", src: "/barbers/V6.mp4" },
+  { id: "v7", type: "video", src: "/barbers/V7.mp4" },
+  { id: "v8", type: "video", src: "/barbers/V8.mp4" },
+  { id: "v9", type: "video", src: "/barbers/V9.mp4" }
 ];
 
 export const AUDIT_BENCHMARKS: AuditComparisonItem[] = [

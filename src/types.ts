@@ -66,14 +66,10 @@ export interface CustomerReview {
   verified: boolean;
 }
 
-export interface LookbookItem {
+export interface GalleryMediaItem {
   id: string;
-  title: string;
-  category: 'fades' | 'beards' | 'classics' | 'combos';
-  imageUrl: string;
-  description: string;
-  tags: string[];
-  serviceIdToBook: string;
+  type: 'image' | 'video';
+  src: string;
 }
 
 export interface AuditComparisonItem {

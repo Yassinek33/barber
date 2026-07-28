@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { LOOKBOOK_ITEMS } from '../data/barbershopData';
-import { LookbookItem } from '../types';
-import { Camera, Scissors, Maximize2, X, ChevronRight } from 'lucide-react';
+import { GALLERY_MEDIA } from '../data/barbershopData';
+import { GalleryMediaItem } from '../types';
+import { Camera, Scissors, Maximize2, X, Play, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
 import { TiltCard } from './TiltCard';
 import { Reveal } from './Reveal';
 
@@ -9,21 +9,21 @@ interface GallerySectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
 }
 
-export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceToBook }) => {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [selectedLook, setSelectedLook] = useState<LookbookItem | null>(null);
+type FilterType = 'all' | 'image' | 'video';
 
-  const categories = [
-    { id: 'all', label: 'Alle Stijlen' },
-    { id: 'fades', label: 'Skin Fades' },
-    { id: 'beards', label: 'Baardtrim' },
-    { id: 'combos', label: 'Combo Pakketten' },
-    { id: 'classics', label: 'Klassieke Knipbeurten' },
+export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceToBook }) => {
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [selectedItem, setSelectedItem] = useState<GalleryMediaItem | null>(null);
+
+  const filters: { id: FilterType; label: string }[] = [
+    { id: 'all', label: 'Alles' },
+    { id: 'image', label: "Foto's" },
+    { id: 'video', label: "Video's" },
   ];
 
-  const filteredItems = activeCategory === 'all'
-    ? LOOKBOOK_ITEMS
-    : LOOKBOOK_ITEMS.filter(item => item.category === activeCategory);
+  const filteredItems = activeFilter === 'all'
+    ? GALLERY_MEDIA
+    : GALLERY_MEDIA.filter(item => item.type === activeFilter);
 
   return (
     <section id="lookbook" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
@@ -31,7 +31,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
         <div className="ambient-glow w-[480px] h-[480px] bg-amber-500/10 -bottom-32 left-1/3" />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        
+
         {/* Section Header */}
         <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
@@ -42,62 +42,76 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
             Galerij van onze <span className="gold-text-gradient">Creaties</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            Alle getoonde kapsels zijn gemaakt bij onze klanten in de zaak in Groningen.
+            Echte foto's en video's, rechtstreeks uit de zaak in Groningen.
           </p>
         </Reveal>
 
-        {/* Filter Category Tabs */}
+        {/* Filter Type Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          {categories.map((cat) => (
+          {filters.map((f) => (
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                activeCategory === cat.id
+              key={f.id}
+              onClick={() => setActiveFilter(f.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                activeFilter === f.id
                   ? 'bg-amber-500 text-black shadow-lg scale-105'
                   : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
               }`}
             >
-              {cat.label}
+              {f.id === 'image' && <ImageIcon className="w-3.5 h-3.5" />}
+              {f.id === 'video' && <VideoIcon className="w-3.5 h-3.5" />}
+              {f.label}
             </button>
           ))}
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Masonry-style Grid */}
+        <div className="columns-2 sm:columns-3 lg:columns-4 gap-4 [column-fill:balance]">
           {filteredItems.map((item, idx) => (
-            <Reveal key={item.id} delayMs={(idx % 4) * 80}>
-            <TiltCard
-              onClick={() => setSelectedLook(item)}
-              className="group rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-colors duration-300"
-            >
-              <div className="relative h-72 w-full overflow-hidden">
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+            <Reveal key={item.id} delayMs={(idx % 4) * 70} className="mb-4 break-inside-avoid">
+              <TiltCard
+                onClick={() => setSelectedItem(item)}
+                maxTilt={5}
+                className="group rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-colors duration-300"
+              >
+                <div className="relative w-full">
+                  {item.type === 'image' ? (
+                    <img
+                      src={item.src}
+                      alt="Resultaat van The Premium Barbershop Groningen"
+                      loading="lazy"
+                      className="w-full h-auto block object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="relative w-full h-72 bg-gradient-to-br from-slate-800 via-slate-900 to-black">
+                      <video
+                        src={item.src}
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        className="absolute inset-0 w-full h-full object-cover block group-hover:scale-105 transition-transform duration-500"
+                        onMouseEnter={(e) => { e.currentTarget.play().catch(() => {}); }}
+                        onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none group-hover:opacity-0 transition-opacity duration-300">
+                        <div className="w-14 h-14 rounded-full bg-amber-500/90 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                          <Play className="w-6 h-6 text-black translate-x-0.5" fill="currentColor" />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 bg-black/50 px-2 py-0.5 rounded-full">
+                          Video
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="absolute top-3 right-3 p-2 rounded-lg bg-black/60 text-white group-hover:bg-amber-500 group-hover:text-black transition-colors">
-                  <Maximize2 className="w-4 h-4" />
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                <div className="absolute bottom-4 left-4 right-4 space-y-1">
-                  <h3 className="font-display font-bold text-white text-base group-hover:text-amber-400 transition-colors">
-                    {item.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-1">
-                    {item.tags.map((tag, idx) => (
-                      <span key={idx} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">
-                        {tag}
-                      </span>
-                    ))}
+                  <div className="absolute top-3 right-3 p-2 rounded-lg bg-black/60 text-white group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                    {item.type === 'video' ? <Play className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                   </div>
                 </div>
-              </div>
-            </TiltCard>
+              </TiltCard>
             </Reveal>
           ))}
         </div>
@@ -105,45 +119,48 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
       </div>
 
       {/* Lightbox Modal */}
-      {selectedLook && (
+      {selectedItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
           <div className="relative w-full max-w-2xl bg-slate-900 border border-amber-500/30 rounded-2xl overflow-hidden shadow-2xl">
             <button
-              onClick={() => setSelectedLook(null)}
+              onClick={() => setSelectedItem(null)}
               className="absolute top-4 right-4 z-10 p-2 rounded-lg bg-black/70 text-white hover:bg-slate-800 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="relative h-80 w-full overflow-hidden">
-              <img
-                src={selectedLook.imageUrl}
-                alt={selectedLook.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
+            <div className="relative w-full max-h-[75vh] overflow-hidden flex items-center justify-center bg-black">
+              {selectedItem.type === 'image' ? (
+                <img
+                  src={selectedItem.src}
+                  alt="Resultaat van The Premium Barbershop Groningen"
+                  className="w-full h-auto max-h-[75vh] object-contain"
+                />
+              ) : (
+                <video
+                  src={selectedItem.src}
+                  autoPlay
+                  muted
+                  loop
+                  controls
+                  playsInline
+                  className="w-full max-h-[75vh] object-contain"
+                />
+              )}
             </div>
 
-            <div className="p-6 space-y-4">
-              <div>
-                <h3 className="font-display text-xl font-bold text-white">{selectedLook.title}</h3>
-                <p className="text-xs text-slate-300 mt-1">{selectedLook.description}</p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-slate-800">
-                <span className="text-xs text-slate-400">Klaar voor dit kapsel?</span>
-                <button
-                  onClick={() => {
-                    const sId = selectedLook.serviceIdToBook;
-                    setSelectedLook(null);
-                    onSelectServiceToBook(sId);
-                  }}
-                  className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
-                >
-                  <Scissors className="w-4 h-4" />
-                  <span>Reserveer dit Kapsel</span>
-                </button>
-              </div>
+            <div className="p-6 flex items-center justify-between border-t border-slate-800">
+              <span className="text-xs text-slate-400">Zelf ook zo'n resultaat?</span>
+              <button
+                onClick={() => {
+                  setSelectedItem(null);
+                  onSelectServiceToBook('knippen');
+                }}
+                className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
+              >
+                <Scissors className="w-4 h-4" />
+                <span>Boek een Afspraak</span>
+              </button>
             </div>
           </div>
         </div>
