@@ -102,7 +102,6 @@ export default function App() {
                   onOpenBooking={() => handleOpenBooking()}
                   onOpenAuditModal={() => setIsAuditModalOpen(true)}
                 />
-                <AboutSection onOpenBooking={() => handleOpenBooking()} />
                 <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
                 <ReviewsSection />
                 <LocationSection />
@@ -133,6 +132,15 @@ export default function App() {
             element={
               <div className="pt-24">
                 <GallerySection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+              </div>
+            }
+          />
+
+          <Route
+            path="/over-ons"
+            element={
+              <div className="pt-24">
+                <AboutSection onOpenBooking={() => handleOpenBooking()} />
               </div>
             }
           />

@@ -100,12 +100,12 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Booking System Widget — shown first, directly after the photo, on mobile and desktop */}
           <div className="lg:col-span-5 flex flex-col justify-center pb-8 lg:pb-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
-            <div className="bg-[#111111] p-6 sm:p-8 border border-white/10 shadow-2xl flex flex-col justify-between">
+            <div className="bg-[#111111] p-7 sm:p-10 border border-amber-500/30 shadow-2xl gold-border-glow flex flex-col justify-between">
               <div>
-                <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                <div className="flex justify-between items-center mb-7 border-b border-white/10 pb-5">
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">Reserveringsmodule</span>
-                    <h2 className="text-lg font-black uppercase tracking-tight text-white italic">Direct Boeken</h2>
+                    <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white italic">Direct Boeken</h2>
                   </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
                     <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -172,9 +172,10 @@ export const Hero: React.FC<HeroProps> = ({
 
               <button
                 onClick={onOpenBooking}
-                className="w-full bg-white text-black py-3.5 font-black uppercase tracking-[0.2em] text-xs mt-6 hover:bg-zinc-200 transition-colors"
+                className="neon-cta w-full bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black py-5 font-black uppercase tracking-[0.2em] text-sm mt-7 hover:from-amber-300 hover:to-amber-300 transition-colors flex items-center justify-center gap-2"
               >
-                Kies mijn Datum & Tijd
+                <Scissors className="w-4 h-4" />
+                <span>Kies mijn Datum & Tijd</span>
               </button>
             </div>
           </div>

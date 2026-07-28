@@ -98,9 +98,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
-            <Link to="/#over-ons" className="relative pb-1 transition-colors duration-300 hover:text-amber-300 after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:bg-gradient-to-r after:from-amber-400 after:to-amber-200 after:transition-all after:duration-300 after:w-0 hover:after:w-full">
-              Over Ons
-            </Link>
             <NavLink to="/diensten" className={navLinkClass}>
               Diensten
             </NavLink>
@@ -109,6 +106,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </NavLink>
             <NavLink to="/galerij" className={navLinkClass}>
               Galerij
+            </NavLink>
+            <NavLink to="/over-ons" className={navLinkClass}>
+              Over Ons
             </NavLink>
           </nav>
 
@@ -191,13 +191,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav className="flex flex-col gap-3 font-medium text-base">
-            <Link
-              to="/#over-ons"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
-            >
-              Over Ons
-            </Link>
             <NavLink to="/diensten" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               Diensten & Tarieven
             </NavLink>
@@ -228,6 +221,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Locatie Groningen
             </Link>
+            <NavLink to="/over-ons" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              Over Ons
+            </NavLink>
           </nav>
 
           <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
