@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { Scissors, Calendar, Volume2, VolumeX, Menu, X, Sparkles } from 'lucide-react';
-import { SHOP_INFO } from '../data/barbershopData';
 import { audioSynth } from '../utils/audioSynth';
-
-type MenuSection = 'services' | 'barbers' | 'gallery' | null;
 
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
   onOpenMyBookings: () => void;
   onOpenAuditModal: () => void;
   myBookingsCount: number;
-  activeSection: MenuSection;
-  onSelectSection: (section: Exclude<MenuSection, null>) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenMyBookings,
   onOpenAuditModal,
-  myBookingsCount,
-  activeSection,
-  onSelectSection
+  myBookingsCount
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -45,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       const now = new Date();
       const day = now.getDay(); // 0 is Sun, 1 Mon...
       const hour = now.getHours();
-      
+
       // Sunday closed
       if (day === 0) {
         setIsOpenNow(false);
@@ -65,6 +59,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     setIsAudioPlaying(state);
   };
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `transition-colors ${isActive ? 'text-amber-400' : 'hover:text-white'}`;
+
+  const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `py-1 text-left ${isActive ? 'text-amber-400' : 'hover:text-amber-400'}`;
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
@@ -75,9 +75,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          
+
           {/* Brand Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#E5C158] to-[#996515] p-[1px] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-[#0a0a0a] rounded-full flex items-center justify-center">
                 <Scissors className="w-4 h-4 text-[#E5C158] transform -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
@@ -91,33 +91,24 @@ export const Navbar: React.FC<NavbarProps> = ({
                 BARBERSHOP GRONINGEN
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
-            <button
-              onClick={() => onSelectSection('services')}
-              className={`transition-colors ${activeSection === 'services' ? 'text-amber-400' : 'hover:text-white'}`}
-            >
+            <NavLink to="/diensten" className={navLinkClass}>
               Diensten
-            </button>
-            <button
-              onClick={() => onSelectSection('barbers')}
-              className={`transition-colors ${activeSection === 'barbers' ? 'text-amber-400' : 'hover:text-white'}`}
-            >
+            </NavLink>
+            <NavLink to="/barbiers" className={navLinkClass}>
               Barbiers
-            </button>
-            <button
-              onClick={() => onSelectSection('gallery')}
-              className={`transition-colors ${activeSection === 'gallery' ? 'text-amber-400' : 'hover:text-white'}`}
-            >
+            </NavLink>
+            <NavLink to="/galerij" className={navLinkClass}>
               Galerij
-            </button>
+            </NavLink>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
           <div className="hidden sm:flex items-center gap-3">
-            
+
             {/* ASMR Sound Ambient Toggle */}
             <button
               onClick={toggleSound}
@@ -192,62 +183,44 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav className="flex flex-col gap-3 font-medium text-base">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onSelectSection('services');
-              }}
-              className={`py-1 text-left ${activeSection === 'services' ? 'text-amber-400' : 'hover:text-amber-400'}`}
-            >
+            <NavLink to="/diensten" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               Diensten & Tarieven
-            </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onSelectSection('barbers');
-              }}
-              className={`py-1 text-left ${activeSection === 'barbers' ? 'text-amber-400' : 'hover:text-amber-400'}`}
-            >
+            </NavLink>
+            <NavLink to="/barbiers" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               Onze Barbiers
-            </button>
-            <a
-              href="#before-after"
+            </NavLink>
+            <Link
+              to="/#before-after"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
               Voor/Na Simulator
-            </a>
-            <a
-              href="#quiz"
+            </Link>
+            <Link
+              to="/#quiz"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400 flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
               Stijl Quiz op Maat
-            </a>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onSelectSection('gallery');
-              }}
-              className={`py-1 text-left ${activeSection === 'gallery' ? 'text-amber-400' : 'hover:text-amber-400'}`}
-            >
+            </Link>
+            <NavLink to="/galerij" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               Galerij & Lookbook
-            </button>
-            <a
-              href="#reviews"
+            </NavLink>
+            <Link
+              to="/#reviews"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
               Klantbeoordelingen (4.9/5★)
-            </a>
-            <a
-              href="#location"
+            </Link>
+            <Link
+              to="/#location"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
               Locatie Groningen
-            </a>
+            </Link>
           </nav>
 
           <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">

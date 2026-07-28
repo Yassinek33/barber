@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { ServicesSection } from './components/ServicesSection';
@@ -14,7 +15,23 @@ import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
 import { ConfirmedBooking } from './types';
 
-type MenuSection = 'services' | 'barbers' | 'gallery' | null;
+// Scrolls to top on every route change, or to a #hash target if present
+// (used by links that point back to a home-page section, e.g. /#quiz).
+function ScrollManager() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      requestAnimationFrame(() => {
+        document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } else {
+      window.scrollTo({ top: 0 });
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
 
 export default function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -23,22 +40,6 @@ export default function App() {
 
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
-
-  // Only one of Services / Barbers / Gallery is shown at a time, and only
-  // once the user picks it from the nav — keeps the home page uncluttered.
-  const [visibleSection, setVisibleSection] = useState<MenuSection>(null);
-
-  const handleSelectSection = (section: Exclude<MenuSection, null>) => {
-    setVisibleSection(prev => (prev === section ? null : section));
-  };
-
-  useEffect(() => {
-    if (!visibleSection) return;
-    const anchorId = visibleSection === 'gallery' ? 'lookbook' : visibleSection === 'services' ? 'services' : 'barbers';
-    requestAnimationFrame(() => {
-      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }, [visibleSection]);
 
   // LocalStorage state for persistent client appointments
   const [bookings, setBookings] = useState<ConfirmedBooking[]>(() => {
@@ -75,72 +76,73 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
-      
+
+      <ScrollManager />
+
       {/* Top Fixed Header */}
       <Navbar
         onOpenBooking={(sId) => handleOpenBooking(sId)}
         onOpenMyBookings={() => setIsMyBookingsOpen(true)}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
         myBookingsCount={bookings.length}
-        activeSection={visibleSection}
-        onSelectSection={handleSelectSection}
       />
 
-      {/* Main Content Sections */}
+      {/* Routed Page Content */}
       <main>
-        {/* 1. Hero Section */}
-        <Hero
-          onOpenBooking={() => handleOpenBooking()}
-          onOpenQuiz={() => {
-            const el = document.getElementById('quiz');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onOpenAuditModal={() => setIsAuditModalOpen(true)}
-        />
-
-        {/* 2. Services & Tarifs — shown only when picked from the nav */}
-        {visibleSection === 'services' && (
-          <ServicesSection
-            onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero
+                  onOpenBooking={() => handleOpenBooking()}
+                  onOpenQuiz={() => {
+                    const el = document.getElementById('quiz');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  onOpenAuditModal={() => setIsAuditModalOpen(true)}
+                />
+                <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
+                <StyleFinderQuiz onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+                <ReviewsSection />
+                <LocationSection />
+              </>
+            }
           />
-        )}
 
-        {/* 3. Barbers Team — shown only when picked from the nav */}
-        {visibleSection === 'barbers' && (
-          <BarbersSection
-            onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)}
+          <Route
+            path="/diensten"
+            element={
+              <div className="pt-24">
+                <ServicesSection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+              </div>
+            }
           />
-        )}
 
-        {/* 4. Interactive Before/After Transformation Slider */}
-        <BeforeAfterSlider
-          onOpenBooking={() => handleOpenBooking()}
-        />
-
-        {/* 5. Style Recommendation Quiz */}
-        <StyleFinderQuiz
-          onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
-        />
-
-        {/* 6. Gallery & Lookbook — shown only when picked from the nav */}
-        {visibleSection === 'gallery' && (
-          <GallerySection
-            onSelectServiceToBook={(sId) => handleOpenBooking(sId)}
+          <Route
+            path="/barbiers"
+            element={
+              <div className="pt-24">
+                <BarbersSection onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)} />
+              </div>
+            }
           />
-        )}
 
-        {/* 7. Reviews Section */}
-        <ReviewsSection />
-
-        {/* 8. Location & Opening Hours */}
-        <LocationSection />
+          <Route
+            path="/galerij"
+            element={
+              <div className="pt-24">
+                <GallerySection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+              </div>
+            }
+          />
+        </Routes>
       </main>
 
       {/* Footer */}
       <Footer
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
-        onSelectSection={handleSelectSection}
       />
 
       {/* Modals & Overlays */}

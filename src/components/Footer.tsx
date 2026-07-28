@@ -1,14 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Scissors, MapPin, Phone, Mail, Instagram, ArrowUp } from 'lucide-react';
 import { SHOP_INFO } from '../data/barbershopData';
 
 interface FooterProps {
   onOpenBooking: () => void;
   onOpenAuditModal: () => void;
-  onSelectSection: (section: 'services' | 'barbers' | 'gallery') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal, onSelectSection }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -69,12 +69,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onOpenAuditModal,
           <div className="space-y-3 text-xs">
             <h4 className="text-[11px] uppercase tracking-widest font-black text-white">Navigatie</h4>
             <ul className="space-y-2 text-zinc-400">
-              <li><button onClick={() => onSelectSection('services')} className="hover:text-white transition-colors">Diensten & Tarieven</button></li>
-              <li><button onClick={() => onSelectSection('barbers')} className="hover:text-white transition-colors">Onze Master Barbiers</button></li>
-              <li><a href="#before-after" className="hover:text-white transition-colors">Voor / Na</a></li>
-              <li><a href="#quiz" className="hover:text-white transition-colors">Stijl Quiz</a></li>
-              <li><button onClick={() => onSelectSection('gallery')} className="hover:text-white transition-colors">Fotogalerij</button></li>
-              <li><a href="#reviews" className="hover:text-white transition-colors">Klantbeoordelingen</a></li>
+              <li><Link to="/diensten" className="hover:text-white transition-colors">Diensten & Tarieven</Link></li>
+              <li><Link to="/barbiers" className="hover:text-white transition-colors">Onze Master Barbiers</Link></li>
+              <li><Link to="/#before-after" className="hover:text-white transition-colors">Voor / Na</Link></li>
+              <li><Link to="/#quiz" className="hover:text-white transition-colors">Stijl Quiz</Link></li>
+              <li><Link to="/galerij" className="hover:text-white transition-colors">Fotogalerij</Link></li>
+              <li><Link to="/#reviews" className="hover:text-white transition-colors">Klantbeoordelingen</Link></li>
             </ul>
           </div>
 
