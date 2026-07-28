@@ -8,14 +8,12 @@ import { useLanguage, getSwitchedPath } from '../i18n/LanguageContext';
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
   onOpenMyBookings: () => void;
-  onOpenAuditModal: () => void;
   myBookingsCount: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenMyBookings,
-  onOpenAuditModal,
   myBookingsCount
 }) => {
   const { lang, t, paths } = useLanguage();
@@ -23,7 +21,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [isOpenNow, setIsOpenNow] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,27 +32,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Calculate live shop status in Groningen time
-  useEffect(() => {
-    const checkStatus = () => {
-      const now = new Date();
-      const day = now.getDay(); // 0 is Sun, 1 Mon...
-      const hour = now.getHours();
-
-      // Sunday closed
-      if (day === 0) {
-        setIsOpenNow(false);
-      } else if (hour >= 9 && hour < 19) {
-        setIsOpenNow(true);
-      } else {
-        setIsOpenNow(false);
-      }
-    };
-    checkStatus();
-    const timer = setInterval(checkStatus, 60000);
-    return () => clearInterval(timer);
   }, []);
 
   const toggleSound = () => {
@@ -74,19 +50,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   const nlPath = getSwitchedPath(location.pathname, location.hash, 'nl');
   const enPath = getSwitchedPath(location.pathname, location.hash, 'en');
 
-  const LanguageSwitcher: React.FC<{ className?: string }> = ({ className = '' }) => (
-    <div className={`flex items-center gap-1 p-1 rounded-lg bg-zinc-900 border border-zinc-800 ${className}`}>
+  const LanguageSwitcher: React.FC<{ className?: string; compact?: boolean }> = ({ className = '', compact = false }) => (
+    <div className={`flex items-center gap-0.5 ${compact ? 'p-0.5' : 'p-1 gap-1'} rounded-lg bg-zinc-900 border border-zinc-800 ${className}`}>
       <Link
         to={nlPath}
         aria-label="Nederlands"
-        className={`px-1.5 py-1 rounded-md text-base leading-none transition-all ${lang === 'nl' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
+        className={`${compact ? 'px-1 py-0.5 text-sm' : 'px-1.5 py-1 text-base'} rounded-md leading-none transition-all ${lang === 'nl' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
       >
         🇳🇱
       </Link>
       <Link
         to={enPath}
         aria-label="English"
-        className={`px-1.5 py-1 rounded-md text-base leading-none transition-all ${lang === 'en' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
+        className={`${compact ? 'px-1 py-0.5 text-sm' : 'px-1.5 py-1 text-base'} rounded-md leading-none transition-all ${lang === 'en' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
       >
         🇬🇧
       </Link>
@@ -105,17 +81,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between">
 
           {/* Brand Logo */}
-          <Link to={paths.home} className="flex items-center gap-3 group">
-            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#E5C158] to-[#996515] p-[1px] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+          <Link to={paths.home} className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#E5C158] to-[#996515] p-[1px] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform shrink-0">
               <div className="w-full h-full bg-[#0a0a0a] rounded-full flex items-center justify-center">
-                <Scissors className="w-4 h-4 text-[#E5C158] transform -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                <Scissors className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E5C158] transform -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tighter uppercase text-white leading-none">
+              <span className="text-base sm:text-xl font-black tracking-tighter uppercase text-white leading-none whitespace-nowrap">
                 THE PREMIUM
               </span>
-              <span className="text-[10px] tracking-[0.4em] uppercase text-zinc-400 font-semibold mt-0.5">
+              <span className="hidden sm:block text-[10px] tracking-[0.4em] uppercase text-zinc-400 font-semibold mt-0.5">
                 BARBERSHOP GRONINGEN
               </span>
             </div>
@@ -182,73 +158,40 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Mobile Hamburger Trigger */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-1.5 lg:hidden shrink-0">
+            <LanguageSwitcher compact />
             <button
               onClick={() => onOpenBooking()}
-              className="gold-button neon-cta px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+              aria-label={t.nav.bookNow}
+              title={t.nav.bookNow}
+              className="gold-button neon-cta p-1.5 rounded-lg flex items-center justify-center shrink-0"
             >
-              <Scissors className="w-3.5 h-3.5" />
-              <span>{t.nav.mobileReserve}</span>
+              <Scissors className="w-4 h-4" />
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400"
+              className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 shrink-0"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer — mirrors the desktop nav exactly, nothing extra */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#0B0B0E]/95 backdrop-blur-xl border-b border-slate-800 px-4 py-6 space-y-4 text-slate-200 mt-2">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-            <div className="flex items-center gap-2 text-xs">
-              <span className={`w-2 h-2 rounded-full ${isOpenNow ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-              <span className="text-slate-300">{isOpenNow ? t.nav.openToday : t.nav.closed}</span>
-            </div>
-            <button
-              onClick={onOpenAuditModal}
-              className="text-xs px-2 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30"
-            >
-              {t.nav.auditVsOldSite}
-            </button>
-          </div>
-
           <nav className="flex flex-col gap-3 font-medium text-base">
             <NavLink to={paths.services} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              {t.nav.mobileServices}
+              {t.nav.services}
             </NavLink>
             <NavLink to={paths.barbers} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              {t.nav.mobileBarbers}
+              {t.nav.barbers}
             </NavLink>
-            <Link
-              to={`${paths.home}#before-after`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
-            >
-              {t.nav.mobileBeforeAfter}
-            </Link>
             <NavLink to={paths.gallery} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              {t.nav.mobileGallery}
+              {t.nav.gallery}
             </NavLink>
-            <Link
-              to={`${paths.home}#reviews`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
-            >
-              {t.nav.mobileReviews}
-            </Link>
-            <Link
-              to={`${paths.home}#location`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 hover:text-amber-400"
-            >
-              {t.nav.mobileLocation}
-            </Link>
             <NavLink to={paths.about} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               {t.nav.about}
             </NavLink>

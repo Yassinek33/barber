@@ -5,17 +5,7 @@ export interface Translations {
     gallery: string;
     about: string;
     bookNow: string;
-    mobileReserve: string;
     mobileReserveSlot: string;
-    auditVsOldSite: string;
-    openToday: string;
-    closed: string;
-    mobileServices: string;
-    mobileBarbers: string;
-    mobileBeforeAfter: string;
-    mobileGallery: string;
-    mobileReviews: string;
-    mobileLocation: string;
     myAppointments: string;
     asmrEnable: string;
     asmrDisable: string;
@@ -247,17 +237,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       gallery: 'Galerij',
       about: 'Over Ons',
       bookNow: 'Afspraak Maken',
-      mobileReserve: 'Reserveren',
       mobileReserveSlot: 'Reserveer een Tijdslot',
-      auditVsOldSite: 'Audit vs Oude Site',
-      openToday: 'Vandaag open',
-      closed: 'Gesloten',
-      mobileServices: 'Diensten & Tarieven',
-      mobileBarbers: 'Onze Barbiers',
-      mobileBeforeAfter: 'Voor/Na Simulator',
-      mobileGallery: 'Galerij & Lookbook',
-      mobileReviews: 'Klantbeoordelingen (4.9/5★)',
-      mobileLocation: 'Locatie Groningen',
       myAppointments: 'Mijn Afspraken',
       asmrEnable: 'ASMR barbergeluid inschakelen',
       asmrDisable: 'ASMR-sfeer uitschakelen',
@@ -487,17 +467,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       gallery: 'Gallery',
       about: 'About Us',
       bookNow: 'Book Now',
-      mobileReserve: 'Book',
       mobileReserveSlot: 'Book a Time Slot',
-      auditVsOldSite: 'Audit vs Old Site',
-      openToday: 'Open today',
-      closed: 'Closed',
-      mobileServices: 'Services & Pricing',
-      mobileBarbers: 'Our Barbers',
-      mobileBeforeAfter: 'Before/After Simulator',
-      mobileGallery: 'Gallery & Lookbook',
-      mobileReviews: 'Customer Reviews (4.9/5★)',
-      mobileLocation: 'Groningen Location',
       myAppointments: 'My Appointments',
       asmrEnable: 'Enable ASMR barbershop sound',
       asmrDisable: 'Disable ASMR ambience',

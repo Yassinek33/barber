@@ -126,7 +126,6 @@ export default function App() {
         <Navbar
           onOpenBooking={(sId) => handleOpenBooking(sId)}
           onOpenMyBookings={() => setIsMyBookingsOpen(true)}
-          onOpenAuditModal={() => setIsAuditModalOpen(true)}
           myBookingsCount={bookings.length}
         />
 
