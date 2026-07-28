@@ -57,7 +57,7 @@ export const Hero: React.FC<HeroProps> = ({
               className="w-full h-80 sm:h-[480px] lg:h-[620px] object-cover object-center"
             />
 
-            {/* Golden-hour photo — only revealed inside a spotlight that follows the cursor */}
+            {/* Golden-hour photo — only revealed in a soft glow that follows the cursor, no visible edge */}
             <img
               src="/barbers/home-gold.png"
               alt="The Premium Barbershop Groningen in gouden sfeer"
@@ -65,17 +65,8 @@ export const Hero: React.FC<HeroProps> = ({
               className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"
               style={{
                 opacity: isSpotlightActive ? 1 : 0,
-                maskImage: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, black 0%, black 55%, transparent 100%)`,
-                WebkitMaskImage: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, black 0%, black 55%, transparent 100%)`
-              }}
-            />
-
-            {/* Soft ring outlining the spotlight edge */}
-            <div
-              className="absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out"
-              style={{
-                opacity: isSpotlightActive ? 1 : 0,
-                background: `radial-gradient(circle 220px at ${spotlight.x}% ${spotlight.y}%, transparent 62%, rgba(212,175,55,0.35) 64%, transparent 68%)`
+                maskImage: `radial-gradient(circle 260px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`,
+                WebkitMaskImage: `radial-gradient(circle 260px at ${spotlight.x}% ${spotlight.y}%, black 0%, transparent 100%)`
               }}
             />
 

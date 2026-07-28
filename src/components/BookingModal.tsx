@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { BARBER_SERVICES, BARBERS, BOOKING_EXTRAS } from '../data/barbershopData';
 import { BarberService, Barber, ConfirmedBooking } from '../types';
-import { X, Scissors, Calendar, Clock, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, CreditCard, Download, ExternalLink, Plus } from 'lucide-react';
+import { X, Scissors, Calendar, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, ExternalLink } from 'lucide-react';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -11,6 +11,41 @@ interface BookingModalProps {
   preselectedBarberId?: string;
   onBookingConfirmed: (booking: ConfirmedBooking) => void;
 }
+
+const WEEKDAY_HEADERS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+const WEEKEND_SERVICE_ID = 'weekend-thuis';
+
+const toDateStr = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+const startOfToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const getNextWeekendDate = () => {
+  const d = startOfToday();
+  while (d.getDay() !== 0 && d.getDay() !== 6) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+};
+
+const formatDateLong = (dateStr: string) => {
+  const d = new Date(`${dateStr}T00:00:00`);
+  const formatted = d.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+const parseSlotMinutes = (slot: string) => {
+  const [h, m] = slot.split(':').map(Number);
+  return h * 60 + m;
+};
 
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
@@ -29,20 +64,32 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     BARBERS.find(b => b.id === preselectedBarberId) || null
   );
 
-  // Date selection (defaults to tomorrow if today is past hours)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Date & time selection — a real month calendar, live-aware of the current time
+  const [now, setNow] = useState(() => new Date());
+  const todayStr = toDateStr(startOfToday());
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
-  const [selectedSlot, setSelectedSlot] = useState<string>('11:00');
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
+  const [calendarMonth, setCalendarMonth] = useState<Date>(() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
 
   // Customer info
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
-  const [customerNotes, setCustomerNotes] = useState('');
 
   // Confirmation result
   const [confirmedBooking, setConfirmedBooking] = useState<ConfirmedBooking | null>(null);
+
+  // Keep "now" live so past time slots drop away automatically while the modal stays open
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (preselectedServiceId) {
@@ -58,12 +105,94 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   }, [preselectedBarberId]);
 
-  if (!isOpen) return null;
+  // The weekend home-visit service can only be booked on a Saturday or Sunday —
+  // jump the calendar to the nearest upcoming weekend date when it's selected.
+  useEffect(() => {
+    if (selectedService.id !== WEEKEND_SERVICE_ID) return;
+    const current = new Date(`${selectedDate}T00:00:00`);
+    if (current.getDay() === 0 || current.getDay() === 6) return;
+    const weekendDate = getNextWeekendDate();
+    setSelectedDate(toDateStr(weekendDate));
+    setCalendarMonth(new Date(weekendDate.getFullYear(), weekendDate.getMonth(), 1));
+  }, [selectedService]);
 
-  // Time Slots Generation
+  // Time Slots
   const timeSlotsMorning = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30'];
   const timeSlotsAfternoon = ['12:30', '13:15', '14:00', '14:45', '15:30', '16:15'];
   const timeSlotsEvening = ['17:00', '17:45', '18:30', '19:15'];
+
+  const isSelectedDateToday = selectedDate === toDateStr(now);
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const filterPastSlots = (slots: string[]) =>
+    isSelectedDateToday ? slots.filter(s => parseSlotMinutes(s) > nowMinutes) : slots;
+
+  const morningSlots = filterPastSlots(timeSlotsMorning);
+  const afternoonSlots = filterPastSlots(timeSlotsAfternoon);
+  const eveningSlots = filterPastSlots(timeSlotsEvening);
+  const allAvailableSlots = [...morningSlots, ...afternoonSlots, ...eveningSlots];
+
+  // If the currently selected slot fell out of the available list (date changed,
+  // or time simply passed), snap to the first slot that is still valid.
+  useEffect(() => {
+    if (allAvailableSlots.length === 0) {
+      if (selectedSlot !== '') setSelectedSlot('');
+      return;
+    }
+    if (!allAvailableSlots.includes(selectedSlot)) {
+      setSelectedSlot(allAvailableSlots[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, isSelectedDateToday, nowMinutes]);
+
+  if (!isOpen) return null;
+
+  const isWeekendOnly = selectedService.id === WEEKEND_SERVICE_ID;
+  const todayMidnight = startOfToday();
+
+  const buildCalendarCells = (monthDate: Date) => {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const leadingBlanks = (firstDay.getDay() + 6) % 7; // Monday-start week
+    const cells: (Date | null)[] = [];
+    for (let i = 0; i < leadingBlanks; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+    return cells;
+  };
+
+  const isDayDisabled = (d: Date) => {
+    if (d < todayMidnight) return true;
+    if (isWeekendOnly) {
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) return true;
+    }
+    return false;
+  };
+
+  const canGoPrevMonth = () => {
+    const prev = new Date(calendarMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    const currentMonthStart = new Date(todayMidnight.getFullYear(), todayMidnight.getMonth(), 1);
+    return prev >= currentMonthStart;
+  };
+
+  const goPrevMonth = () => {
+    if (!canGoPrevMonth()) return;
+    const prev = new Date(calendarMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    setCalendarMonth(prev);
+  };
+
+  const goNextMonth = () => {
+    const next = new Date(calendarMonth);
+    next.setMonth(next.getMonth() + 1);
+    setCalendarMonth(next);
+  };
+
+  const monthLabel = calendarMonth.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
+  const calendarCells = buildCalendarCells(calendarMonth);
 
   const toggleExtra = (extraId: string) => {
     if (selectedExtras.includes(extraId)) {
@@ -84,7 +213,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const handleConfirmSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone || !customerEmail) return;
+    if (!customerName || !customerPhone || !customerEmail || !selectedSlot) return;
 
     // Pick barber if null
     const finalBarber = selectedBarber || BARBERS[0];
@@ -133,10 +262,36 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     onClose();
   };
 
+  const renderSlotGrid = (label: string, emoji: string, slots: string[], colsClass: string) => (
+    <div>
+      <p className="text-xs font-semibold text-slate-400 mb-2">{emoji} {label}</p>
+      {slots.length > 0 ? (
+        <div className={`grid ${colsClass} gap-2`}>
+          {slots.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              onClick={() => setSelectedSlot(slot)}
+              className={`py-2 rounded-lg text-xs font-bold border transition-all ${
+                selectedSlot === slot
+                  ? 'bg-amber-500 text-black border-amber-500 shadow-md'
+                  : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+              }`}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-[11px] text-slate-600 italic">Geen tijden meer beschikbaar</p>
+      )}
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
       <div className="relative w-full max-w-3xl bg-[#0F0F14] border border-amber-500/30 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        
+
         {/* Header */}
         <div className="p-5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -183,7 +338,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
         {/* Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
-          
+
           {/* STEP 1: SELECT SERVICE */}
           {step === 1 && (
             <div className="space-y-4">
@@ -206,6 +361,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <p className="text-xs text-slate-400 line-clamp-2">{srv.description}</p>
                     {srv.durationMinutes && (
                       <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minuten</div>
+                    )}
+                    {srv.id === WEEKEND_SERVICE_ID && (
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">📅 Alleen op zaterdag & zondag</div>
                     )}
                   </div>
                 ))}
@@ -270,81 +428,86 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="space-y-5">
               <h3 className="font-display font-bold text-white text-base">Stap 3: Kies de Dag & het Tijdstip</h3>
 
-              {/* Date Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">Datum van de afspraak:</label>
-                <input
-                  type="date"
-                  min={todayStr}
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full sm:w-64 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-medium text-sm focus:outline-none focus:border-amber-400"
-                />
+              {isWeekendOnly && (
+                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 font-medium">
+                  Deze dienst is alleen beschikbaar op zaterdag en zondag — de kalender toont enkel weekenddagen.
+                </div>
+              )}
+
+              {/* Month Calendar */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <button
+                    type="button"
+                    onClick={goPrevMonth}
+                    disabled={!canGoPrevMonth()}
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <p className="text-sm font-bold text-white capitalize">{monthLabel}</p>
+                  <button
+                    type="button"
+                    onClick={goNextMonth}
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-1 mb-1.5">
+                  {WEEKDAY_HEADERS.map((wd) => (
+                    <div key={wd} className="text-center text-[10px] font-bold text-slate-500 uppercase py-1">
+                      {wd}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {calendarCells.map((cell, idx) => {
+                    if (!cell) return <div key={`blank-${idx}`} />;
+                    const dateStr = toDateStr(cell);
+                    const disabled = isDayDisabled(cell);
+                    const isSelected = dateStr === selectedDate;
+                    const isToday = dateStr === todayStr;
+                    return (
+                      <button
+                        key={dateStr}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => setSelectedDate(dateStr)}
+                        className={`aspect-square rounded-lg text-xs font-semibold flex items-center justify-center transition-all ${
+                          disabled
+                            ? 'text-slate-700 cursor-not-allowed'
+                            : isSelected
+                              ? 'bg-amber-500 text-black shadow-md'
+                              : isToday
+                                ? 'border border-amber-500/50 text-amber-300 hover:bg-slate-800'
+                                : 'text-slate-300 hover:bg-slate-800'
+                        }`}
+                      >
+                        {cell.getDate()}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Time Slots Categorized */}
+              <p className="text-xs text-slate-400 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                <span>Geselecteerd: <strong className="text-white">{formatDateLong(selectedDate)}</strong></span>
+              </p>
+
+              {/* Time Slots Categorized — automatically excludes times already passed today */}
               <div className="space-y-4 pt-2">
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌅 Ochtend</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {timeSlotsMorning.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">☀️ Middag</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {timeSlotsAfternoon.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-2">🌙 Avond / Late Uren</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {timeSlotsEvening.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                          selectedSlot === slot
-                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {renderSlotGrid('Ochtend', '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-6')}
+                {renderSlotGrid('Middag', '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-6')}
+                {renderSlotGrid('Avond / Late Uren', '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-4')}
               </div>
 
+              {allAvailableSlots.length === 0 && (
+                <p className="text-xs text-rose-400 font-medium">Geen tijden meer beschikbaar op deze dag — kies een andere dag in de kalender.</p>
+              )}
             </div>
           )}
 
@@ -358,7 +521,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <div>
                   <p className="font-bold text-white">{selectedService.name}</p>
                   <p className="text-slate-400">
-                    Op {selectedDate} om {selectedSlot} • Bij {selectedBarber ? selectedBarber.name : 'Beschikbare Barbier'}
+                    {formatDateLong(selectedDate)} om {selectedSlot || '—'} • Bij {selectedBarber ? selectedBarber.name : 'Beschikbare Barbier'}
                   </p>
                 </div>
                 <span className="text-amber-400 font-extrabold text-lg">{calculateTotalPrice()}€</span>
@@ -452,7 +615,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
                   <span className="text-slate-400">Datum & Tijd:</span>
-                  <span className="font-bold text-white">{confirmedBooking.date} om {confirmedBooking.timeSlot}</span>
+                  <span className="font-bold text-white">{formatDateLong(confirmedBooking.date)} om {confirmedBooking.timeSlot}</span>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-sm">
                   <span className="text-slate-300">Totaal te betalen in de zaak:</span>
@@ -504,7 +667,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md"
+                disabled={step === 3 && !selectedSlot}
+                className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <span>Doorgaan</span>
                 <ChevronRight className="w-4 h-4" />
