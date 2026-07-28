@@ -110,6 +110,7 @@ export default function App() {
   const aboutContent = (
     <div className="pt-24">
       <AboutSection onOpenBooking={() => handleOpenBooking()} />
+      <LocationSection />
     </div>
   );
 
