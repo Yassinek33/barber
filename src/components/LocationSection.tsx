@@ -1,16 +1,20 @@
 import React from 'react';
 import { SHOP_INFO } from '../data/barbershopData';
 import { MapPin, Phone, Mail, Clock, Navigation, Car, ShieldCheck } from 'lucide-react';
+import { Reveal } from './Reveal';
 
 export const LocationSection: React.FC = () => {
   const todayName = new Date().toLocaleDateString('nl-NL', { weekday: 'long' });
 
   return (
-    <section id="location" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section id="location" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[440px] h-[440px] bg-amber-500/10 top-10 -right-24" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <MapPin className="w-3.5 h-3.5" />
             <span>Adres & Openingstijden</span>
@@ -21,7 +25,7 @@ export const LocationSection: React.FC = () => {
           <p className="text-slate-400 text-sm">
             Vind ons eenvoudig in de winkelstraat Oosterstraat, op enkele minuten van de Grote Markt.
           </p>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           

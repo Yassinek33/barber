@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SlidersHorizontal, Sparkles, Scissors, ChevronRight } from 'lucide-react';
+import { Reveal } from './Reveal';
 
 interface BeforeAfterSliderProps {
   onOpenBooking: () => void;
@@ -23,7 +24,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Text Explanation */}
-          <div className="lg:col-span-5 space-y-6">
+          <Reveal className="lg:col-span-5 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>Interactieve Transformatie Simulator</span>
@@ -63,10 +64,10 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right Interactive Drag Slider Container */}
-          <div className="lg:col-span-7">
+          <Reveal className="lg:col-span-7" delayMs={150}>
             <div className="relative rounded-2xl overflow-hidden border border-amber-500/30 shadow-2xl gold-border-glow select-none bg-slate-950">
               
               {/* Interactive Area */}
@@ -122,7 +123,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
               </div>
 
             </div>
-          </div>
+          </Reveal>
 
         </div>
 

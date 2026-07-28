@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Scissors, Calendar, Volume2, VolumeX, Menu, X } from 'lucide-react';
 import { audioSynth } from '../utils/audioSynth';
+import { Magnetic } from './Magnetic';
 
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
@@ -137,13 +138,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             {/* Main Booking Button */}
-            <button
-              onClick={() => onOpenBooking()}
-              className="px-5 py-2 border border-white/20 bg-white text-black hover:bg-zinc-200 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
-            >
-              <Scissors className="w-3.5 h-3.5" />
-              <span>Afspraak Maken</span>
-            </button>
+            <Magnetic strength={14}>
+              <button
+                onClick={() => onOpenBooking()}
+                className="px-5 py-2 border border-white/20 bg-white text-black hover:bg-zinc-200 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
+              >
+                <Scissors className="w-3.5 h-3.5" />
+                <span>Afspraak Maken</span>
+              </button>
+            </Magnetic>
           </div>
 
           {/* Mobile Hamburger Trigger */}

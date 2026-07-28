@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Scissors, Star, MapPin, Sparkles, ShieldCheck, ChevronRight, Clock, Award } from 'lucide-react';
 import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
+import { ParticleField } from './ParticleField';
+import { Magnetic } from './Magnetic';
 
 interface HeroProps {
   onOpenBooking: () => void;
@@ -37,6 +39,13 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/80" />
       </div>
 
+      {/* Ambient glow blobs + tech grid for a futuristic backdrop behind the content */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="ambient-glow w-[420px] h-[420px] bg-amber-500/25 -bottom-24 -left-24" />
+        <div className="ambient-glow w-[380px] h-[380px] bg-amber-400/15 top-1/3 -right-20" style={{ animationDelay: '4s' }} />
+        <div className="tech-grid absolute inset-x-0 bottom-0 h-[60%]" />
+      </div>
+
       {/* Full-bleed Showcase Photo - The Salon (golden-hour variant revealed in a spotlight that follows the cursor) */}
       <div
         className="relative z-10 w-full mb-10"
@@ -66,6 +75,9 @@ export const Hero: React.FC<HeroProps> = ({
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-[#0a0a0a]/30 pointer-events-none" />
+
+        {/* Drifting 3D gold-dust particle field for a futuristic, immersive feel */}
+        <ParticleField className="absolute inset-0 pointer-events-none mix-blend-screen opacity-70" />
 
         {/* Hover hint badge */}
         <div className="absolute top-6 right-6 sm:top-8 sm:right-8 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 border border-amber-400/40 text-amber-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm transition-opacity duration-500 pointer-events-none" style={{ opacity: isSpotlightActive ? 1 : 0 }}>
@@ -123,13 +135,15 @@ export const Hero: React.FC<HeroProps> = ({
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 mb-8">
-                <button
-                  onClick={onOpenBooking}
-                  className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2"
-                >
-                  <Scissors className="w-4 h-4" />
-                  <span>Online Reserveren</span>
-                </button>
+                <Magnetic strength={12}>
+                  <button
+                    onClick={onOpenBooking}
+                    className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+                  >
+                    <Scissors className="w-4 h-4" />
+                    <span>Online Reserveren</span>
+                  </button>
+                </Magnetic>
               </div>
 
               {/* Audit Benchmark Link */}

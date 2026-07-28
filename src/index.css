@@ -88,3 +88,48 @@
   animation: ticker 25s linear infinite;
 }
 
+/* Futuristic ambient glow blobs — soft drifting light behind dark sections */
+.ambient-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+  animation: float-glow 14s ease-in-out infinite;
+}
+
+@keyframes float-glow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.15); }
+}
+
+/* Faint futuristic grid/mesh backdrop for a techy premium feel */
+.tech-grid {
+  background-image:
+    linear-gradient(rgba(212, 175, 55, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Slow gradient shimmer sweep, used on premium borders */
+@keyframes border-sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.sheen-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.sheen-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(212, 175, 55, 0.25) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: border-sheen 4s ease-in-out infinite;
+  pointer-events: none;
+}
+

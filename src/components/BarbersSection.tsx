@@ -1,6 +1,8 @@
 import React from 'react';
 import { BARBERS } from '../data/barbershopData';
 import { Star, Instagram, Award, Scissors, CheckCircle } from 'lucide-react';
+import { TiltCard } from './TiltCard';
+import { Reveal } from './Reveal';
 
 interface BarbersSectionProps {
   onSelectBarberToBook: (barberId: string) => void;
@@ -8,11 +10,14 @@ interface BarbersSectionProps {
 
 export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberToBook }) => {
   return (
-    <section id="barbers" className="py-20 bg-[#0F0F14] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section id="barbers" className="py-20 bg-[#0F0F14] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[460px] h-[460px] bg-amber-500/10 top-0 right-0" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Award className="w-3.5 h-3.5" />
             <span>Het Team van Master Barbiers</span>
@@ -23,14 +28,14 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
           <p className="text-slate-400 text-sm sm:text-base">
             Elk teamlid heeft jarenlange ervaring in een hoogwaardige zaak om u de perfecte knipbeurt te bieden.
           </p>
-        </div>
+        </Reveal>
 
         {/* Barbers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {BARBERS.map((barber) => (
-            <div
-              key={barber.id}
-              className="relative rounded-2xl bg-slate-900/80 border border-slate-800 overflow-hidden group hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between"
+          {BARBERS.map((barber, idx) => (
+            <Reveal key={barber.id} delayMs={idx * 100}>
+            <TiltCard
+              className="rounded-2xl bg-slate-900/80 border border-slate-800 overflow-hidden group hover:border-amber-500/40 transition-colors duration-300 flex flex-col justify-between h-full"
             >
               <div>
                 {/* Photo Header */}
@@ -96,7 +101,8 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
                 </button>
               </div>
 
-            </div>
+            </TiltCard>
+            </Reveal>
           ))}
         </div>
 

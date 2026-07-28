@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BARBER_SERVICES } from '../data/barbershopData';
 import { ServiceCategory } from '../types';
 import { Scissors, Crown, Flame, Sparkles, Clock, Check, User } from 'lucide-react';
+import { TiltCard } from './TiltCard';
+import { Reveal } from './Reveal';
 
 interface ServicesSectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
@@ -33,11 +35,14 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   };
 
   return (
-    <section id="services" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section id="services" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[500px] h-[500px] bg-amber-500/10 -top-40 left-1/4" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Scissors className="w-3.5 h-3.5" />
             <span>Menu & Behandelingen Hoogwaardig Kappen</span>
@@ -48,7 +53,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           <p className="text-slate-400 text-sm sm:text-base">
             Elke behandeling omvat een persoonlijke diagnose, hoogwaardige verzorgingsproducten voor mannen en een gratis drankje.
           </p>
-        </div>
+        </Reveal>
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
@@ -69,10 +74,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
         {/* Services Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <div
-              key={service.id}
-              className={`relative rounded-2xl p-6 bg-slate-900/80 border transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 ${
+          {filteredServices.map((service, idx) => (
+            <Reveal key={service.id} delayMs={(idx % 3) * 90}>
+            <TiltCard
+              className={`rounded-2xl p-6 bg-slate-900/80 border transition-colors duration-300 flex flex-col justify-between group h-full ${
                 service.popular
                   ? 'border-amber-500/50 shadow-xl gold-border-glow'
                   : 'border-slate-800 hover:border-slate-700'
@@ -128,7 +133,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 <Scissors className="w-4 h-4" />
                 <span>Reserveer deze Dienst</span>
               </button>
-            </div>
+            </TiltCard>
+            </Reveal>
           ))}
         </div>
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CLIENT_REVIEWS, BARBERS, BARBER_SERVICES } from '../data/barbershopData';
 import { CustomerReview } from '../types';
 import { Star, MessageSquare, CheckCircle, Plus, X } from 'lucide-react';
+import { Reveal } from './Reveal';
 
 export const ReviewsSection: React.FC = () => {
   const [reviewsList, setReviewsList] = useState<CustomerReview[]>(CLIENT_REVIEWS);
@@ -39,7 +40,7 @@ export const ReviewsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+        <Reveal className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-2">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -60,14 +61,14 @@ export const ReviewsSection: React.FC = () => {
             <Plus className="w-4 h-4" />
             <span>Beoordeling Achterlaten</span>
           </button>
-        </div>
+        </Reveal>
 
         {/* Reviews Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {reviewsList.map((rev) => (
+          {reviewsList.map((rev, idx) => (
+            <Reveal key={rev.id} delayMs={(idx % 3) * 90}>
             <div
-              key={rev.id}
-              className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4 flex flex-col justify-between"
+              className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4 flex flex-col justify-between h-full hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300"
             >
               <div className="space-y-3">
                 {/* Author Info */}
@@ -110,6 +111,7 @@ export const ReviewsSection: React.FC = () => {
                 <span className="text-amber-400 font-medium">bij {rev.barberName}</span>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
 

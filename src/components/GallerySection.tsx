@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { LOOKBOOK_ITEMS } from '../data/barbershopData';
 import { LookbookItem } from '../types';
 import { Camera, Scissors, Maximize2, X, ChevronRight } from 'lucide-react';
+import { TiltCard } from './TiltCard';
+import { Reveal } from './Reveal';
 
 interface GallerySectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
@@ -24,11 +26,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
     : LOOKBOOK_ITEMS.filter(item => item.category === activeCategory);
 
   return (
-    <section id="lookbook" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="lookbook" className="py-20 bg-[#0B0B0E] relative border-t border-slate-900 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ambient-glow w-[480px] h-[480px] bg-amber-500/10 -bottom-32 left-1/3" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Camera className="w-3.5 h-3.5" />
             <span>Lookbook & Barbier Inspiratie</span>
@@ -39,7 +44,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
           <p className="text-slate-400 text-sm">
             Alle getoonde kapsels zijn gemaakt bij onze klanten in de zaak in Groningen.
           </p>
-        </div>
+        </Reveal>
 
         {/* Filter Category Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
@@ -60,11 +65,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
+          {filteredItems.map((item, idx) => (
+            <Reveal key={item.id} delayMs={(idx % 4) * 80}>
+            <TiltCard
               onClick={() => setSelectedLook(item)}
-              className="group relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 hover:border-amber-500/40 cursor-pointer transition-colors duration-300"
             >
               <div className="relative h-72 w-full overflow-hidden">
                 <img
@@ -92,7 +97,8 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
                   </div>
                 </div>
               </div>
-            </div>
+            </TiltCard>
+            </Reveal>
           ))}
         </div>
 
