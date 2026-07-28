@@ -309,13 +309,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     <div>
       <p className="text-xs font-semibold text-slate-400 mb-2">{emoji} {label}</p>
       {slots.length > 0 ? (
-        <div className={`grid ${colsClass} gap-2`}>
+        <div className={`grid ${colsClass} gap-2.5`}>
           {slots.map((slot) => (
             <button
               key={slot}
               type="button"
               onClick={() => setSelectedSlot(slot)}
-              className={`py-2 rounded-lg text-xs font-bold border transition-all ${
+              className={`py-3.5 rounded-xl text-base font-bold border transition-all ${
                 selectedSlot === slot
                   ? 'bg-amber-500 text-black border-amber-500 shadow-md'
                   : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
@@ -478,35 +478,35 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               )}
 
               {/* Month Calendar */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
-                <div className="flex items-center justify-between mb-3">
+              <div className="max-w-xs mx-auto rounded-xl border border-slate-800 bg-slate-950 p-3">
+                <div className="flex items-center justify-between mb-2.5">
                   <button
                     type="button"
                     onClick={goPrevMonth}
                     disabled={!canGoPrevMonth()}
-                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="p-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
-                  <p className="text-sm font-bold text-white capitalize">{monthLabel}</p>
+                  <p className="text-xs font-bold text-white capitalize">{monthLabel}</p>
                   <button
                     type="button"
                     onClick={goNextMonth}
-                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+                    className="p-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-7 gap-1 mb-1.5">
+                <div className="grid grid-cols-7 gap-0.5 mb-1">
                   {WEEKDAY_HEADERS.map((wd) => (
-                    <div key={wd} className="text-center text-[10px] font-bold text-slate-500 uppercase py-1">
+                    <div key={wd} className="text-center text-[9px] font-bold text-slate-500 uppercase py-0.5">
                       {wd}
                     </div>
                   ))}
                 </div>
 
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-0.5">
                   {calendarCells.map((cell, idx) => {
                     if (!cell) return <div key={`blank-${idx}`} />;
                     const dateStr = toDateStr(cell);
@@ -519,7 +519,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         type="button"
                         disabled={disabled}
                         onClick={() => setSelectedDate(dateStr)}
-                        className={`aspect-square rounded-lg text-xs font-semibold flex items-center justify-center transition-all ${
+                        className={`aspect-square rounded-md text-[11px] font-semibold flex items-center justify-center transition-all ${
                           disabled
                             ? 'text-slate-700 cursor-not-allowed'
                             : isSelected
@@ -543,9 +543,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Time Slots Categorized — automatically excludes times already passed today */}
               <div className="space-y-4 pt-2">
-                {renderSlotGrid('Ochtend', '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-6')}
-                {renderSlotGrid('Middag', '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-6')}
-                {renderSlotGrid('Avond / Late Uren', '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-4')}
+                {renderSlotGrid('Ochtend', '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid('Middag', '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid('Avond / Late Uren', '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-3')}
               </div>
 
               {allAvailableSlots.length === 0 && (
