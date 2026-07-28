@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
-import { BARBER_SERVICES } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBER_SERVICES_EN } from '../data/barbershopData';
 import { ServiceCategory } from '../types';
-import { Scissors, Crown, Flame, Sparkles, Clock, Check, User } from 'lucide-react';
+import { Scissors, Crown, Flame, Sparkles, Clock, User } from 'lucide-react';
 import { TiltCard } from './TiltCard';
 import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ServicesSectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServiceToBook }) => {
+  const { t, lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>('all');
 
+  const services = lang === 'en' ? BARBER_SERVICES_EN : BARBER_SERVICES;
+
   const categories: { id: ServiceCategory; label: string }[] = [
-    { id: 'all', label: 'Alle Diensten' },
-    { id: 'haircut', label: 'Knipbeurten & Skin Fades' },
-    { id: 'beard', label: 'Baardtrim & Scheren' },
-    { id: 'combo', label: 'Signature VIP Pakketten' },
-    { id: 'junior', label: 'Jonge Gentleman' },
+    { id: 'all', label: t.services.catAll },
+    { id: 'haircut', label: t.services.catHaircut },
+    { id: 'beard', label: t.services.catBeard },
+    { id: 'combo', label: t.services.catCombo },
+    { id: 'junior', label: t.services.catJunior },
   ];
 
   const filteredServices = activeCategory === 'all'
-    ? BARBER_SERVICES
-    : BARBER_SERVICES.filter(s => s.category === activeCategory);
+    ? services
+    : services.filter(s => s.category === activeCategory);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -45,13 +49,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Scissors className="w-3.5 h-3.5" />
-            <span>Menu & Behandelingen Hoogwaardig Kappen</span>
+            <span>{t.services.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Tarieven & <span className="gold-text-gradient">Barbering</span> Behandelingen
+            {t.services.title} <span className="gold-text-gradient">{t.services.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Elke behandeling omvat een persoonlijke diagnose, hoogwaardige verzorgingsproducten voor mannen en een gratis drankje.
+            {t.services.subtitle}
           </p>
         </Reveal>
 
@@ -111,7 +115,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 {service.durationMinutes && (
                   <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
                     <Clock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Geschatte duur: {service.durationMinutes} min</span>
+                    <span>{t.services.durationLabel} {service.durationMinutes} {t.services.minutesShort}</span>
                   </div>
                 )}
 
@@ -131,7 +135,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 }`}
               >
                 <Scissors className="w-4 h-4" />
-                <span>Reserveer deze Dienst</span>
+                <span>{t.services.bookThis}</span>
               </button>
             </TiltCard>
             </Reveal>

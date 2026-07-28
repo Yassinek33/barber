@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Scissors, Calendar, Volume2, VolumeX, Menu, X } from 'lucide-react';
 import { audioSynth } from '../utils/audioSynth';
 import { Magnetic } from './Magnetic';
+import { useLanguage, getSwitchedPath } from '../i18n/LanguageContext';
 
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
@@ -17,6 +18,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuditModal,
   myBookingsCount
 }) => {
+  const { lang, t, paths } = useLanguage();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -68,6 +71,28 @@ export const Navbar: React.FC<NavbarProps> = ({
   const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
     `py-1 text-left transition-colors duration-300 ${isActive ? 'text-amber-400' : 'hover:text-amber-300'}`;
 
+  const nlPath = getSwitchedPath(location.pathname, location.hash, 'nl');
+  const enPath = getSwitchedPath(location.pathname, location.hash, 'en');
+
+  const LanguageSwitcher: React.FC<{ className?: string }> = ({ className = '' }) => (
+    <div className={`flex items-center gap-1 p-1 rounded-lg bg-zinc-900 border border-zinc-800 ${className}`}>
+      <Link
+        to={nlPath}
+        aria-label="Nederlands"
+        className={`px-1.5 py-1 rounded-md text-base leading-none transition-all ${lang === 'nl' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
+      >
+        🇳🇱
+      </Link>
+      <Link
+        to={enPath}
+        aria-label="English"
+        className={`px-1.5 py-1 rounded-md text-base leading-none transition-all ${lang === 'en' ? 'bg-zinc-800 ring-1 ring-amber-400/60' : 'opacity-50 hover:opacity-90'}`}
+      >
+        🇬🇧
+      </Link>
+    </div>
+  );
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
@@ -80,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between">
 
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to={paths.home} className="flex items-center gap-3 group">
             <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#E5C158] to-[#996515] p-[1px] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-[#0a0a0a] rounded-full flex items-center justify-center">
                 <Scissors className="w-4 h-4 text-[#E5C158] transform -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
@@ -98,22 +123,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 text-[11px] uppercase tracking-widest font-bold text-zinc-400">
-            <NavLink to="/diensten" className={navLinkClass}>
-              Diensten
+            <NavLink to={paths.services} className={navLinkClass}>
+              {t.nav.services}
             </NavLink>
-            <NavLink to="/barbiers" className={navLinkClass}>
-              Barbiers
+            <NavLink to={paths.barbers} className={navLinkClass}>
+              {t.nav.barbers}
             </NavLink>
-            <NavLink to="/galerij" className={navLinkClass}>
-              Galerij
+            <NavLink to={paths.gallery} className={navLinkClass}>
+              {t.nav.gallery}
             </NavLink>
-            <NavLink to="/over-ons" className={navLinkClass}>
-              Over Ons
+            <NavLink to={paths.about} className={navLinkClass}>
+              {t.nav.about}
             </NavLink>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
           <div className="hidden sm:flex items-center gap-3">
+
+            <LanguageSwitcher />
 
             {/* ASMR Sound Ambient Toggle */}
             <button
@@ -123,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-amber-500/20 border-amber-400 text-amber-300'
                   : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
               }`}
-              title={isAudioPlaying ? 'ASMR-sfeer uitschakelen' : 'ASMR barbergeluid inschakelen'}
+              title={isAudioPlaying ? t.nav.asmrDisable : t.nav.asmrEnable}
             >
               {isAudioPlaying ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -132,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenMyBookings}
               className="relative p-2 bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-600 transition-all"
-              title="Mijn opgeslagen afspraken"
+              title={t.nav.myAppointments}
             >
               <Calendar className="w-4 h-4" />
               {myBookingsCount > 0 && (
@@ -149,19 +176,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="neon-cta px-5 py-2 border border-amber-300 bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black hover:from-amber-300 hover:to-amber-300 transition-colors text-[11px] uppercase tracking-widest font-black flex items-center gap-2"
               >
                 <Scissors className="w-3.5 h-3.5" />
-                <span>Afspraak Maken</span>
+                <span>{t.nav.bookNow}</span>
               </button>
             </Magnetic>
           </div>
 
           {/* Mobile Hamburger Trigger */}
           <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitcher />
             <button
               onClick={() => onOpenBooking()}
               className="gold-button neon-cta px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
             >
               <Scissors className="w-3.5 h-3.5" />
-              <span>Reserveren</span>
+              <span>{t.nav.mobileReserve}</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -180,49 +208,49 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
             <div className="flex items-center gap-2 text-xs">
               <span className={`w-2 h-2 rounded-full ${isOpenNow ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-              <span className="text-slate-300">{isOpenNow ? 'Vandaag open' : 'Gesloten'}</span>
+              <span className="text-slate-300">{isOpenNow ? t.nav.openToday : t.nav.closed}</span>
             </div>
             <button
               onClick={onOpenAuditModal}
               className="text-xs px-2 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30"
             >
-              Audit vs Oude Site
+              {t.nav.auditVsOldSite}
             </button>
           </div>
 
           <nav className="flex flex-col gap-3 font-medium text-base">
-            <NavLink to="/diensten" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              Diensten & Tarieven
+            <NavLink to={paths.services} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              {t.nav.mobileServices}
             </NavLink>
-            <NavLink to="/barbiers" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              Onze Barbiers
+            <NavLink to={paths.barbers} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              {t.nav.mobileBarbers}
             </NavLink>
             <Link
-              to="/#before-after"
+              to={`${paths.home}#before-after`}
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Voor/Na Simulator
+              {t.nav.mobileBeforeAfter}
             </Link>
-            <NavLink to="/galerij" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              Galerij & Lookbook
+            <NavLink to={paths.gallery} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              {t.nav.mobileGallery}
             </NavLink>
             <Link
-              to="/#reviews"
+              to={`${paths.home}#reviews`}
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Klantbeoordelingen (4.9/5★)
+              {t.nav.mobileReviews}
             </Link>
             <Link
-              to="/#location"
+              to={`${paths.home}#location`}
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 hover:text-amber-400"
             >
-              Locatie Groningen
+              {t.nav.mobileLocation}
             </Link>
-            <NavLink to="/over-ons" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
-              Over Ons
+            <NavLink to={paths.about} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              {t.nav.about}
             </NavLink>
           </nav>
 
@@ -235,7 +263,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-sm font-semibold flex items-center justify-center gap-2"
             >
               <Calendar className="w-4 h-4 text-amber-400" />
-              <span>Mijn Afspraken ({myBookingsCount})</span>
+              <span>{t.nav.myAppointments} ({myBookingsCount})</span>
             </button>
 
             <button
@@ -246,7 +274,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full gold-button neon-cta py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 shadow-lg"
             >
               <Scissors className="w-4 h-4" />
-              <span>Reserveer een Tijdslot</span>
+              <span>{t.nav.mobileReserveSlot}</span>
             </button>
           </div>
         </div>

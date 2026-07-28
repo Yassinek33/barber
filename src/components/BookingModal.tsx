@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { BARBER_SERVICES, BARBERS, BOOKING_EXTRAS, SHOP_INFO } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBER_SERVICES_EN, BARBERS, BARBERS_EN, BOOKING_EXTRAS, BOOKING_EXTRAS_EN, SHOP_INFO } from '../data/barbershopData';
 import { BarberService, Barber, ConfirmedBooking } from '../types';
 import { X, Scissors, Calendar, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, ExternalLink } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -12,7 +13,8 @@ interface BookingModalProps {
   onBookingConfirmed: (booking: ConfirmedBooking) => void;
 }
 
-const WEEKDAY_HEADERS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+const WEEKDAY_HEADERS_NL = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+const WEEKDAY_HEADERS_EN = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 const WEEKEND_SERVICE_ID = 'weekend-thuis';
 
 const toDateStr = (d: Date) => {
@@ -36,9 +38,9 @@ const getNextWeekendDate = () => {
   return d;
 };
 
-const formatDateLong = (dateStr: string) => {
+const formatDateLong = (dateStr: string, lang: 'nl' | 'en') => {
   const d = new Date(`${dateStr}T00:00:00`);
-  const formatted = d.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const formatted = d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 };
 
@@ -47,7 +49,9 @@ const parseSlotMinutes = (slot: string) => {
   return h * 60 + m;
 };
 
-// Dutch day names indexed the same way as Date#getDay() (0 = Sunday)
+// Dutch day names indexed the same way as Date#getDay() (0 = Sunday) — this
+// is the canonical business-logic source and stays Dutch regardless of the
+// display language, since it must match SHOP_INFO.openingHours entries.
 const DAY_NAMES = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
 
 const getOpeningEntry = (dateStr: string) => {
@@ -95,14 +99,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   preselectedBarberId,
   onBookingConfirmed
 }) => {
+  const { t, lang } = useLanguage();
+  const services = lang === 'en' ? BARBER_SERVICES_EN : BARBER_SERVICES;
+  const barbers = lang === 'en' ? BARBERS_EN : BARBERS;
+  const extras = lang === 'en' ? BOOKING_EXTRAS_EN : BOOKING_EXTRAS;
+  const weekdayHeaders = lang === 'en' ? WEEKDAY_HEADERS_EN : WEEKDAY_HEADERS_NL;
+
   const [step, setStep] = useState(1);
 
   // Form Selections
   const [selectedService, setSelectedService] = useState<BarberService>(
-    BARBER_SERVICES.find(s => s.id === preselectedServiceId) || BARBER_SERVICES[0]
+    services.find(s => s.id === preselectedServiceId) || services[0]
   );
   const [selectedBarber, setSelectedBarber] = useState<Barber | null>(
-    BARBERS.find(b => b.id === preselectedBarberId) || null
+    barbers.find(b => b.id === preselectedBarberId) || null
   );
 
   // Date & time selection — a real month calendar, live-aware of the current time
@@ -134,17 +144,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   useEffect(() => {
     if (preselectedServiceId) {
-      const match = BARBER_SERVICES.find(s => s.id === preselectedServiceId);
+      const match = services.find(s => s.id === preselectedServiceId);
       if (match) setSelectedService(match);
     }
-  }, [preselectedServiceId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedServiceId, lang]);
 
   useEffect(() => {
     if (preselectedBarberId) {
-      const match = BARBERS.find(b => b.id === preselectedBarberId);
+      const match = barbers.find(b => b.id === preselectedBarberId);
       if (match) setSelectedBarber(match);
     }
-  }, [preselectedBarberId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedBarberId, lang]);
 
   // The weekend home-visit service can only be booked on a Saturday or Sunday —
   // jump the calendar to the nearest upcoming weekend date when it's selected.
@@ -234,7 +246,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setCalendarMonth(next);
   };
 
-  const monthLabel = calendarMonth.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
+  const monthLabel = calendarMonth.toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL', { month: 'long', year: 'numeric' });
   const calendarCells = buildCalendarCells(calendarMonth);
 
   const toggleExtra = (extraId: string) => {
@@ -248,7 +260,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const calculateTotalPrice = () => {
     let total = selectedService.price;
     selectedExtras.forEach(extId => {
-      const match = BOOKING_EXTRAS.find(e => e.id === extId);
+      const match = extras.find(e => e.id === extId);
       if (match) total += match.price;
     });
     return total;
@@ -259,10 +271,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     if (!customerName || !customerPhone || !customerEmail || !selectedSlot) return;
 
     // Pick barber if null
-    const finalBarber = selectedBarber || BARBERS[0];
+    const finalBarber = selectedBarber || barbers[0];
 
     const extrasData = selectedExtras.map(id => {
-      const ex = BOOKING_EXTRAS.find(e => e.id === id);
+      const ex = extras.find(e => e.id === id);
       return { name: ex ? ex.name : id, price: ex ? ex.price : 0 };
     });
 
@@ -278,7 +290,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       extras: extrasData,
       totalPrice: calculateTotalPrice(),
       durationMinutes: selectedService.durationMinutes,
-      createdAt: new Date().toLocaleDateString('nl-NL'),
+      createdAt: new Date().toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL'),
       status: 'bevestigd'
     };
 
@@ -326,7 +338,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           ))}
         </div>
       ) : (
-        <p className="text-[11px] text-slate-600 italic">Geen tijden meer beschikbaar</p>
+        <p className="text-[11px] text-slate-600 italic">{t.booking.noSlotsLeft}</p>
       )}
     </div>
   );
@@ -342,8 +354,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-white">Reserveer een Tijdslot bij de Barbier</h2>
-              <p className="text-xs text-slate-400">The Premium Barbershop Groningen • Direct & Zonder Wachten</p>
+              <h2 className="font-display text-lg font-bold text-white">{t.booking.modalTitle}</h2>
+              <p className="text-xs text-slate-400">{t.booking.modalSubtitle}</p>
             </div>
           </div>
           <button
@@ -359,22 +371,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="px-6 py-3 bg-slate-950/80 border-b border-slate-800/60 flex items-center justify-between text-xs font-semibold">
             <div className={`flex items-center gap-1.5 ${step >= 1 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">1</span>
-              <span className="hidden sm:inline">Dienst</span>
+              <span className="hidden sm:inline">{t.booking.stepService}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 2 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">2</span>
-              <span className="hidden sm:inline">Barbier</span>
+              <span className="hidden sm:inline">{t.booking.stepBarber}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 3 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
-              <span className="hidden sm:inline">Datum & Tijd</span>
+              <span className="hidden sm:inline">{t.booking.stepDateTime}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-700" />
             <div className={`flex items-center gap-1.5 ${step >= 4 ? 'text-amber-400' : 'text-slate-600'}`}>
               <span className="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-[10px]">4</span>
-              <span className="hidden sm:inline">Bevestiging</span>
+              <span className="hidden sm:inline">{t.booking.stepConfirmation}</span>
             </div>
           </div>
         )}
@@ -385,9 +397,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 1: SELECT SERVICE */}
           {step === 1 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Stap 1: Kies uw Behandeling</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step1Title}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {BARBER_SERVICES.map((srv) => (
+                {services.map((srv) => (
                   <div
                     key={srv.id}
                     onClick={() => setSelectedService(srv)}
@@ -403,10 +415,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </div>
                     <p className="text-xs text-slate-400 line-clamp-2">{srv.description}</p>
                     {srv.durationMinutes && (
-                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} minuten</div>
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">⏱ {srv.durationMinutes} {t.booking.minutes}</div>
                     )}
                     {srv.id === WEEKEND_SERVICE_ID && (
-                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">📅 Alleen op zaterdag & zondag</div>
+                      <div className="mt-2 text-[11px] text-amber-300/80 font-medium">📅 {t.booking.weekendOnlyNote}</div>
                     )}
                   </div>
                 ))}
@@ -417,7 +429,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 2: SELECT BARBER */}
           {step === 2 && (
             <div className="space-y-4">
-              <h3 className="font-display font-bold text-white text-base">Stap 2: Kies uw Favoriete Barbier</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step2Title}</h3>
 
               {/* Option: Any available */}
               <div
@@ -432,14 +444,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-white">Elke Beschikbare Barbier</h4>
-                  <p className="text-xs text-slate-400">Automatische toewijzing op basis van de beste beschikbaarheid</p>
+                  <h4 className="font-bold text-sm text-white">{t.booking.anyBarberTitle}</h4>
+                  <p className="text-xs text-slate-400">{t.booking.anyBarberDesc}</p>
                 </div>
               </div>
 
               {/* Specific Barbers */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {BARBERS.map((b) => (
+                {barbers.map((b) => (
                   <div
                     key={b.id}
                     onClick={() => setSelectedBarber(b)}
@@ -469,11 +481,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 3: PICK DATE & TIME SLOT */}
           {step === 3 && (
             <div className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Stap 3: Kies de Dag & het Tijdstip</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step3Title}</h3>
 
               {isWeekendOnly && (
                 <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 font-medium">
-                  Deze dienst is alleen beschikbaar op zaterdag en zondag — de kalender toont enkel weekenddagen.
+                  {t.booking.weekendOnlyBanner}
                 </div>
               )}
 
@@ -499,7 +511,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div className="grid grid-cols-7 gap-0.5 mb-1">
-                  {WEEKDAY_HEADERS.map((wd) => (
+                  {weekdayHeaders.map((wd) => (
                     <div key={wd} className="text-center text-[9px] font-bold text-slate-500 uppercase py-0.5">
                       {wd}
                     </div>
@@ -538,18 +550,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               <p className="text-xs text-slate-400 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                <span>Geselecteerd: <strong className="text-white">{formatDateLong(selectedDate)}</strong></span>
+                <span>{t.booking.selected} <strong className="text-white">{formatDateLong(selectedDate, lang)}</strong></span>
               </p>
 
               {/* Time Slots Categorized — automatically excludes times already passed today */}
               <div className="space-y-4 pt-2">
-                {renderSlotGrid('Ochtend', '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-4')}
-                {renderSlotGrid('Middag', '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-4')}
-                {renderSlotGrid('Avond / Late Uren', '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-3')}
+                {renderSlotGrid(t.booking.morning, '🌅', morningSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid(t.booking.afternoon, '☀️', afternoonSlots, 'grid-cols-3 sm:grid-cols-4')}
+                {renderSlotGrid(t.booking.evening, '🌙', eveningSlots, 'grid-cols-2 sm:grid-cols-3')}
               </div>
 
               {allAvailableSlots.length === 0 && (
-                <p className="text-xs text-rose-400 font-medium">Geen tijden meer beschikbaar op deze dag — kies een andere dag in de kalender.</p>
+                <p className="text-xs text-rose-400 font-medium">{t.booking.noSlotsForDay}</p>
               )}
             </div>
           )}
@@ -557,14 +569,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 4: CUSTOMER DETAILS & EXTRAS */}
           {step === 4 && (
             <form id="booking-form" onSubmit={handleConfirmSubmit} className="space-y-5">
-              <h3 className="font-display font-bold text-white text-base">Stap 4: Uw Gegevens & VIP Opties</h3>
+              <h3 className="font-display font-bold text-white text-base">{t.booking.step4Title}</h3>
 
               {/* Summary Bar */}
               <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
                 <div>
                   <p className="font-bold text-white">{selectedService.name}</p>
                   <p className="text-slate-400">
-                    {formatDateLong(selectedDate)} om {selectedSlot || '—'} • Bij {selectedBarber ? selectedBarber.name : 'Beschikbare Barbier'}
+                    {formatDateLong(selectedDate, lang)} {t.booking.at} {selectedSlot || '—'} • {t.booking.withBarber} {selectedBarber ? selectedBarber.name : t.booking.availableBarber}
                   </p>
                 </div>
                 <span className="text-amber-400 font-extrabold text-lg">{calculateTotalPrice()}€</span>
@@ -573,11 +585,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Form Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Voor- & Achternaam *:</label>
+                  <label className="block text-slate-300 font-semibold mb-1">{t.booking.fullNameLabel}</label>
                   <input
                     type="text"
                     required
-                    placeholder="bijv: Lucas Jansen"
+                    placeholder={t.booking.fullNamePlaceholder}
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -585,11 +597,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Telefoonnummer *:</label>
+                  <label className="block text-slate-300 font-semibold mb-1">{t.booking.phoneLabel}</label>
                   <input
                     type="tel"
                     required
-                    placeholder="bijv: +31 6 1234 5678"
+                    placeholder={t.booking.phonePlaceholder}
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -598,11 +610,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="text-xs">
-                <label className="block text-slate-300 font-semibold mb-1">E-mailadres (voor bevestiging) *:</label>
+                <label className="block text-slate-300 font-semibold mb-1">{t.booking.emailLabel}</label>
                 <input
                   type="email"
                   required
-                  placeholder="bijv: lucas@example.com"
+                  placeholder={t.booking.emailPlaceholder}
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
@@ -611,9 +623,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Optional Extras Checkboxes */}
               <div className="space-y-2 pt-2">
-                <label className="block text-xs font-semibold text-slate-300">Extra of VIP Opties:</label>
+                <label className="block text-xs font-semibold text-slate-300">{t.booking.extrasLabel}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {BOOKING_EXTRAS.map((extra) => (
+                  {extras.map((extra) => (
                     <div
                       key={extra.id}
                       onClick={() => toggleExtra(extra.id)}
@@ -624,7 +636,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       }`}
                     >
                       <span className="font-medium">{extra.name}</span>
-                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : 'Gratis'}</span>
+                      <span className="font-bold text-amber-400">{extra.price > 0 ? `+${extra.price}€` : t.booking.free}</span>
                     </div>
                   ))}
                 </div>
@@ -641,27 +653,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <h3 className="font-display text-2xl font-bold text-white">Reservering Bevestigd!</h3>
-                <p className="text-xs text-amber-400 font-mono font-bold">Referentie: #{confirmedBooking.id}</p>
-                <p className="text-xs text-slate-400">Een SMS & e-mail ter bevestiging is verzonden naar {confirmedBooking.customerEmail}.</p>
+                <h3 className="font-display text-2xl font-bold text-white">{t.booking.confirmedTitle}</h3>
+                <p className="text-xs text-amber-400 font-mono font-bold">{t.booking.referenceLabel} #{confirmedBooking.id}</p>
+                <p className="text-xs text-slate-400">{t.booking.confirmationSent} {confirmedBooking.customerEmail}.</p>
               </div>
 
               {/* Receipt Card */}
               <div className="max-w-md mx-auto p-5 rounded-2xl bg-slate-950 border border-amber-500/30 text-left space-y-3 text-xs">
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Behandeling:</span>
+                  <span className="text-slate-400">{t.booking.receiptTreatment}</span>
                   <span className="font-bold text-white">{confirmedBooking.service.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Barbier:</span>
+                  <span className="text-slate-400">{t.booking.receiptBarber}</span>
                   <span className="font-bold text-amber-300">{confirmedBooking.barber.name}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-800">
-                  <span className="text-slate-400">Datum & Tijd:</span>
-                  <span className="font-bold text-white">{formatDateLong(confirmedBooking.date)} om {confirmedBooking.timeSlot}</span>
+                  <span className="text-slate-400">{t.booking.receiptDateTime}</span>
+                  <span className="font-bold text-white">{formatDateLong(confirmedBooking.date, lang)} {t.booking.at} {confirmedBooking.timeSlot}</span>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-sm">
-                  <span className="text-slate-300">Totaal te betalen in de zaak:</span>
+                  <span className="text-slate-300">{t.booking.receiptTotal}</span>
                   <span className="text-amber-400">{confirmedBooking.totalPrice}€</span>
                 </div>
               </div>
@@ -669,19 +681,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <a
-                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:Afspraak Barbershop Groningen%0ADESCRIPTION:Behandeling ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
+                  href={`data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${lang === 'en' ? 'Appointment' : 'Afspraak'} Barbershop Groningen%0ADESCRIPTION:${lang === 'en' ? 'Treatment' : 'Behandeling'} ${confirmedBooking.service.name}%0ALOCATION:Oosterstraat 42 Groningen%0AEND:VEVENT%0AEND:VCALENDAR`}
                   download="afspraak-barbershop.ics"
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4 text-amber-400" />
-                  <span>Toevoegen aan mijn Agenda</span>
+                  <span>{t.booking.addToCalendar}</span>
                 </a>
 
                 <button
                   onClick={resetModal}
                   className="w-full sm:w-auto gold-button px-6 py-2.5 rounded-xl font-bold text-xs"
                 >
-                  Voltooien
+                  {t.booking.done}
                 </button>
               </div>
 
@@ -700,7 +712,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Terug</span>
+                <span>{t.booking.back}</span>
               </button>
             ) : (
               <div />
@@ -713,7 +725,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 disabled={step === 3 && !selectedSlot}
                 className="gold-button px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <span>Doorgaan</span>
+                <span>{t.booking.continueBtn}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
@@ -723,7 +735,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="gold-button px-7 py-2.5 rounded-xl font-bold text-xs shadow-lg flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Bevestig mijn Reservering ({calculateTotalPrice()}€)</span>
+                <span>{t.booking.confirmBooking} ({calculateTotalPrice()}€)</span>
               </button>
             )}
           </div>

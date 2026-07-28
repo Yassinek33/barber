@@ -4,6 +4,7 @@ import { GalleryMediaItem } from '../types';
 import { Camera, Scissors, Maximize2, X, Play, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
 import { TiltCard } from './TiltCard';
 import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface GallerySectionProps {
   onSelectServiceToBook: (serviceId: string) => void;
@@ -12,13 +13,14 @@ interface GallerySectionProps {
 type FilterType = 'all' | 'image' | 'video';
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceToBook }) => {
+  const { t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [selectedItem, setSelectedItem] = useState<GalleryMediaItem | null>(null);
 
   const filters: { id: FilterType; label: string }[] = [
-    { id: 'all', label: 'Alles' },
-    { id: 'image', label: "Foto's" },
-    { id: 'video', label: "Video's" },
+    { id: 'all', label: t.gallery.filterAll },
+    { id: 'image', label: t.gallery.filterPhotos },
+    { id: 'video', label: t.gallery.filterVideos },
   ];
 
   const filteredItems = activeFilter === 'all'
@@ -36,13 +38,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
         <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Camera className="w-3.5 h-3.5" />
-            <span>Lookbook & Barbier Inspiratie</span>
+            <span>{t.gallery.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Galerij van onze <span className="gold-text-gradient">Creaties</span>
+            {t.gallery.title} <span className="gold-text-gradient">{t.gallery.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            Echte foto's en video's, rechtstreeks uit de zaak in Groningen.
+            {t.gallery.subtitle}
           </p>
         </Reveal>
 
@@ -78,7 +80,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
                   {item.type === 'image' ? (
                     <img
                       src={item.src}
-                      alt="Resultaat van The Premium Barbershop Groningen"
+                      alt={t.gallery.imageAlt}
                       loading="lazy"
                       className="w-full h-auto block object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -99,7 +101,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
                           <Play className="w-6 h-6 text-black translate-x-0.5" fill="currentColor" />
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 bg-black/50 px-2 py-0.5 rounded-full">
-                          Video
+                          {t.gallery.videoLabel}
                         </span>
                       </div>
                     </div>
@@ -133,7 +135,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
               {selectedItem.type === 'image' ? (
                 <img
                   src={selectedItem.src}
-                  alt="Resultaat van The Premium Barbershop Groningen"
+                  alt={t.gallery.imageAlt}
                   className="w-full h-auto max-h-[75vh] object-contain"
                 />
               ) : (
@@ -150,7 +152,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
             </div>
 
             <div className="p-6 flex items-center justify-between border-t border-slate-800">
-              <span className="text-xs text-slate-400">Zelf ook zo'n resultaat?</span>
+              <span className="text-xs text-slate-400">{t.gallery.lightboxPrompt}</span>
               <button
                 onClick={() => {
                   setSelectedItem(null);
@@ -159,7 +161,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectServiceT
                 className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
               >
                 <Scissors className="w-4 h-4" />
-                <span>Boek een Afspraak</span>
+                <span>{t.gallery.lightboxCta}</span>
               </button>
             </div>
           </div>

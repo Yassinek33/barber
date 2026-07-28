@@ -14,6 +14,7 @@ import { BookingModal } from './components/BookingModal';
 import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
 import { SplashScreen } from './components/SplashScreen';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { ConfirmedBooking } from './types';
 
 // Scrolls to top on every route change, or to a #hash target if present
@@ -76,106 +77,108 @@ export default function App() {
     setBookings(bookings.filter(b => b.id !== bookingId));
   };
 
-  return (
-    <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
-
-      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-
-      <ScrollManager />
-
-      {/* Top Fixed Header */}
-      <Navbar
-        onOpenBooking={(sId) => handleOpenBooking(sId)}
-        onOpenMyBookings={() => setIsMyBookingsOpen(true)}
-        onOpenAuditModal={() => setIsAuditModalOpen(true)}
-        myBookingsCount={bookings.length}
-      />
-
-      {/* Routed Page Content */}
-      <main>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Hero
-                  onOpenBooking={() => handleOpenBooking()}
-                  onOpenAuditModal={() => setIsAuditModalOpen(true)}
-                />
-                <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
-                <ReviewsSection />
-                <LocationSection />
-              </>
-            }
-          />
-
-          <Route
-            path="/diensten"
-            element={
-              <div className="pt-24">
-                <ServicesSection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
-              </div>
-            }
-          />
-
-          <Route
-            path="/barbiers"
-            element={
-              <div className="pt-24">
-                <BarbersSection onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)} />
-              </div>
-            }
-          />
-
-          <Route
-            path="/galerij"
-            element={
-              <div className="pt-24">
-                <GallerySection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
-              </div>
-            }
-          />
-
-          <Route
-            path="/over-ons"
-            element={
-              <div className="pt-24">
-                <AboutSection onOpenBooking={() => handleOpenBooking()} />
-              </div>
-            }
-          />
-        </Routes>
-      </main>
-
-      {/* Footer */}
-      <Footer
+  const homeContent = (
+    <>
+      <Hero
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
       />
+      <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
+      <ReviewsSection />
+      <LocationSection />
+    </>
+  );
 
-      {/* Modals & Overlays */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        preselectedServiceId={preselectedServiceId}
-        preselectedBarberId={preselectedBarberId}
-        onBookingConfirmed={handleBookingConfirmed}
-      />
-
-      <MyBookingsModal
-        isOpen={isMyBookingsOpen}
-        onClose={() => setIsMyBookingsOpen(false)}
-        bookings={bookings}
-        onCancelBooking={handleCancelBooking}
-        onOpenBooking={() => handleOpenBooking()}
-      />
-
-      <AuditComparisonModal
-        isOpen={isAuditModalOpen}
-        onClose={() => setIsAuditModalOpen(false)}
-        onOpenBooking={() => handleOpenBooking()}
-      />
-
+  const servicesContent = (
+    <div className="pt-24">
+      <ServicesSection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
     </div>
+  );
+
+  const barbersContent = (
+    <div className="pt-24">
+      <BarbersSection onSelectBarberToBook={(bId) => handleOpenBooking(undefined, bId)} />
+    </div>
+  );
+
+  const galleryContent = (
+    <div className="pt-24">
+      <GallerySection onSelectServiceToBook={(sId) => handleOpenBooking(sId)} />
+    </div>
+  );
+
+  const aboutContent = (
+    <div className="pt-24">
+      <AboutSection onOpenBooking={() => handleOpenBooking()} />
+    </div>
+  );
+
+  return (
+    <LanguageProvider>
+      <div className="min-h-screen bg-[#0B0B0E] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black">
+
+        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+
+        <ScrollManager />
+
+        {/* Top Fixed Header */}
+        <Navbar
+          onOpenBooking={(sId) => handleOpenBooking(sId)}
+          onOpenMyBookings={() => setIsMyBookingsOpen(true)}
+          onOpenAuditModal={() => setIsAuditModalOpen(true)}
+          myBookingsCount={bookings.length}
+        />
+
+        {/* Routed Page Content — Dutch routes are canonical, /en/* mirrors them for the English version */}
+        <main>
+          <Routes>
+            <Route path="/" element={homeContent} />
+            <Route path="/en" element={homeContent} />
+
+            <Route path="/diensten" element={servicesContent} />
+            <Route path="/en/services" element={servicesContent} />
+
+            <Route path="/barbiers" element={barbersContent} />
+            <Route path="/en/barbers" element={barbersContent} />
+
+            <Route path="/galerij" element={galleryContent} />
+            <Route path="/en/gallery" element={galleryContent} />
+
+            <Route path="/over-ons" element={aboutContent} />
+            <Route path="/en/about" element={aboutContent} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <Footer
+          onOpenBooking={() => handleOpenBooking()}
+          onOpenAuditModal={() => setIsAuditModalOpen(true)}
+        />
+
+        {/* Modals & Overlays */}
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          preselectedServiceId={preselectedServiceId}
+          preselectedBarberId={preselectedBarberId}
+          onBookingConfirmed={handleBookingConfirmed}
+        />
+
+        <MyBookingsModal
+          isOpen={isMyBookingsOpen}
+          onClose={() => setIsMyBookingsOpen(false)}
+          bookings={bookings}
+          onCancelBooking={handleCancelBooking}
+          onOpenBooking={() => handleOpenBooking()}
+        />
+
+        <AuditComparisonModal
+          isOpen={isAuditModalOpen}
+          onClose={() => setIsAuditModalOpen(false)}
+          onOpenBooking={() => handleOpenBooking()}
+        />
+
+      </div>
+    </LanguageProvider>
   );
 }

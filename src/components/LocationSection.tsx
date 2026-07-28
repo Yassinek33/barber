@@ -1,9 +1,11 @@
 import React from 'react';
-import { SHOP_INFO } from '../data/barbershopData';
-import { MapPin, Phone, Mail, Clock, Navigation, Car, ShieldCheck } from 'lucide-react';
+import { SHOP_INFO, translateDayName, translateHoursLabel } from '../data/barbershopData';
+import { MapPin, Phone, Clock, Navigation, Car, ShieldCheck } from 'lucide-react';
 import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const LocationSection: React.FC = () => {
+  const { t, lang } = useLanguage();
   const todayName = new Date().toLocaleDateString('nl-NL', { weekday: 'long' });
 
   return (
@@ -17,21 +19,21 @@ export const LocationSection: React.FC = () => {
         <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <MapPin className="w-3.5 h-3.5" />
-            <span>Adres & Openingstijden</span>
+            <span>{t.location.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            In het Hart van het Centrum van <span className="gold-text-gradient">Groningen</span>
+            {t.location.title} <span className="gold-text-gradient">{t.location.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            Vind ons eenvoudig in de winkelstraat Oosterstraat, op enkele minuten van de Grote Markt.
+            {t.location.subtitle}
           </p>
         </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Info & Opening Hours Card */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Contact Cards */}
             <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
               <div className="flex items-start gap-3">
@@ -39,7 +41,7 @@ export const LocationSection: React.FC = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Adres van de Zaak</h3>
+                  <h3 className="font-bold text-white text-sm">{t.location.addressTitle}</h3>
                   <p className="text-xs text-slate-300 mt-0.5">{SHOP_INFO.address}</p>
                   <a
                     href={`https://maps.google.com/?q=${encodeURIComponent(SHOP_INFO.address)}`}
@@ -48,7 +50,7 @@ export const LocationSection: React.FC = () => {
                     className="inline-flex items-center gap-1 text-xs font-bold text-amber-400 hover:underline mt-2"
                   >
                     <Navigation className="w-3.5 h-3.5" />
-                    <span>Openen in Google Maps</span>
+                    <span>{t.location.openInMaps}</span>
                   </a>
                 </div>
               </div>
@@ -58,7 +60,7 @@ export const LocationSection: React.FC = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Telefoon</h3>
+                  <h3 className="font-bold text-white text-sm">{t.location.phoneTitle}</h3>
                   <a href={`tel:${SHOP_INFO.phone}`} className="text-xs text-slate-300 hover:text-amber-400 transition-colors">
                     {SHOP_INFO.phone}
                   </a>
@@ -70,8 +72,8 @@ export const LocationSection: React.FC = () => {
                   <Car className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">Parkeren in de Buurt</h3>
-                  <p className="text-xs text-slate-300">Q-Park Rademarkt & Damsterdiep (3 min lopen)</p>
+                  <h3 className="font-bold text-white text-sm">{t.location.parkingTitle}</h3>
+                  <p className="text-xs text-slate-300">{t.location.parkingDesc}</p>
                 </div>
               </div>
             </div>
@@ -80,7 +82,7 @@ export const LocationSection: React.FC = () => {
             <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
               <div className="flex items-center gap-2 text-white font-display font-bold text-base">
                 <Clock className="w-5 h-5 text-amber-400" />
-                <span>Openingstijden</span>
+                <span>{t.location.openingHours}</span>
               </div>
 
               <div className="space-y-2 text-xs">
@@ -95,8 +97,8 @@ export const LocationSection: React.FC = () => {
                           : 'text-slate-300 hover:bg-slate-800/50'
                       }`}
                     >
-                      <span className="capitalize">{item.day} {isToday && '(Vandaag)'}</span>
-                      <span>{item.hours}</span>
+                      <span className="capitalize">{translateDayName(item.day, lang)} {isToday && t.location.today}</span>
+                      <span>{translateHoursLabel(item.hours, lang)}</span>
                     </div>
                   );
                 })}
@@ -124,7 +126,7 @@ export const LocationSection: React.FC = () => {
               <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Toegankelijk voor Rolstoelgebruikers & Krachtige Airco</span>
+                  <span>{t.location.accessible}</span>
                 </span>
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent(SHOP_INFO.address)}`}
@@ -132,7 +134,7 @@ export const LocationSection: React.FC = () => {
                   rel="noreferrer"
                   className="gold-button px-3.5 py-1.5 rounded-lg text-xs font-bold"
                 >
-                  Bereken de Route
+                  {t.location.getDirections}
                 </a>
               </div>
             </div>

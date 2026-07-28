@@ -1,14 +1,17 @@
 import React from 'react';
-import { BARBERS } from '../data/barbershopData';
+import { BARBERS, BARBERS_EN } from '../data/barbershopData';
 import { Award, Scissors } from 'lucide-react';
 import { TiltCard } from './TiltCard';
 import { Reveal } from './Reveal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface BarbersSectionProps {
   onSelectBarberToBook: (barberId: string) => void;
 }
 
 export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberToBook }) => {
+  const { t, lang } = useLanguage();
+  const barbers = lang === 'en' ? BARBERS_EN : BARBERS;
   return (
     <section id="barbers" className="py-20 bg-[#0F0F14] relative border-t border-slate-900 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -20,19 +23,19 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
         <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
             <Award className="w-3.5 h-3.5" />
-            <span>Het Team van Master Barbiers</span>
+            <span>{t.barbers.badge}</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Kunstenaars van <span className="gold-text-gradient">Scheermes & Schaar</span>
+            {t.barbers.title} <span className="gold-text-gradient">{t.barbers.titleHighlight}</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Elk teamlid heeft jarenlange ervaring in een hoogwaardige zaak om u de perfecte knipbeurt te bieden.
+            {t.barbers.subtitle}
           </p>
         </Reveal>
 
         {/* Barbers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {BARBERS.map((barber, idx) => (
+          {barbers.map((barber, idx) => (
             <Reveal key={barber.id} delayMs={idx * 100}>
             <TiltCard
               className="rounded-2xl bg-slate-900/80 border border-slate-800 overflow-hidden group hover:border-amber-500/40 transition-colors duration-300 flex flex-col justify-between h-full"
@@ -67,7 +70,7 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
 
                   {/* Specialty Tags */}
                   <div className="space-y-1.5">
-                    <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Specialiteiten:</p>
+                    <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">{t.barbers.specialties}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {barber.specialties.map((spec, idx) => (
                         <span
@@ -90,7 +93,7 @@ export const BarbersSection: React.FC<BarbersSectionProps> = ({ onSelectBarberTo
                   className="w-full gold-button py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-102 transition-transform"
                 >
                   <Scissors className="w-4 h-4" />
-                  <span>Reserveer bij {barber.name}</span>
+                  <span>{t.barbers.bookWith} {barber.name}</span>
                 </button>
               </div>
 

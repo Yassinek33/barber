@@ -1,6 +1,7 @@
 import React from 'react';
 import { ConfirmedBooking } from '../types';
-import { X, Calendar, Clock, User, Trash2, Scissors, AlertCircle } from 'lucide-react';
+import { X, Calendar, Trash2, Scissors } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface MyBookingsModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
   onCancelBooking,
   onOpenBooking
 }) => {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -30,8 +32,8 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display text-lg font-bold text-white">Mijn Afspraken bij de Barbier</h2>
-              <p className="text-xs text-slate-400">Geschiedenis & Beheer van gereserveerde tijdsloten</p>
+              <h2 className="font-display text-lg font-bold text-white">{t.myBookings.title}</h2>
+              <p className="text-xs text-slate-400">{t.myBookings.subtitle}</p>
             </div>
           </div>
           <button
@@ -49,7 +51,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
               <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500">
                 <Scissors className="w-8 h-8" />
               </div>
-              <p className="text-slate-300 font-medium text-sm">U heeft momenteel geen actieve afspraken.</p>
+              <p className="text-slate-300 font-medium text-sm">{t.myBookings.emptyText}</p>
               <button
                 onClick={() => {
                   onClose();
@@ -57,7 +59,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                 }}
                 className="gold-button px-5 py-2.5 rounded-xl font-bold text-xs"
               >
-                Maak uw Eerste Afspraak
+                {t.myBookings.emptyCta}
               </button>
             </div>
           ) : (
@@ -76,12 +78,12 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                     </div>
                     <p className="text-xs text-slate-300 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{b.date} om {b.timeSlot}</span>
+                      <span>{b.date} {t.myBookings.at} {b.timeSlot}</span>
                       <span className="text-slate-500">•</span>
-                      <span>Barbier: {b.barber.name}</span>
+                      <span>{t.myBookings.barber} {b.barber.name}</span>
                     </p>
                     <p className="text-[11px] text-slate-400">
-                      Klant: {b.customerName} ({b.customerPhone})
+                      {t.myBookings.customer} {b.customerName} ({b.customerPhone})
                     </p>
                   </div>
 
@@ -90,7 +92,7 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
                     <button
                       onClick={() => onCancelBooking(b.id)}
                       className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
-                      title="Deze afspraak annuleren"
+                      title={t.myBookings.cancelTitle}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -103,12 +105,12 @@ export const MyBookingsModal: React.FC<MyBookingsModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-xs text-slate-400">Totaal: {bookings.length} afspraken</span>
+          <span className="text-xs text-slate-400">{t.myBookings.total}: {bookings.length}</span>
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold"
           >
-            Sluiten
+            {t.myBookings.close}
           </button>
         </div>
 
