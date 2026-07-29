@@ -6,7 +6,6 @@ export interface Translations {
     about: string;
     bookNow: string;
     mobileReserveSlot: string;
-    myAppointments: string;
     asmrEnable: string;
     asmrDisable: string;
   };
@@ -198,18 +197,6 @@ export interface Translations {
     invalidName: string;
     invalidPhone: string;
   };
-  myBookings: {
-    title: string;
-    subtitle: string;
-    emptyText: string;
-    emptyCta: string;
-    at: string;
-    barber: string;
-    customer: string;
-    cancelTitle: string;
-    total: string;
-    close: string;
-  };
   audit: {
     modalTitle: string;
     modalSubtitle: string;
@@ -242,7 +229,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       about: 'Over Ons',
       bookNow: 'Afspraak Maken',
       mobileReserveSlot: 'Reserveer een Tijdslot',
-      myAppointments: 'Mijn Afspraken',
       asmrEnable: 'ASMR barbergeluid inschakelen',
       asmrDisable: 'ASMR-sfeer uitschakelen',
     },
@@ -434,18 +420,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       invalidName: 'Vul een geldige naam in (alleen letters).',
       invalidPhone: 'Vul een geldig telefoonnummer in voor het gekozen land.',
     },
-    myBookings: {
-      title: 'Mijn Afspraken bij de Barbier',
-      subtitle: 'Geschiedenis & Beheer van gereserveerde tijdsloten',
-      emptyText: 'U heeft momenteel geen actieve afspraken.',
-      emptyCta: 'Maak uw Eerste Afspraak',
-      at: 'om',
-      barber: 'Barbier:',
-      customer: 'Klant:',
-      cancelTitle: 'Deze afspraak annuleren',
-      total: 'Totaal',
-      close: 'Sluiten',
-    },
     audit: {
       modalTitle: 'Analyse & Vergelijking van de Barbier Website',
       modalSubtitle: 'Oude standaard site (thepremiumbarbershopgroningen.nl) vs Nieuw Gemoderniseerd Platform',
@@ -463,7 +437,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       highlight1: 'Direct reserveringssysteem zonder de site te verlaten: Hiermee kiest u precies het type fade, de favoriete barbier en het exacte tijdslot.',
       highlight2: 'Interactieve Voor/Na Module: Laat klanten het precisiewerk zien voordat ze een afspraak maken.',
       highlight3: 'VIP Service aan Huis: Boek een knipbeurt of weekendafspraak gewoon bij u thuis, zonder de deur uit te hoeven.',
-      highlight4: "'Mijn Afspraken' Beheeromgeving: Slaat reserveringen lokaal op met de mogelijkheid om in 1 klik te annuleren of te verzetten.",
+      highlight4: 'Persoonlijke bevestigingsmail: elke reservering krijgt een professionele e-mail met een beveiligde link om de afspraak zelf te wijzigen of te annuleren.',
       close: 'Sluiten',
       testBooking: 'Test de Reservering',
     },
@@ -476,7 +450,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       about: 'About Us',
       bookNow: 'Book Now',
       mobileReserveSlot: 'Book a Time Slot',
-      myAppointments: 'My Appointments',
       asmrEnable: 'Enable ASMR barbershop sound',
       asmrDisable: 'Disable ASMR ambience',
     },
@@ -668,18 +641,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       invalidName: 'Please enter a valid name (letters only).',
       invalidPhone: 'Please enter a valid phone number for the selected country.',
     },
-    myBookings: {
-      title: 'My Appointments with the Barber',
-      subtitle: 'History & management of booked time slots',
-      emptyText: 'You currently have no active appointments.',
-      emptyCta: 'Make your First Appointment',
-      at: 'at',
-      barber: 'Barber:',
-      customer: 'Customer:',
-      cancelTitle: 'Cancel this appointment',
-      total: 'Total',
-      close: 'Close',
-    },
     audit: {
       modalTitle: 'Analysis & Comparison of the Barbershop Website',
       modalSubtitle: 'Old standard site (thepremiumbarbershopgroningen.nl) vs New Modernized Platform',
@@ -697,7 +658,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       highlight1: 'Instant booking system without leaving the site: pick the exact fade type, favorite barber, and exact time slot.',
       highlight2: 'Interactive Before/After Module: shows clients the precision work before they even book.',
       highlight3: 'VIP At-Home Service: book a haircut or weekend appointment right at home, no need to go out.',
-      highlight4: "'My Appointments' Dashboard: stores bookings locally with the ability to cancel or reschedule in 1 click.",
+      highlight4: 'Personal confirmation email: every booking gets a professional email with a secure link to modify or cancel the appointment.',
       close: 'Close',
       testBooking: 'Test the Booking',
     },
