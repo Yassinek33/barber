@@ -1,8 +1,9 @@
 import type { Context } from '@netlify/functions';
 import { getSupabaseAdmin } from './_lib/supabase';
 import { getFreeBusy } from './_lib/google';
+import { SHOP_TIME_ZONE, zonedTimeToUtcISO } from './_lib/time';
 
-const TIME_ZONE = 'Europe/Amsterdam';
+const TIME_ZONE = SHOP_TIME_ZONE;
 
 // GET /api/availability?barberId=majid&date=2026-08-01
 // Returns the busy time ranges (ISO strings) for that barber on that day,
@@ -36,8 +37,8 @@ export default async (req: Request, _context: Context) => {
   }
 
   try {
-    const timeMin = new Date(`${date}T00:00:00`).toISOString();
-    const timeMax = new Date(`${date}T23:59:59`).toISOString();
+    const timeMin = zonedTimeToUtcISO(date, '00:00');
+    const timeMax = zonedTimeToUtcISO(date, '23:59');
     const busy = await getFreeBusy(barber.google_refresh_token, barber.google_calendar_id, timeMin, timeMax);
     return new Response(JSON.stringify({ connected: true, busy, timeZone: TIME_ZONE }), {
       status: 200,

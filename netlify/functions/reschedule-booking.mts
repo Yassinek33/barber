@@ -2,8 +2,9 @@ import type { Context } from '@netlify/functions';
 import { getSupabaseAdmin } from './_lib/supabase';
 import { getFreeBusy, updateCalendarEvent } from './_lib/google';
 import { sendBookingConfirmationEmail } from './_lib/email';
+import { SHOP_TIME_ZONE, zonedTimeToUtcISO } from './_lib/time';
 
-const TIME_ZONE = 'Europe/Amsterdam';
+const TIME_ZONE = SHOP_TIME_ZONE;
 const DEFAULT_DURATION_MINUTES = 60;
 
 interface RescheduleBody {
@@ -14,9 +15,9 @@ interface RescheduleBody {
 }
 
 function slotToRange(date: string, timeSlot: string, durationMinutes: number) {
-  const start = new Date(`${date}T${timeSlot}:00`);
-  const end = new Date(start.getTime() + durationMinutes * 60000);
-  return { startISO: start.toISOString(), endISO: end.toISOString() };
+  const startISO = zonedTimeToUtcISO(date, timeSlot);
+  const endISO = new Date(new Date(startISO).getTime() + durationMinutes * 60000).toISOString();
+  return { startISO, endISO };
 }
 
 function rangesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: string) {
@@ -74,8 +75,8 @@ export default async (req: Request, _context: Context) => {
 
   if (barber?.connected && barber.google_refresh_token && barber.google_calendar_id) {
     try {
-      const dayStart = new Date(`${body.newDate}T00:00:00`).toISOString();
-      const dayEnd = new Date(`${body.newDate}T23:59:59`).toISOString();
+      const dayStart = zonedTimeToUtcISO(body.newDate, '00:00');
+      const dayEnd = zonedTimeToUtcISO(body.newDate, '23:59');
       const busy = await getFreeBusy(barber.google_refresh_token, barber.google_calendar_id, dayStart, dayEnd);
       const conflict = busy.some(b => rangesOverlap(startISO, endISO, b.start, b.end));
       if (conflict) {
