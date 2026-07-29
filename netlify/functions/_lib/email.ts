@@ -15,8 +15,26 @@ export interface BookingEmailData {
   customerName: string;
   customerEmail: string;
   manageUrl: string;
-  variant?: 'confirmation' | 'reschedule';
+  variant?: 'confirmation' | 'reschedule' | 'cancelled';
 }
+
+const VARIANT_COPY = {
+  confirmation: {
+    eyebrow: 'Reservering bevestigd',
+    intro: 'Bedankt voor je reservering! Hieronder vind je een overzicht van je afspraak.',
+    subject: 'Bevestiging afspraak',
+  },
+  reschedule: {
+    eyebrow: 'Afspraak gewijzigd',
+    intro: 'Je afspraak is verzet. Hieronder vind je het bijgewerkte overzicht.',
+    subject: 'Afspraak gewijzigd',
+  },
+  cancelled: {
+    eyebrow: 'Afspraak geannuleerd',
+    intro: 'Je afspraak is geannuleerd. Hieronder vind je de gegevens van de geannuleerde afspraak.',
+    subject: 'Afspraak geannuleerd',
+  },
+} as const;
 
 function formatDateLongNL(dateStr: string): string {
   const d = new Date(`${dateStr}T00:00:00`);
@@ -25,6 +43,12 @@ function formatDateLongNL(dateStr: string): string {
 }
 
 function buildConfirmationHtml(b: BookingEmailData): string {
+  const variant = b.variant || 'confirmation';
+  const copy = VARIANT_COPY[variant];
+  const siteUrl = (() => {
+    try { return new URL(b.manageUrl).origin; } catch { return ''; }
+  })();
+
   const extrasRows = b.extras.length
     ? b.extras.map(e => `
         <tr>
@@ -32,6 +56,29 @@ function buildConfirmationHtml(b: BookingEmailData): string {
           <td style="padding:4px 0;color:#94a3b8;font-size:13px;text-align:right;">€${e.price}</td>
         </tr>`).join('')
     : '';
+
+  const actionsHtml = variant === 'cancelled'
+    ? `<tr>
+        <td align="center">
+          <a href="${siteUrl}" style="display:inline-block;width:100%;box-sizing:border-box;background:linear-gradient(135deg,${GOLD},#b8942e);color:#0B0B0E;text-decoration:none;font-weight:bold;font-size:13px;padding:13px 0;border-radius:10px;text-align:center;">
+            Nieuwe afspraak maken
+          </a>
+        </td>
+      </tr>`
+    : `<tr>
+        <td align="center" style="padding-bottom:12px;">
+          <a href="${b.manageUrl}&action=wijzigen" style="display:inline-block;width:100%;box-sizing:border-box;background:linear-gradient(135deg,${GOLD},#b8942e);color:#0B0B0E;text-decoration:none;font-weight:bold;font-size:13px;padding:13px 0;border-radius:10px;text-align:center;">
+            Afspraak wijzigen
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <a href="${b.manageUrl}&action=annuleren" style="display:inline-block;width:100%;box-sizing:border-box;background:transparent;border:1px solid rgba(244,63,94,0.4);color:#fb7185;text-decoration:none;font-weight:bold;font-size:13px;padding:12px 0;border-radius:10px;text-align:center;">
+            Afspraak annuleren
+          </a>
+        </td>
+      </tr>`;
 
   return `<!doctype html>
 <html lang="nl">
@@ -44,7 +91,7 @@ function buildConfirmationHtml(b: BookingEmailData): string {
 
           <tr>
             <td style="padding:32px 32px 16px 32px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.15);">
-              <div style="font-size:11px;letter-spacing:3px;color:${GOLD};text-transform:uppercase;margin-bottom:6px;">${b.variant === 'reschedule' ? 'Afspraak gewijzigd' : 'Reservering bevestigd'}</div>
+              <div style="font-size:11px;letter-spacing:3px;color:${GOLD};text-transform:uppercase;margin-bottom:6px;">${copy.eyebrow}</div>
               <div style="font-size:22px;font-weight:bold;color:#ffffff;">${SHOP_NAME}</div>
             </td>
           </tr>
@@ -52,11 +99,7 @@ function buildConfirmationHtml(b: BookingEmailData): string {
           <tr>
             <td style="padding:28px 32px 8px 32px;">
               <p style="color:#e2e8f0;font-size:15px;margin:0 0 4px 0;">Hallo ${b.customerName},</p>
-              <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0;">
-                ${b.variant === 'reschedule'
-                  ? 'Je afspraak is verzet. Hieronder vind je het bijgewerkte overzicht.'
-                  : 'Bedankt voor je reservering! Hieronder vind je een overzicht van je afspraak.'}
-              </p>
+              <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0;">${copy.intro}</p>
             </td>
           </tr>
 
@@ -95,24 +138,11 @@ function buildConfirmationHtml(b: BookingEmailData): string {
           <tr>
             <td style="padding:8px 32px 28px 32px;" align="center">
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td align="center" style="padding-bottom:12px;">
-                    <a href="${b.manageUrl}&action=wijzigen" style="display:inline-block;width:100%;box-sizing:border-box;background:linear-gradient(135deg,${GOLD},#b8942e);color:#0B0B0E;text-decoration:none;font-weight:bold;font-size:13px;padding:13px 0;border-radius:10px;text-align:center;">
-                      Afspraak wijzigen
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">
-                    <a href="${b.manageUrl}&action=annuleren" style="display:inline-block;width:100%;box-sizing:border-box;background:transparent;border:1px solid rgba(244,63,94,0.4);color:#fb7185;text-decoration:none;font-weight:bold;font-size:13px;padding:12px 0;border-radius:10px;text-align:center;">
-                      Afspraak annuleren
-                    </a>
-                  </td>
-                </tr>
+                ${actionsHtml}
               </table>
-              <p style="color:#475569;font-size:11px;margin:14px 0 0 0;">
+              ${variant !== 'cancelled' ? `<p style="color:#475569;font-size:11px;margin:14px 0 0 0;">
                 Of beheer je afspraak via: <a href="${b.manageUrl}" style="color:${GOLD};">${b.manageUrl}</a>
-              </p>
+              </p>` : ''}
             </td>
           </tr>
 
@@ -151,7 +181,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData): Prom
     body: JSON.stringify({
       from,
       to: data.customerEmail,
-      subject: `${data.variant === 'reschedule' ? 'Afspraak gewijzigd' : 'Bevestiging afspraak'} #${data.bookingId} — ${SHOP_NAME}`,
+      subject: `${VARIANT_COPY[data.variant || 'confirmation'].subject} #${data.bookingId} — ${SHOP_NAME}`,
       html: buildConfirmationHtml(data),
     }),
   });

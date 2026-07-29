@@ -92,6 +92,30 @@ export async function updateCalendarEvent(
   });
 }
 
+// Current state of a specific event, or null if it's gone (deleted or
+// cancelled directly on the barber's phone) — used by the reconciliation
+// job to detect changes the barber made outside the site.
+export async function getCalendarEvent(
+  refreshToken: string,
+  calendarId: string,
+  eventId: string
+): Promise<{ startISO: string; endISO: string } | null> {
+  const auth = clientFor(refreshToken);
+  const calendar = google.calendar({ version: 'v3', auth });
+  try {
+    const res = await calendar.events.get({ calendarId, eventId });
+    if (res.data.status === 'cancelled') return null;
+    const startISO = res.data.start?.dateTime;
+    const endISO = res.data.end?.dateTime;
+    if (!startISO || !endISO) return null;
+    return { startISO, endISO };
+  } catch (err: unknown) {
+    const status = (err as { code?: number })?.code;
+    if (status === 404 || status === 410) return null;
+    throw err;
+  }
+}
+
 export async function deleteCalendarEvent(refreshToken: string, calendarId: string, eventId: string) {
   const auth = clientFor(refreshToken);
   const calendar = google.calendar({ version: 'v3', auth });

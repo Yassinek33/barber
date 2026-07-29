@@ -25,3 +25,22 @@ export function zonedTimeToUtcISO(dateStr: string, timeStr: string, timeZone: st
   const offsetMs = asIfUTC - guess.getTime();
   return new Date(guess.getTime() - offsetMs).toISOString();
 }
+
+// The reverse: a UTC instant back to the shop's local wall-clock date+time
+// (YYYY-MM-DD / HH:MM) — used to read a Google Calendar event's actual time
+// back into the site's own terms, e.g. when reconciling a change the
+// barber made directly on their phone.
+export function utcIsoToZonedDateTime(iso: string, timeZone: string = SHOP_TIME_ZONE): { date: string; time: string } {
+  const d = new Date(iso);
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  });
+  const parts: Record<string, string> = {};
+  for (const p of dtf.formatToParts(d)) {
+    if (p.type !== 'literal') parts[p.type] = p.value;
+  }
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+}
