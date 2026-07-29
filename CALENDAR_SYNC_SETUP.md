@@ -37,7 +37,7 @@ access that I don't have.
 4. **APIs & Services → Credentials → Create Credentials → OAuth client ID**
    → Application type: **Web application**.
    - Authorized redirect URI:
-     `https://thepremiumbarbergroningen.netlify.app/api/google-oauth-callback`
+     `https://<your-site>.netlify.app/api/google-oauth-callback`
 5. Note down the **Client ID** and **Client secret**.
 
 ## 3. Add environment variables in Netlify
@@ -50,20 +50,27 @@ Netlify dashboard → your site → **Site configuration → Environment variabl
 | `SUPABASE_SERVICE_ROLE_KEY` | from step 1 |
 | `GOOGLE_CLIENT_ID` | from step 2 |
 | `GOOGLE_CLIENT_SECRET` | from step 2 |
-| `GOOGLE_REDIRECT_URI` | `https://thepremiumbarbergroningen.netlify.app/api/google-oauth-callback` |
-| `SITE_URL` | `https://thepremiumbarbergroningen.netlify.app` |
+| `GOOGLE_REDIRECT_URI` | `https://<your-site>.netlify.app/api/google-oauth-callback` |
+| `SITE_URL` | `https://<your-site>.netlify.app` |
+| `SECRETS_SCAN_OMIT_KEYS` | `GOOGLE_REDIRECT_URI,SITE_URL` |
 
-Then trigger a redeploy (Netlify → Deploys → Trigger deploy), so the
-functions pick up the new variables.
+`GOOGLE_REDIRECT_URI` and `SITE_URL` are public URLs, not secrets — the last
+row above tells Netlify's build-time secret scanner not to flag them (it
+otherwise fails the build if an env var's value happens to also appear
+anywhere in the repo, e.g. in this very file).
+
+Then trigger a redeploy (Netlify → Deploys → Trigger deploy → "Clear cache
+and deploy site"), so the functions pick up the new variables.
 
 ## 4. Get each barber's private connect link
 
 In Supabase → **Table Editor → barbers** (or SQL Editor, run
 `select id, name, connect_token from barbers;`), copy each barber's
-`connect_token`, then send them this link (swap in their id and token):
+`connect_token`, then send them this link (swap in their id, token, and your
+actual site domain):
 
 ```
-https://thepremiumbarbergroningen.netlify.app/team/majid/agenda?token=<connect_token>
+https://<your-site>.netlify.app/team/majid/agenda?token=<connect_token>
 ```
 
 Do this for `majid`, `ayoub`, and `yanti`. Keep these links private — anyone
@@ -80,3 +87,11 @@ with the link can connect a calendar for that barber.
 
 That's it — from then on their bookings appear on their phone automatically,
 and blocking time on their phone removes it from the site's availability.
+
+## Troubleshooting
+
+**Deploy fails with "Secrets scanning found ... in build output or repo
+code"**: this means some file in the repo contains the exact same text as
+one of your env vars. Either remove that literal value from the file, or
+(for env vars that genuinely aren't secret, like `SITE_URL`) add them to
+`SECRETS_SCAN_OMIT_KEYS` as shown in step 3.
