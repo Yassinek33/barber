@@ -162,3 +162,41 @@
   animation: neon-pulse 2.4s ease-in-out infinite;
 }
 
+/* Slow cinematic zoom applied to the full-bleed hero video/poster */
+@keyframes hero-video-zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.07); }
+}
+
+.hero-video-zoom {
+  animation: hero-video-zoom 22s ease-in-out infinite alternate;
+}
+
+/* Rotating conic-gradient rings used for the futuristic framed icon on the
+   video hero — a thin gradient sweep masked down to just its edge, so it
+   reads as a HUD-style ring rather than a solid disc. */
+@keyframes hud-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hud-ring {
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(212, 175, 55, 0.95) 40deg, transparent 100deg, transparent 200deg, rgba(212, 175, 55, 0.55) 240deg, transparent 300deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  animation: hud-spin 9s linear infinite;
+}
+
+.hud-ring-outer {
+  background: conic-gradient(from 180deg, transparent 0deg, rgba(255, 255, 255, 0.55) 20deg, transparent 70deg, transparent 280deg, rgba(212, 175, 55, 0.4) 330deg, transparent 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+  animation: hud-spin 15s linear infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-video-zoom, .hud-ring, .hud-ring-outer, .neon-cta, .animate-pulse-slow, .animate-ticker {
+    animation: none;
+  }
+}
+

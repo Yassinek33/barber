@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
+import { VideoHero } from './components/VideoHero';
 import { Hero } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
 import { ServicesSection } from './components/ServicesSection';
@@ -56,6 +57,7 @@ export default function App() {
 
   const homeContent = (
     <>
+      <VideoHero onOpenBooking={() => handleOpenBooking()} />
       <Hero
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuditModal={() => setIsAuditModalOpen(true)}
