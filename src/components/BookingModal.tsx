@@ -11,6 +11,12 @@ import {
   buildHalfHourSlots, generateDaySlots, filterSlotsAgainstCalendar,
   buildCalendarCells, isDayDisabled,
 } from '../lib/scheduling';
+import { DEFAULT_COUNTRY, COUNTRY_OPTIONS, formatPhoneForSubmit } from '../lib/phone';
+import type { CountryCode } from 'libphonenumber-js';
+
+// Letters (incl. accented), spaces, hyphens and apostrophes only — rejects a
+// name containing digits or other stray characters.
+const NAME_REGEX = /^[\p{L}\p{M}][\p{L}\p{M}\s'’.-]*$/u;
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -58,8 +64,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   // Customer info
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>(DEFAULT_COUNTRY);
   const [customerEmail, setCustomerEmail] = useState('');
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+  const [nameTouched, setNameTouched] = useState(false);
+  const [phoneTouched, setPhoneTouched] = useState(false);
+
+  const isNameValid = NAME_REGEX.test(customerName.trim());
+  const isPhoneValid = formatPhoneForSubmit(customerPhone, phoneCountry) !== null;
 
   // Confirmation result
   const [confirmedBooking, setConfirmedBooking] = useState<ConfirmedBooking | null>(null);
@@ -199,6 +211,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     e.preventDefault();
     if (!customerName || !customerPhone || !customerEmail || !selectedSlot) return;
 
+    setNameTouched(true);
+    setPhoneTouched(true);
+
+    if (!isNameValid) {
+      setSubmitError(t.booking.invalidName);
+      return;
+    }
+    const formattedPhone = formatPhoneForSubmit(customerPhone, phoneCountry);
+    if (!formattedPhone) {
+      setSubmitError(t.booking.invalidPhone);
+      return;
+    }
+
     // Pick barber if null
     const finalBarber = selectedBarber || barbers[0];
 
@@ -213,8 +238,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       barber: finalBarber,
       date: selectedDate,
       timeSlot: selectedSlot,
-      customerName,
-      customerPhone,
+      customerName: customerName.trim(),
+      customerPhone: formattedPhone,
       customerEmail,
       extras: extrasData,
       totalPrice: calculateTotalPrice(),
@@ -244,8 +269,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           date: selectedDate,
           timeSlot: selectedSlot,
           durationMinutes: selectedService.durationMinutes,
-          customerName,
-          customerPhone,
+          customerName: booking.customerName,
+          customerPhone: booking.customerPhone,
           customerEmail,
           extras: extrasData,
           totalPrice: booking.totalPrice,
@@ -568,20 +593,49 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     placeholder={t.booking.fullNamePlaceholder}
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
+                    onBlur={() => setNameTouched(true)}
+                    className={`w-full px-3 py-2.5 rounded-xl bg-slate-950 border text-white focus:outline-none ${
+                      nameTouched && customerName && !isNameValid
+                        ? 'border-rose-500 focus:border-rose-400'
+                        : 'border-slate-800 focus:border-amber-400'
+                    }`}
                   />
+                  {nameTouched && customerName && !isNameValid && (
+                    <p className="text-[10px] text-rose-400 mt-1">{t.booking.invalidName}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">{t.booking.phoneLabel}</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder={t.booking.phonePlaceholder}
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400"
-                  />
+                  <div className="flex gap-1.5">
+                    <select
+                      value={phoneCountry}
+                      onChange={(e) => setPhoneCountry(e.target.value as CountryCode)}
+                      className="px-2 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-400 shrink-0 max-w-[6.5rem]"
+                    >
+                      {COUNTRY_OPTIONS.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.flag} {c.dialCode}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="tel"
+                      required
+                      placeholder={t.booking.phonePlaceholder}
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      onBlur={() => setPhoneTouched(true)}
+                      className={`w-full min-w-0 px-3 py-2.5 rounded-xl bg-slate-950 border text-white focus:outline-none ${
+                        phoneTouched && customerPhone && !isPhoneValid
+                          ? 'border-rose-500 focus:border-rose-400'
+                          : 'border-slate-800 focus:border-amber-400'
+                      }`}
+                    />
+                  </div>
+                  {phoneTouched && customerPhone && !isPhoneValid && (
+                    <p className="text-[10px] text-rose-400 mt-1">{t.booking.invalidPhone}</p>
+                  )}
                 </div>
               </div>
 

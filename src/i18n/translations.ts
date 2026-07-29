@@ -195,6 +195,8 @@ export interface Translations {
     confirmBooking: string;
     slotTaken: string;
     submitting: string;
+    invalidName: string;
+    invalidPhone: string;
   };
   myBookings: {
     title: string;
@@ -410,7 +412,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       fullNameLabel: 'Voor- & Achternaam *:',
       fullNamePlaceholder: 'bijv: Lucas Jansen',
       phoneLabel: 'Telefoonnummer *:',
-      phonePlaceholder: 'bijv: +31 6 1234 5678',
+      phonePlaceholder: 'bijv: 6 1234 5678',
       emailLabel: 'E-mailadres (voor bevestiging) *:',
       emailPlaceholder: 'bijv: lucas@example.com',
       extrasLabel: 'Extra of VIP Opties:',
@@ -429,6 +431,8 @@ export const translations: Record<'nl' | 'en', Translations> = {
       confirmBooking: 'Bevestig mijn Reservering',
       slotTaken: 'Dit tijdstip is net bezet geraakt — kies een ander tijdstip.',
       submitting: 'Bezig met bevestigen...',
+      invalidName: 'Vul een geldige naam in (alleen letters).',
+      invalidPhone: 'Vul een geldig telefoonnummer in voor het gekozen land.',
     },
     myBookings: {
       title: 'Mijn Afspraken bij de Barbier',
@@ -642,7 +646,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       fullNameLabel: 'First & Last Name *:',
       fullNamePlaceholder: 'e.g. Lucas Jansen',
       phoneLabel: 'Phone Number *:',
-      phonePlaceholder: 'e.g. +31 6 1234 5678',
+      phonePlaceholder: 'e.g. 6 1234 5678',
       emailLabel: 'Email Address (for confirmation) *:',
       emailPlaceholder: 'e.g. lucas@example.com',
       extrasLabel: 'Extras or VIP Options:',
@@ -661,6 +665,8 @@ export const translations: Record<'nl' | 'en', Translations> = {
       confirmBooking: 'Confirm my Booking',
       slotTaken: 'This time slot was just taken — please pick another one.',
       submitting: 'Confirming...',
+      invalidName: 'Please enter a valid name (letters only).',
+      invalidPhone: 'Please enter a valid phone number for the selected country.',
     },
     myBookings: {
       title: 'My Appointments with the Barber',
