@@ -21,7 +21,16 @@ export default async (req: Request, _context: Context) => {
     .eq('id', barberId)
     .single();
 
-  if (error || !barber || barber.connect_token !== token) {
+  if (error) {
+    console.error('barber-status: Supabase query failed', JSON.stringify(error));
+    return new Response(JSON.stringify({ error: 'invalid_link' }), { status: 403 });
+  }
+  if (!barber) {
+    console.error(`barber-status: no barber row found for id "${barberId}"`);
+    return new Response(JSON.stringify({ error: 'invalid_link' }), { status: 403 });
+  }
+  if (barber.connect_token !== token) {
+    console.error(`barber-status: token mismatch for barber "${barberId}"`);
     return new Response(JSON.stringify({ error: 'invalid_link' }), { status: 403 });
   }
 
