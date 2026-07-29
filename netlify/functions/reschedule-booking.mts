@@ -1,6 +1,7 @@
 import type { Context } from '@netlify/functions';
 import { getSupabaseAdmin } from './_lib/supabase';
 import { getFreeBusy, updateCalendarEvent } from './_lib/google';
+import { sendBookingConfirmationEmail } from './_lib/email';
 
 const TIME_ZONE = 'Europe/Amsterdam';
 const DEFAULT_DURATION_MINUTES = 60;
@@ -45,7 +46,7 @@ export default async (req: Request, _context: Context) => {
   const supabase = getSupabaseAdmin();
   const { data: booking, error } = await supabase
     .from('bookings')
-    .select('id, barber_id, status, date, time_slot, duration_minutes, google_event_id, manage_token')
+    .select('id, barber_id, status, date, time_slot, duration_minutes, google_event_id, manage_token, service_name, customer_name, customer_email, extras, total_price')
     .eq('id', body.id)
     .single();
 
@@ -67,7 +68,7 @@ export default async (req: Request, _context: Context) => {
 
   const { data: barber } = await supabase
     .from('barbers')
-    .select('google_refresh_token, google_calendar_id, connected')
+    .select('name, google_refresh_token, google_calendar_id, connected')
     .eq('id', booking.barber_id)
     .single();
 
@@ -95,7 +96,11 @@ export default async (req: Request, _context: Context) => {
     return new Response(JSON.stringify({ error: 'reschedule_failed' }), { status: 500 });
   }
 
-  if (booking.google_event_id && barber?.connected && barber.google_refresh_token && barber.google_calendar_id) {
+  if (!booking.google_event_id) {
+    console.warn(`reschedule-booking: booking ${booking.id} has no google_event_id, nothing to update on the calendar (barber likely wasn't connected when it was created)`);
+  } else if (!barber?.connected || !barber.google_refresh_token || !barber.google_calendar_id) {
+    console.warn(`reschedule-booking: barber ${booking.barber_id} not connected, skipping calendar update for booking ${booking.id}`);
+  } else {
     try {
       await updateCalendarEvent(barber.google_refresh_token, barber.google_calendar_id, booking.google_event_id, {
         startISO,
@@ -107,6 +112,28 @@ export default async (req: Request, _context: Context) => {
       // The Supabase row is already the source of truth for the site; the
       // barber's calendar event will be stale until they reconnect/refresh.
     }
+  }
+
+  // Best-effort: let the customer know their new time, same template as the
+  // original confirmation. Must never fail the reschedule itself.
+  try {
+    const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
+    await sendBookingConfirmationEmail({
+      bookingId: booking.id,
+      serviceName: booking.service_name,
+      barberName: barber?.name || booking.barber_id,
+      date: body.newDate,
+      timeSlot: body.newTimeSlot,
+      durationMinutes: booking.duration_minutes ?? undefined,
+      extras: booking.extras || [],
+      totalPrice: booking.total_price,
+      customerName: booking.customer_name,
+      customerEmail: booking.customer_email,
+      manageUrl: `${siteUrl}/afspraak/${encodeURIComponent(booking.id)}?token=${encodeURIComponent(booking.manage_token)}`,
+      variant: 'reschedule',
+    });
+  } catch (err) {
+    console.error('sendBookingConfirmationEmail (reschedule) failed', err);
   }
 
   return new Response(JSON.stringify({ ok: true, date: body.newDate, timeSlot: body.newTimeSlot }), {

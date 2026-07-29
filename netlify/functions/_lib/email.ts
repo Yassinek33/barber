@@ -15,6 +15,7 @@ export interface BookingEmailData {
   customerName: string;
   customerEmail: string;
   manageUrl: string;
+  variant?: 'confirmation' | 'reschedule';
 }
 
 function formatDateLongNL(dateStr: string): string {
@@ -43,7 +44,7 @@ function buildConfirmationHtml(b: BookingEmailData): string {
 
           <tr>
             <td style="padding:32px 32px 16px 32px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.15);">
-              <div style="font-size:11px;letter-spacing:3px;color:${GOLD};text-transform:uppercase;margin-bottom:6px;">Reservering bevestigd</div>
+              <div style="font-size:11px;letter-spacing:3px;color:${GOLD};text-transform:uppercase;margin-bottom:6px;">${b.variant === 'reschedule' ? 'Afspraak gewijzigd' : 'Reservering bevestigd'}</div>
               <div style="font-size:22px;font-weight:bold;color:#ffffff;">${SHOP_NAME}</div>
             </td>
           </tr>
@@ -52,7 +53,9 @@ function buildConfirmationHtml(b: BookingEmailData): string {
             <td style="padding:28px 32px 8px 32px;">
               <p style="color:#e2e8f0;font-size:15px;margin:0 0 4px 0;">Hallo ${b.customerName},</p>
               <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0;">
-                Bedankt voor je reservering! Hieronder vind je een overzicht van je afspraak.
+                ${b.variant === 'reschedule'
+                  ? 'Je afspraak is verzet. Hieronder vind je het bijgewerkte overzicht.'
+                  : 'Bedankt voor je reservering! Hieronder vind je een overzicht van je afspraak.'}
               </p>
             </td>
           </tr>
@@ -148,7 +151,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData): Prom
     body: JSON.stringify({
       from,
       to: data.customerEmail,
-      subject: `Bevestiging afspraak #${data.bookingId} — ${SHOP_NAME}`,
+      subject: `${data.variant === 'reschedule' ? 'Afspraak gewijzigd' : 'Bevestiging afspraak'} #${data.bookingId} — ${SHOP_NAME}`,
       html: buildConfirmationHtml(data),
     }),
   });
