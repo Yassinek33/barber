@@ -74,6 +74,24 @@ export async function createCalendarEvent(
   return res.data.id as string;
 }
 
+export async function updateCalendarEvent(
+  refreshToken: string,
+  calendarId: string,
+  eventId: string,
+  event: { startISO: string; endISO: string; timeZone: string }
+) {
+  const auth = clientFor(refreshToken);
+  const calendar = google.calendar({ version: 'v3', auth });
+  await calendar.events.patch({
+    calendarId,
+    eventId,
+    requestBody: {
+      start: { dateTime: event.startISO, timeZone: event.timeZone },
+      end: { dateTime: event.endISO, timeZone: event.timeZone },
+    },
+  });
+}
+
 export async function deleteCalendarEvent(refreshToken: string, calendarId: string, eventId: string) {
   const auth = clientFor(refreshToken);
   const calendar = google.calendar({ version: 'v3', auth });

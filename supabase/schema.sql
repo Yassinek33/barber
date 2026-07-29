@@ -28,8 +28,14 @@ create table if not exists bookings (
   total_price numeric not null,
   status text not null default 'bevestigd',
   google_event_id text,
+  manage_token text unique default encode(gen_random_bytes(16), 'hex'),
   created_at timestamptz not null default now()
 );
+
+-- If you already ran this script before manage_token existed, this backfills
+-- the column and tokens for existing rows without touching anything else.
+alter table bookings add column if not exists manage_token text unique default encode(gen_random_bytes(16), 'hex');
+update bookings set manage_token = encode(gen_random_bytes(16), 'hex') where manage_token is null;
 
 create index if not exists bookings_barber_date_idx on bookings (barber_id, date);
 

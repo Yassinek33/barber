@@ -52,6 +52,7 @@ export interface ConfirmedBooking {
   durationMinutes?: number;
   createdAt: string;
   status: 'bevestigd' | 'voltooid' | 'geannuleerd';
+  manageToken?: string;
 }
 
 export interface CustomerReview {
