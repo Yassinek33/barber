@@ -15,6 +15,7 @@ import { Footer } from './components/Footer';
 import { SplashScreen } from './components/SplashScreen';
 import { BarberConnectPage } from './components/BarberConnectPage';
 import { ManageBookingPage } from './components/ManageBookingPage';
+import { PrivacyPage } from './components/PrivacyPage';
 import { LanguageProvider } from './i18n/LanguageContext';
 
 // Scrolls to top on every route change, or to a #hash target if present
@@ -90,6 +91,12 @@ export default function App() {
     </div>
   );
 
+  const privacyContent = (
+    <div className="pt-24">
+      <PrivacyPage />
+    </div>
+  );
+
   // Private per-barber calendar-connect page — deliberately outside the
   // public site chrome (no navbar/footer/language switcher, just the tool).
   if (isBarberConnectRoute) {
@@ -140,6 +147,9 @@ export default function App() {
 
             <Route path="/over-ons" element={aboutContent} />
             <Route path="/en/about" element={aboutContent} />
+
+            <Route path="/veiligheid-privacy" element={privacyContent} />
+            <Route path="/en/safety-privacy" element={privacyContent} />
           </Routes>
         </main>
 

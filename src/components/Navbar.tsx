@@ -107,6 +107,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <NavLink to={paths.about} className={navLinkClass}>
               {t.nav.about}
             </NavLink>
+            <NavLink to={paths.privacy} className={navLinkClass}>
+              {t.nav.privacy}
+            </NavLink>
           </nav>
 
           {/* Action Tools & Booking CTAs */}
@@ -176,6 +179,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </NavLink>
             <NavLink to={paths.about} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
               {t.nav.about}
+            </NavLink>
+            <NavLink to={paths.privacy} onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass}>
+              {t.nav.privacy}
             </NavLink>
           </nav>
 

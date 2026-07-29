@@ -4,6 +4,7 @@ export interface Translations {
     barbers: string;
     gallery: string;
     about: string;
+    privacy: string;
     bookNow: string;
     mobileReserveSlot: string;
     asmrEnable: string;
@@ -227,6 +228,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       barbers: 'Barbiers',
       gallery: 'Galerij',
       about: 'Over Ons',
+      privacy: 'Veiligheid & Privacy',
       bookNow: 'Afspraak Maken',
       mobileReserveSlot: 'Reserveer een Tijdslot',
       asmrEnable: 'ASMR barbergeluid inschakelen',
@@ -448,6 +450,7 @@ export const translations: Record<'nl' | 'en', Translations> = {
       barbers: 'Barbers',
       gallery: 'Gallery',
       about: 'About Us',
+      privacy: 'Safety & Privacy',
       bookNow: 'Book Now',
       mobileReserveSlot: 'Book a Time Slot',
       asmrEnable: 'Enable ASMR barbershop sound',

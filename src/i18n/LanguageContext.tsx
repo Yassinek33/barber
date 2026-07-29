@@ -10,11 +10,12 @@ export interface LangPaths {
   barbers: string;
   gallery: string;
   about: string;
+  privacy: string;
 }
 
 const PATHS: Record<Lang, LangPaths> = {
-  nl: { home: '/', services: '/diensten', barbers: '/barbiers', gallery: '/galerij', about: '/over-ons' },
-  en: { home: '/en', services: '/en/services', barbers: '/en/barbers', gallery: '/en/gallery', about: '/en/about' },
+  nl: { home: '/', services: '/diensten', barbers: '/barbiers', gallery: '/galerij', about: '/over-ons', privacy: '/veiligheid-privacy' },
+  en: { home: '/en', services: '/en/services', barbers: '/en/barbers', gallery: '/en/gallery', about: '/en/about', privacy: '/en/safety-privacy' },
 };
 
 // Maps any known path (either language) to its canonical Dutch path, used as
