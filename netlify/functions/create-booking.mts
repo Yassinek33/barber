@@ -1,6 +1,8 @@
 import type { Context } from '@netlify/functions';
+import crypto from 'node:crypto';
 import { getSupabaseAdmin } from './_lib/supabase';
 import { getFreeBusy, createCalendarEvent } from './_lib/google';
+import { sendBookingConfirmationEmail } from './_lib/email';
 
 const TIME_ZONE = 'Europe/Amsterdam';
 const DEFAULT_DURATION_MINUTES = 60;
@@ -104,6 +106,8 @@ export default async (req: Request, _context: Context) => {
     }
   }
 
+  const manageToken = crypto.randomBytes(16).toString('hex');
+
   const { error: insertError } = await supabase.from('bookings').insert({
     id: body.id,
     barber_id: body.barberId,
@@ -119,6 +123,7 @@ export default async (req: Request, _context: Context) => {
     total_price: body.totalPrice,
     status: 'bevestigd',
     google_event_id: googleEventId,
+    manage_token: manageToken,
   });
 
   if (insertError) {
@@ -126,7 +131,28 @@ export default async (req: Request, _context: Context) => {
     return new Response(JSON.stringify({ error: 'booking_save_failed' }), { status: 500 });
   }
 
-  return new Response(JSON.stringify({ ok: true, id: body.id, calendarSynced: !!googleEventId }), {
+  // Best-effort: a broken/unconfigured email provider must never fail the
+  // booking itself — the reservation is already safely written above.
+  try {
+    const siteUrl = process.env.SITE_URL || new URL(req.url).origin;
+    await sendBookingConfirmationEmail({
+      bookingId: body.id,
+      serviceName: body.serviceName,
+      barberName: body.barberName,
+      date: body.date,
+      timeSlot: body.timeSlot,
+      durationMinutes: body.durationMinutes,
+      extras: body.extras || [],
+      totalPrice: body.totalPrice,
+      customerName: body.customerName,
+      customerEmail: body.customerEmail,
+      manageUrl: `${siteUrl}/afspraak/${encodeURIComponent(body.id)}?token=${encodeURIComponent(manageToken)}`,
+    });
+  } catch (err) {
+    console.error('sendBookingConfirmationEmail failed', err);
+  }
+
+  return new Response(JSON.stringify({ ok: true, id: body.id, calendarSynced: !!googleEventId, manageToken }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });

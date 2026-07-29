@@ -36,5 +36,6 @@ export interface BookingRow {
   total_price: number;
   status: string;
   google_event_id: string | null;
+  manage_token: string | null;
   created_at: string;
 }

@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { BARBER_SERVICES, BARBER_SERVICES_EN, BARBERS, BARBERS_EN, BOOKING_EXTRAS, BOOKING_EXTRAS_EN, SHOP_INFO } from '../data/barbershopData';
+import { BARBER_SERVICES, BARBER_SERVICES_EN, BARBERS, BARBERS_EN, BOOKING_EXTRAS, BOOKING_EXTRAS_EN } from '../data/barbershopData';
 import { BarberService, Barber, ConfirmedBooking } from '../types';
 import { X, Scissors, Calendar, User, CheckCircle2, ChevronRight, ChevronLeft, Sparkles, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import {
+  WEEKDAY_HEADERS_NL, WEEKDAY_HEADERS_EN, WEEKEND_SERVICE_ID,
+  WEEKEND_SERVICE_OPEN_MIN, WEEKEND_SERVICE_CLOSE_MIN,
+  toDateStr, startOfToday, getNextWeekendDate, formatDateLong, parseSlotMinutes,
+  buildHalfHourSlots, generateDaySlots, filterSlotsAgainstCalendar,
+  buildCalendarCells, isDayDisabled,
+} from '../lib/scheduling';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -12,102 +19,6 @@ interface BookingModalProps {
   preselectedBarberId?: string;
   onBookingConfirmed: (booking: ConfirmedBooking) => void;
 }
-
-const WEEKDAY_HEADERS_NL = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
-const WEEKDAY_HEADERS_EN = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-const WEEKEND_SERVICE_ID = 'weekend-thuis';
-
-const toDateStr = (d: Date) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
-
-const startOfToday = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-};
-
-const getNextWeekendDate = () => {
-  const d = startOfToday();
-  while (d.getDay() !== 0 && d.getDay() !== 6) {
-    d.setDate(d.getDate() + 1);
-  }
-  return d;
-};
-
-const formatDateLong = (dateStr: string, lang: 'nl' | 'en') => {
-  const d = new Date(`${dateStr}T00:00:00`);
-  const formatted = d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-};
-
-const parseSlotMinutes = (slot: string) => {
-  const [h, m] = slot.split(':').map(Number);
-  return h * 60 + m;
-};
-
-// Dutch day names indexed the same way as Date#getDay() (0 = Sunday) — this
-// is the canonical business-logic source and stays Dutch regardless of the
-// display language, since it must match SHOP_INFO.openingHours entries.
-const DAY_NAMES = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
-
-const getOpeningEntry = (dateStr: string) => {
-  const dayName = DAY_NAMES[new Date(`${dateStr}T00:00:00`).getDay()];
-  return SHOP_INFO.openingHours.find(h => h.day === dayName);
-};
-
-// "12.00 tot 18.00" -> { openMin: 720, closeMin: 1080 }
-const parseOpeningRange = (hoursStr: string) => {
-  const [openStr, closeStr] = hoursStr.split(' tot ');
-  const toMinutes = (s: string) => {
-    const [h, m] = s.split('.').map(Number);
-    return h * 60 + (m || 0);
-  };
-  return { openMin: toMinutes(openStr), closeMin: toMinutes(closeStr) };
-};
-
-const buildHalfHourSlots = (openMin: number, closeMin: number): string[] => {
-  const slots: string[] = [];
-  for (let t = openMin; t < closeMin; t += 30) {
-    const h = Math.floor(t / 60);
-    const m = t % 60;
-    slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-  }
-  return slots;
-};
-
-// Every half hour between opening and closing time for that specific day
-const generateDaySlots = (dateStr: string): string[] => {
-  const entry = getOpeningEntry(dateStr);
-  if (!entry || !entry.open) return [];
-  const { openMin, closeMin } = parseOpeningRange(entry.hours);
-  return buildHalfHourSlots(openMin, closeMin);
-};
-
-// The at-home weekend service isn't tied to the shop's own hours — the barber
-// travels to the client, so it runs 09:00–18:00 on both Saturday and Sunday.
-const WEEKEND_SERVICE_OPEN_MIN = 9 * 60;
-const WEEKEND_SERVICE_CLOSE_MIN = 18 * 60;
-
-// Drops any slot that overlaps a busy range from the barber's real,
-// connected Google Calendar — this is what makes something they book on
-// their phone disappear from the site.
-const filterSlotsAgainstCalendar = (
-  slots: string[],
-  dateStr: string,
-  durationMinutes: number,
-  busyRanges: { start: string; end: string }[]
-): string[] => {
-  if (busyRanges.length === 0) return slots;
-  return slots.filter(slot => {
-    const slotStart = new Date(`${dateStr}T${slot}:00`);
-    const slotEnd = new Date(slotStart.getTime() + durationMinutes * 60000);
-    return !busyRanges.some(b => slotStart < new Date(b.end) && new Date(b.start) < slotEnd);
-  });
-};
 
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
@@ -244,29 +155,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const isWeekendOnly = selectedService.id === WEEKEND_SERVICE_ID;
   const todayMidnight = startOfToday();
 
-  const buildCalendarCells = (monthDate: Date) => {
-    const year = monthDate.getFullYear();
-    const month = monthDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const leadingBlanks = (firstDay.getDay() + 6) % 7; // Monday-start week
-    const cells: (Date | null)[] = [];
-    for (let i = 0; i < leadingBlanks; i++) cells.push(null);
-    for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
-    return cells;
-  };
-
-  const isDayDisabled = (d: Date) => {
-    if (d < todayMidnight) return true;
-    if (isWeekendOnly) {
-      // The at-home weekend service runs independently of the shop's hours.
-      const dow = d.getDay();
-      return dow !== 0 && dow !== 6;
-    }
-    const entry = getOpeningEntry(toDateStr(d));
-    return !entry || !entry.open;
-  };
-
   const canGoPrevMonth = () => {
     const prev = new Date(calendarMonth);
     prev.setMonth(prev.getMonth() - 1);
@@ -367,6 +255,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         setIsSubmitting(false);
         setSubmitError(t.booking.slotTaken);
         return;
+      }
+      if (res.ok) {
+        const data = await res.json();
+        if (data.manageToken) booking.manageToken = data.manageToken;
       }
     } catch {
       // Backend unreachable — proceed with the local-only booking flow.
@@ -602,7 +494,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   {calendarCells.map((cell, idx) => {
                     if (!cell) return <div key={`blank-${idx}`} />;
                     const dateStr = toDateStr(cell);
-                    const disabled = isDayDisabled(cell);
+                    const disabled = isDayDisabled(cell, isWeekendOnly);
                     const isSelected = dateStr === selectedDate;
                     const isToday = dateStr === todayStr;
                     return (
