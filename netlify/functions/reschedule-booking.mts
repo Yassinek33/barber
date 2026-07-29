@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from './_lib/supabase';
 import { getFreeBusy, updateCalendarEvent } from './_lib/google';
 import { sendBookingConfirmationEmail } from './_lib/email';
 import { SHOP_TIME_ZONE, zonedTimeToUtcISO } from './_lib/time';
+import { getBarberPhone, hoursUntil, MANAGE_DEADLINE_HOURS } from './_lib/barberContact';
 
 const TIME_ZONE = SHOP_TIME_ZONE;
 const DEFAULT_DURATION_MINUTES = 60;
@@ -55,9 +56,16 @@ export default async (req: Request, _context: Context) => {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404 });
   }
 
-  const currentDateTime = new Date(`${booking.date}T${booking.time_slot}:00`);
-  if (booking.status !== 'bevestigd' || currentDateTime.getTime() < Date.now()) {
+  if (booking.status !== 'bevestigd') {
     return new Response(JSON.stringify({ error: 'not_modifiable' }), { status: 409 });
+  }
+
+  if (hoursUntil(booking.date, booking.time_slot) < MANAGE_DEADLINE_HOURS) {
+    return new Response(JSON.stringify({
+      error: 'deadline_passed',
+      barberPhone: getBarberPhone(booking.barber_id),
+      deadlineHours: MANAGE_DEADLINE_HOURS,
+    }), { status: 409 });
   }
 
   const durationMinutes = booking.duration_minutes || DEFAULT_DURATION_MINUTES;

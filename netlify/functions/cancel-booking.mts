@@ -2,6 +2,7 @@ import type { Context } from '@netlify/functions';
 import { getSupabaseAdmin } from './_lib/supabase';
 import { deleteCalendarEvent } from './_lib/google';
 import { sendBookingConfirmationEmail } from './_lib/email';
+import { getBarberPhone, hoursUntil, MANAGE_DEADLINE_HOURS } from './_lib/barberContact';
 
 // POST /api/cancel-booking  body: { bookingId: string, manageToken?: string }
 // Deletes the event from the barber's Google Calendar (freeing the slot on
@@ -40,6 +41,16 @@ export default async (req: Request, _context: Context) => {
 
   if (manageToken && booking.manage_token !== manageToken) {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404 });
+  }
+
+  // Customer self-service (identified by a manageToken) can only cancel up
+  // to the deadline — after that they need to call the barber directly.
+  if (manageToken && booking.status === 'bevestigd' && hoursUntil(booking.date, booking.time_slot) < MANAGE_DEADLINE_HOURS) {
+    return new Response(JSON.stringify({
+      error: 'deadline_passed',
+      barberPhone: getBarberPhone(booking.barber_id),
+      deadlineHours: MANAGE_DEADLINE_HOURS,
+    }), { status: 409 });
   }
 
   const { data: barber } = await supabase
