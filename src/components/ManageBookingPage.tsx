@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Calendar, CheckCircle2, XCircle, Loader2, Scissors, ChevronLeft, ChevronRight, Clock, User, Ban } from 'lucide-react';
+import { Calendar, CheckCircle2, XCircle, Loader2, Scissors, ChevronLeft, ChevronRight, Clock, User, Ban, Phone } from 'lucide-react';
 import {
   WEEKDAY_HEADERS_NL, WEEKEND_SERVICE_ID, WEEKEND_SERVICE_OPEN_MIN, WEEKEND_SERVICE_CLOSE_MIN,
   toDateStr, startOfToday, formatDateLong, parseSlotMinutes,
@@ -15,6 +15,7 @@ interface BookingDetails {
   id: string;
   barberId: string;
   barberName: string;
+  barberPhone: string;
   serviceId: string;
   serviceName: string;
   date: string;
@@ -25,6 +26,8 @@ interface BookingDetails {
   totalPrice: number;
   status: string;
   canManage: boolean;
+  pastDeadline: boolean;
+  deadlineHours: number;
 }
 
 export const ManageBookingPage: React.FC = () => {
@@ -149,6 +152,12 @@ export const ManageBookingPage: React.FC = () => {
       });
       const data = await res.json();
       if (!res.ok) {
+        if (data.error === 'deadline_passed') {
+          setBooking({ ...booking, canManage: false, pastDeadline: true, barberPhone: data.barberPhone || booking.barberPhone });
+          setMode('view');
+          setIsBusy(false);
+          return;
+        }
         setActionError(
           data.error === 'slot_no_longer_available'
             ? 'Dit tijdstip is net bezet geraakt. Kies een ander tijdstip.'
@@ -176,6 +185,13 @@ export const ManageBookingPage: React.FC = () => {
         body: JSON.stringify({ bookingId: booking.id, manageToken: token }),
       });
       if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (data.error === 'deadline_passed') {
+          setBooking({ ...booking, canManage: false, pastDeadline: true, barberPhone: data.barberPhone || booking.barberPhone });
+          setMode('view');
+          setIsBusy(false);
+          return;
+        }
         setActionError('Annuleren is niet gelukt. Probeer het opnieuw.');
         setIsBusy(false);
         return;
@@ -272,7 +288,23 @@ export const ManageBookingPage: React.FC = () => {
             </div>
           )}
 
-          {mode === 'view' && !booking.canManage && !resultMessage && (
+          {mode === 'view' && !booking.canManage && booking.status === 'bevestigd' && booking.pastDeadline && (
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-center space-y-3">
+              <p className="text-xs text-amber-200 leading-relaxed">
+                Wijzigen of annuleren kan online tot uiterlijk {booking.deadlineHours} uur voor je afspraak.
+                Neem telefonisch contact op met de barbier om dit alsnog te regelen.
+              </p>
+              <a
+                href={`tel:${booking.barberPhone.replace(/[^0-9+]/g, '')}`}
+                className="gold-button w-full px-6 py-3 rounded-xl font-bold text-sm inline-flex items-center justify-center gap-2 shadow-xl hover:scale-105 transition-all"
+              >
+                <Phone className="w-4 h-4" />
+                <span>Bel {booking.barberName}: {booking.barberPhone}</span>
+              </a>
+            </div>
+          )}
+
+          {mode === 'view' && !booking.canManage && booking.status !== 'bevestigd' && !resultMessage && (
             <p className="text-xs text-slate-500 text-center">
               {booking.status === 'geannuleerd'
                 ? 'Deze afspraak is geannuleerd.'

@@ -1,5 +1,6 @@
 import type { Context } from '@netlify/functions';
 import { getSupabaseAdmin } from './_lib/supabase';
+import { getBarberPhone, hoursUntil, MANAGE_DEADLINE_HOURS } from './_lib/barberContact';
 
 // GET /api/get-booking?id=PBG-1234&token=<manage_token>
 // Powers the customer-facing "manage my booking" page. The manage_token is
@@ -32,14 +33,15 @@ export default async (req: Request, _context: Context) => {
     .eq('id', booking.barber_id)
     .single();
 
-  const appointmentDateTime = new Date(`${booking.date}T${booking.time_slot}:00`);
-  const isPast = appointmentDateTime.getTime() < Date.now();
-  const canManage = booking.status === 'bevestigd' && !isPast;
+  const hoursLeft = hoursUntil(booking.date, booking.time_slot);
+  const pastDeadline = hoursLeft < MANAGE_DEADLINE_HOURS;
+  const canManage = booking.status === 'bevestigd' && !pastDeadline;
 
   return new Response(JSON.stringify({
     id: booking.id,
     barberId: booking.barber_id,
     barberName: barber?.name || booking.barber_id,
+    barberPhone: getBarberPhone(booking.barber_id),
     serviceId: booking.service_id,
     serviceName: booking.service_name,
     date: booking.date,
@@ -51,6 +53,8 @@ export default async (req: Request, _context: Context) => {
     totalPrice: booking.total_price,
     status: booking.status,
     canManage,
+    pastDeadline,
+    deadlineHours: MANAGE_DEADLINE_HOURS,
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
