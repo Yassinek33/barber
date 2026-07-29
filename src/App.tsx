@@ -11,13 +11,11 @@ import { ReviewsSection } from './components/ReviewsSection';
 import { LocationSection } from './components/LocationSection';
 import { AuditComparisonModal } from './components/AuditComparisonModal';
 import { BookingModal } from './components/BookingModal';
-import { MyBookingsModal } from './components/MyBookingsModal';
 import { Footer } from './components/Footer';
 import { SplashScreen } from './components/SplashScreen';
 import { BarberConnectPage } from './components/BarberConnectPage';
 import { ManageBookingPage } from './components/ManageBookingPage';
 import { LanguageProvider } from './i18n/LanguageContext';
-import { ConfirmedBooking } from './types';
 
 // Scrolls to top on every route change, or to a #hash target if present
 // (used by links that point back to a home-page section, e.g. /#reviews).
@@ -47,50 +45,12 @@ export default function App() {
   const [preselectedServiceId, setPreselectedServiceId] = useState<string | undefined>();
   const [preselectedBarberId, setPreselectedBarberId] = useState<string | undefined>();
 
-  const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
-
-  // LocalStorage state for persistent client appointments
-  const [bookings, setBookings] = useState<ConfirmedBooking[]>(() => {
-    try {
-      const saved = localStorage.getItem('pbg_my_bookings');
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('pbg_my_bookings', JSON.stringify(bookings));
-    } catch {
-      // ignore
-    }
-  }, [bookings]);
 
   const handleOpenBooking = (serviceId?: string, barberId?: string) => {
     setPreselectedServiceId(serviceId);
     setPreselectedBarberId(barberId);
     setIsBookingModalOpen(true);
-  };
-
-  const handleBookingConfirmed = (newBooking: ConfirmedBooking) => {
-    setBookings([newBooking, ...bookings]);
-  };
-
-  const handleCancelBooking = (bookingId: string) => {
-    // Best-effort: also free the slot on the barber's Google Calendar. If
-    // the backend isn't reachable this just no-ops — the local cancellation
-    // below still goes through either way.
-    const manageToken = bookings.find(b => b.id === bookingId)?.manageToken;
-    fetch('/api/cancel-booking', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bookingId, manageToken }),
-    }).catch(() => { /* backend unreachable — local cancellation still applies */ });
-
-    setBookings(bookings.filter(b => b.id !== bookingId));
   };
 
   const homeContent = (
@@ -161,8 +121,6 @@ export default function App() {
         {/* Top Fixed Header */}
         <Navbar
           onOpenBooking={(sId) => handleOpenBooking(sId)}
-          onOpenMyBookings={() => setIsMyBookingsOpen(true)}
-          myBookingsCount={bookings.length}
         />
 
         {/* Routed Page Content — Dutch routes are canonical, /en/* mirrors them for the English version */}
@@ -197,15 +155,7 @@ export default function App() {
           onClose={() => setIsBookingModalOpen(false)}
           preselectedServiceId={preselectedServiceId}
           preselectedBarberId={preselectedBarberId}
-          onBookingConfirmed={handleBookingConfirmed}
-        />
-
-        <MyBookingsModal
-          isOpen={isMyBookingsOpen}
-          onClose={() => setIsMyBookingsOpen(false)}
-          bookings={bookings}
-          onCancelBooking={handleCancelBooking}
-          onOpenBooking={() => handleOpenBooking()}
+          onBookingConfirmed={() => {}}
         />
 
         <AuditComparisonModal

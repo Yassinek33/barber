@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Scissors, Calendar, Volume2, VolumeX, Menu, X } from 'lucide-react';
+import { Scissors, Volume2, VolumeX, Menu, X } from 'lucide-react';
 import { audioSynth } from '../utils/audioSynth';
 import { Magnetic } from './Magnetic';
 import { useLanguage, getSwitchedPath } from '../i18n/LanguageContext';
 
 interface NavbarProps {
   onOpenBooking: (serviceId?: string) => void;
-  onOpenMyBookings: () => void;
-  myBookingsCount: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  onOpenBooking,
-  onOpenMyBookings,
-  myBookingsCount
+  onOpenBooking
 }) => {
   const { lang, t, paths } = useLanguage();
   const location = useLocation();
@@ -131,20 +127,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               {isAudioPlaying ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4" />}
             </button>
 
-            {/* My Bookings Drawer Trigger */}
-            <button
-              onClick={onOpenMyBookings}
-              className="relative p-2 bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-600 transition-all"
-              title={t.nav.myAppointments}
-            >
-              <Calendar className="w-4 h-4" />
-              {myBookingsCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 text-black font-black text-[9px] flex items-center justify-center">
-                  {myBookingsCount}
-                </span>
-              )}
-            </button>
-
             {/* Main Booking Button */}
             <Magnetic strength={14}>
               <button
@@ -198,17 +180,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenMyBookings();
-              }}
-              className="w-full py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-sm font-semibold flex items-center justify-center gap-2"
-            >
-              <Calendar className="w-4 h-4 text-amber-400" />
-              <span>{t.nav.myAppointments} ({myBookingsCount})</span>
-            </button>
-
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
