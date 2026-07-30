@@ -15,16 +15,16 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ onOpenBook
   const examples = [
     {
       id: 'krullen-fade',
-      beforeSrc: '/barbers/avant-2.png',
-      afterSrc: '/barbers/apres-2.png',
+      beforeSrc: '/barbers/avant-2.jpg',
+      afterSrc: '/barbers/apres-2.jpg',
       beforeLabel: t.beforeAfter.example1Before,
       afterLabel: t.beforeAfter.example1After,
       modelLabel: 'Model: Curly Taper Fade',
     },
     {
       id: 'skin-fade',
-      beforeSrc: '/barbers/avant.png',
-      afterSrc: '/barbers/apres.png',
+      beforeSrc: '/barbers/avant.jpg',
+      afterSrc: '/barbers/apres.jpg',
       beforeLabel: t.beforeAfter.example2Before,
       afterLabel: t.beforeAfter.example2After,
       modelLabel: 'Model: Royal Combo Skin Fade',
