@@ -61,7 +61,7 @@ export const Hero: React.FC<HeroProps> = ({
 
         {/* Golden-hour photo — only revealed in a soft glow that follows the cursor, no visible edge */}
         <img
-          src="/barbers/home-gold.png"
+          src="/barbers/home-gold.jpg"
           alt="The Premium Barbershop Groningen in gouden sfeer"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-300 ease-out"

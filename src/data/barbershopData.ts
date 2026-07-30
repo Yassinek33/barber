@@ -1,6 +1,6 @@
 import { BarberService, Barber, CustomerReview, GalleryMediaItem, AuditComparisonItem } from '../types';
 
-export const HERO_IMAGE_PATH = '/barbers/home.png';
+export const HERO_IMAGE_PATH = '/barbers/home.jpg';
 export const MASTER_IMAGE_PATH = '/src/assets/images/barber_master_1785073753141.jpg';
 
 export const SHOP_INFO = {
@@ -241,7 +241,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 18,
     rating: 4.98,
     reviewsCount: 245,
-    avatarUrl: "/barbers/majid.png",
+    avatarUrl: "/barbers/majid.jpg",
     bio: "Met 18 jaar ervaring ben ik een gerespecteerde kapper bekend om mijn vakmanschap en oog voor detail. Ik bedien een diverse klantenkring, van lokale vaste klanten tot mensen van ver. Mijn passie voor haar en stijl houdt me up-to-date met de nieuwste trends, waardoor ik mijn klanten altijd de beste service bied.",
     specialties: ["18 Jaar Ervaring", "Oog voor Detail", "Nieuwste Hair Trends"],
     instagram: "@majid_barber"
@@ -254,7 +254,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 12,
     rating: 4.96,
     reviewsCount: 198,
-    avatarUrl: "/barbers/ayoub.png",
+    avatarUrl: "/barbers/ayoub.jpg",
     bio: "Ayoub is een ervaren Master Barber. Gedreven door passie en vakmanschap, staat hij bekend om zijn precisie, creativiteit en klantgerichtheid. Ayoub biedt moderne stijlen, klassieke kapsels en gespecialiseerde baardverzorging, altijd met een perfecte en gepersonaliseerde look.",
     specialties: ["Precisie & Creativiteit", "Moderne Stijlen", "Baardverzorging"],
     instagram: "@ayoub_barber"
@@ -267,7 +267,7 @@ export const BARBERS: Barber[] = [
     experienceYears: 10,
     rating: 4.94,
     reviewsCount: 155,
-    avatarUrl: "/barbers/yanti.png",
+    avatarUrl: "/barbers/yanti.jpg",
     bio: "Yanti heeft veel ervaring in de kappersbranche. Met zijn passie voor het vak en vakmanschap weet hij elke klant te voorzien van een stijl die perfect past. Hij combineert moderne trends met klassieke kapsels en biedt daarnaast gespecialiseerde baardverzorging. Yanti werkt nauwkeurig, creatief en met persoonlijke aandacht.",
     specialties: ["Persoonlijke Aandacht", "Nauwkeurig & Creatief", "Klassiek & Modern"],
     instagram: "@yanti_barber"
@@ -283,7 +283,7 @@ export const BARBERS_EN: Barber[] = [
     experienceYears: 18,
     rating: 4.98,
     reviewsCount: 245,
-    avatarUrl: "/barbers/majid.png",
+    avatarUrl: "/barbers/majid.jpg",
     bio: "With 18 years of experience, I'm a respected barber known for my craftsmanship and eye for detail. I serve a diverse clientele, from local regulars to people who travel from further afield. My passion for hair and style keeps me up to date with the latest trends, so my clients always get the best service.",
     specialties: ["18 Years Experience", "Eye for Detail", "Latest Hair Trends"],
     instagram: "@majid_barber"
@@ -296,7 +296,7 @@ export const BARBERS_EN: Barber[] = [
     experienceYears: 12,
     rating: 4.96,
     reviewsCount: 198,
-    avatarUrl: "/barbers/ayoub.png",
+    avatarUrl: "/barbers/ayoub.jpg",
     bio: "Ayoub is an experienced Master Barber. Driven by passion and craftsmanship, he's known for his precision, creativity and client focus. Ayoub offers modern styles, classic cuts and specialized beard grooming, always with a perfectly personalized look.",
     specialties: ["Precision & Creativity", "Modern Styles", "Beard Grooming"],
     instagram: "@ayoub_barber"
@@ -309,7 +309,7 @@ export const BARBERS_EN: Barber[] = [
     experienceYears: 10,
     rating: 4.94,
     reviewsCount: 155,
-    avatarUrl: "/barbers/yanti.png",
+    avatarUrl: "/barbers/yanti.jpg",
     bio: "Yanti has extensive experience in the barbering trade. With a passion for the craft, he knows how to give every client a style that fits them perfectly. He combines modern trends with classic cuts and also offers specialized beard grooming. Yanti works precisely, creatively and with personal attention.",
     specialties: ["Personal Attention", "Precise & Creative", "Classic & Modern"],
     instagram: "@yanti_barber"

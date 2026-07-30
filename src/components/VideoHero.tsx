@@ -18,7 +18,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onOpenBooking }) => {
       <video
         className="hero-video-zoom absolute inset-0 w-full h-full object-cover"
         src="/barbers/hero-video.mp4"
-        poster="/barbers/home-gold.png"
+        poster="/barbers/home-gold.jpg"
         autoPlay
         muted
         loop
