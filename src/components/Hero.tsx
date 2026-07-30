@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { Scissors, MapPin, ShieldCheck, Clock, Award, Star } from 'lucide-react';
-import { HERO_IMAGE_PATH, SHOP_INFO, SHOP_INFO_EN } from '../data/barbershopData';
-import { Magnetic } from './Magnetic';
+import { Scissors, Award } from 'lucide-react';
+import { HERO_IMAGE_PATH, SHOP_INFO } from '../data/barbershopData';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface HeroProps {
-  onOpenBooking: () => void;
-  onOpenAuditModal: () => void;
+  onOpenBooking: (serviceId?: string) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
-  onOpenBooking,
-  onOpenAuditModal
+  onOpenBooking
 }) => {
-  const { t, lang } = useLanguage();
-  const openingHoursSummary = lang === 'en' ? SHOP_INFO_EN.openingHoursSummary : SHOP_INFO.openingHoursSummary;
+  const { t } = useLanguage();
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
 
@@ -97,173 +93,89 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 pb-4">
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
-          {/* Booking System Widget — shown first, directly after the photo, on mobile and desktop */}
-          <div className="lg:col-span-5 flex flex-col justify-center pb-8 lg:pb-0 lg:pr-6 border-b lg:border-b-0 lg:border-r border-white/10">
-            <div className="bg-[#111111] p-7 sm:p-10 border border-amber-500/30 shadow-2xl gold-border-glow flex flex-col justify-between">
+        {/* Booking System Widget — the only thing left in this section, the video
+            hero above already carries the brand introduction and CTA. */}
+        <div className="bg-[#111111] p-7 sm:p-10 border border-amber-500/30 shadow-2xl gold-border-glow flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-7 border-b border-white/10 pb-5">
               <div>
-                <div className="flex justify-between items-center mb-7 border-b border-white/10 pb-5">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">{t.hero.reserveringsmodule}</span>
-                    <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white italic">{t.hero.directBoeken}</h2>
-                  </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span>{t.hero.beschikbaar}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      {t.hero.aanbevolenBehandelingen}
-                    </label>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        onClick={() => onOpenBooking('barber-cut')}
-                        className="p-3 border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all text-left text-xs group"
-                      >
-                        <span className="block font-bold text-white group-hover:text-black">{t.hero.knippenStylen}</span>
-                        <span className="text-zinc-400 group-hover:text-zinc-800 text-[10px]">30 {t.services.minutesShort} • €32</span>
-                      </button>
-                      <button
-                        onClick={() => onOpenBooking('skin-fade')}
-                        className="p-3 border border-white/10 hover:border-white/30 text-left text-xs hover:bg-white/5 transition-all group"
-                      >
-                        <span className="block font-bold text-white">{t.hero.skinFade}</span>
-                        <span className="text-zinc-500 group-hover:text-zinc-400 text-[10px]">45 {t.services.minutesShort} • €35</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
-                      {t.hero.eerstvolgendeTijden}
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="p-2.5 border border-amber-400/50 bg-amber-400/10 text-center cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-amber-300 uppercase font-bold">{t.hero.vandaag}</span>
-                        <span className="font-bold text-xs text-white">14:30</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.vandaag}</span>
-                        <span className="font-bold text-xs text-zinc-300">16:00</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
-                        <span className="font-bold text-xs text-zinc-300">10:00</span>
-                      </div>
-                      <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={onOpenBooking}>
-                        <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
-                        <span className="font-bold text-xs text-zinc-300">11:15</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 border border-zinc-800 bg-zinc-900/50 flex items-center gap-3">
-                    <Award className="w-5 h-5 text-amber-400 shrink-0" />
-                    <div className="text-left">
-                      <p className="text-[10px] uppercase tracking-wider text-white font-bold">{t.hero.tevredenGratis}</p>
-                      <p className="text-[10px] text-zinc-400">{t.hero.tevredenDesc}</p>
-                    </div>
-                  </div>
-                </div>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 block">{t.hero.reserveringsmodule}</span>
+                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white italic">{t.hero.directBoeken}</h2>
               </div>
-
-              <button
-                onClick={onOpenBooking}
-                className="neon-cta w-full bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black py-5 font-black uppercase tracking-[0.2em] text-sm mt-7 hover:from-amber-300 hover:to-amber-300 transition-colors flex items-center justify-center gap-2"
-              >
-                <Scissors className="w-4 h-4" />
-                <span>{t.hero.kiesDatum}</span>
-              </button>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                <span>{t.hero.beschikbaar}</span>
+              </div>
             </div>
-          </div>
 
-          {/* Hero Text Section (Professional Polish Design) */}
-          <div className="lg:col-span-7 flex flex-col justify-between py-4 lg:pl-6">
-            <div>
-              <div className="mb-6 flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 border border-zinc-700 text-[10px] tracking-[0.2em] uppercase font-bold text-zinc-400">
-                  {t.hero.sinds2018}
-                </span>
-                <span className="px-3 py-1 border border-amber-500/30 bg-amber-500/10 text-[10px] tracking-[0.2em] uppercase font-bold text-amber-300">
-                  GRONINGEN WESTERHAVEN
-                </span>
-              </div>
-
-              {/* Ultra Impactful Title */}
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-6 italic text-white uppercase">
-                {t.hero.titleLine1}<br />
-                <span className="text-zinc-500">{t.hero.titleLine2}</span><br />
-                {t.hero.titleLine3}<br />
-                <span className="gold-text-gradient">{t.hero.titleLine4}</span>
-              </h1>
-
-              <p className="text-zinc-400 max-w-lg text-sm leading-relaxed mb-8">
-                {t.hero.subtitle}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4 mb-8">
-                <Magnetic strength={12}>
+            <div className="space-y-5">
+              <div>
+                <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
+                  {t.hero.aanbevolenBehandelingen}
+                </label>
+                <div className="grid grid-cols-2 gap-2.5">
                   <button
-                    onClick={onOpenBooking}
-                    className="px-6 py-3.5 bg-white text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+                    onClick={() => onOpenBooking('barber-cut')}
+                    className="p-3 border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all text-left text-xs group"
                   >
-                    <Scissors className="w-4 h-4" />
-                    <span>{t.hero.onlineReserveren}</span>
+                    <span className="block font-bold text-white group-hover:text-black">{t.hero.knippenStylen}</span>
+                    <span className="text-zinc-400 group-hover:text-zinc-800 text-[10px]">30 {t.services.minutesShort} • €32</span>
                   </button>
-                </Magnetic>
+                  <button
+                    onClick={() => onOpenBooking('skin-fade')}
+                    className="p-3 border border-white/10 hover:border-white/30 text-left text-xs hover:bg-white/5 transition-all group"
+                  >
+                    <span className="block font-bold text-white">{t.hero.skinFade}</span>
+                    <span className="text-zinc-500 group-hover:text-zinc-400 text-[10px]">45 {t.services.minutesShort} • €35</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Audit Benchmark Link */}
-              <button
-                onClick={onOpenAuditModal}
-                className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>{t.hero.auditLink}</span>
-              </button>
-
-              {/* Customer Rating Metric */}
-              <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-                <div className="flex -space-x-2">
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-amber-400">4.9</div>
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-700 flex items-center justify-center text-[10px] font-bold text-white">M</div>
-                  <div className="w-9 h-9 rounded-full border-2 border-[#0a0a0a] bg-zinc-600 flex items-center justify-center text-[10px] font-bold text-white">K</div>
-                </div>
-                <div className="text-left">
-                  <div className="flex items-center gap-1 text-amber-400 text-xs">
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <span className="font-bold">{t.hero.ratingLabel}</span>
+              <div>
+                <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-2 font-bold">
+                  {t.hero.eerstvolgendeTijden}
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="p-2.5 border border-amber-400/50 bg-amber-400/10 text-center cursor-pointer" onClick={() => onOpenBooking()}>
+                    <span className="block text-[9px] text-amber-300 uppercase font-bold">{t.hero.vandaag}</span>
+                    <span className="font-bold text-xs text-white">14:30</span>
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 block">{t.hero.reviewsCountLabel}</span>
+                  <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={() => onOpenBooking()}>
+                    <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.vandaag}</span>
+                    <span className="font-bold text-xs text-zinc-300">16:00</span>
+                  </div>
+                  <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={() => onOpenBooking()}>
+                    <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
+                    <span className="font-bold text-xs text-zinc-300">10:00</span>
+                  </div>
+                  <div className="p-2.5 border border-white/10 text-center hover:border-white/30 cursor-pointer" onClick={() => onOpenBooking()}>
+                    <span className="block text-[9px] text-zinc-500 uppercase">{t.hero.morgen}</span>
+                    <span className="font-bold text-xs text-zinc-300">11:15</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bottom Location & Hours Strip */}
-            <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6 mt-8">
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-amber-400" /> {t.hero.locatieLabel}
-                </p>
-                <p className="text-xs font-bold text-white">{SHOP_INFO.address}</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-amber-400" /> {t.hero.openingstijdenLabel}
-                </p>
-                <p className="text-xs font-bold text-white">{openingHoursSummary}</p>
+              <div className="p-3 border border-zinc-800 bg-zinc-900/50 flex items-center gap-3">
+                <Award className="w-5 h-5 text-amber-400 shrink-0" />
+                <div className="text-left">
+                  <p className="text-[10px] uppercase tracking-wider text-white font-bold">{t.hero.tevredenGratis}</p>
+                  <p className="text-[10px] text-zinc-400">{t.hero.tevredenDesc}</p>
+                </div>
               </div>
             </div>
           </div>
 
+          <button
+            onClick={() => onOpenBooking()}
+            className="neon-cta w-full bg-gradient-to-r from-[#E5C158] to-[#D4AF37] text-black py-5 font-black uppercase tracking-[0.2em] text-sm mt-7 hover:from-amber-300 hover:to-amber-300 transition-colors flex items-center justify-center gap-2"
+          >
+            <Scissors className="w-4 h-4" />
+            <span>{t.hero.kiesDatum}</span>
+          </button>
         </div>
+
       </div>
     </section>
   );

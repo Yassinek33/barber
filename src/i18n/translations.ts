@@ -11,18 +11,6 @@ export interface Translations {
     asmrDisable: string;
   };
   hero: {
-    titleLine1: string;
-    titleLine2: string;
-    titleLine3: string;
-    titleLine4: string;
-    subtitle: string;
-    onlineReserveren: string;
-    auditLink: string;
-    ratingLabel: string;
-    reviewsCountLabel: string;
-    sinds2018: string;
-    locatieLabel: string;
-    openingstijdenLabel: string;
     photoTagline: string;
     reserveringsmodule: string;
     directBoeken: string;
@@ -235,18 +223,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       asmrDisable: 'ASMR-sfeer uitschakelen',
     },
     hero: {
-      titleLine1: 'SCHERP',
-      titleLine2: 'GEKNIPT.',
-      titleLine3: 'ZONDER',
-      titleLine4: 'ZORGEN.',
-      subtitle: 'Uitmuntende mannenverzorging in het hart van Groningen. Skin fade tot op de millimeter, baardtrim met het scheermes & warme handdoek. Snel, professioneel, zonder compromissen.',
-      onlineReserveren: 'Online Reserveren',
-      auditLink: 'Vergelijkingsrapport vs oude site (Prestaties & Snelheid)',
-      ratingLabel: '4.9/5 BEOORDELING',
-      reviewsCountLabel: '488+ Geverifieerde Google Reviews',
-      sinds2018: 'SINDS 2018',
-      locatieLabel: 'Locatie',
-      openingstijdenLabel: 'Openingstijden',
       photoTagline: 'Uw plek voor precisiekapsels en klassieke baardverzorging in het hart van Groningen.',
       reserveringsmodule: 'Reserveringsmodule',
       directBoeken: 'Direct Boeken',
@@ -457,18 +433,6 @@ export const translations: Record<'nl' | 'en', Translations> = {
       asmrDisable: 'Disable ASMR ambience',
     },
     hero: {
-      titleLine1: 'SHARP',
-      titleLine2: 'CUTS.',
-      titleLine3: 'ZERO',
-      titleLine4: 'WORRIES.',
-      subtitle: "Premium men's grooming in the heart of Groningen. Skin fades down to the millimetre, beard trims with the straight razor & a warm towel finish. Fast, professional, no compromises.",
-      onlineReserveren: 'Book Online',
-      auditLink: 'Comparison report vs old site (Performance & Speed)',
-      ratingLabel: '4.9/5 RATING',
-      reviewsCountLabel: '488+ Verified Google Reviews',
-      sinds2018: 'SINCE 2018',
-      locatieLabel: 'Location',
-      openingstijdenLabel: 'Opening Hours',
       photoTagline: 'Your spot for precision haircuts and classic beard grooming in the heart of Groningen.',
       reserveringsmodule: 'Booking Module',
       directBoeken: 'Book Instantly',

@@ -58,10 +58,7 @@ export default function App() {
   const homeContent = (
     <>
       <VideoHero onOpenBooking={() => handleOpenBooking()} />
-      <Hero
-        onOpenBooking={() => handleOpenBooking()}
-        onOpenAuditModal={() => setIsAuditModalOpen(true)}
-      />
+      <Hero onOpenBooking={handleOpenBooking} />
       <BeforeAfterSlider onOpenBooking={() => handleOpenBooking()} />
       <ReviewsSection />
       <LocationSection />

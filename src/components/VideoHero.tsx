@@ -1,6 +1,7 @@
 import React from 'react';
-import { Scissors, ChevronDown } from 'lucide-react';
+import { Scissors, ChevronDown, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { Magnetic } from './Magnetic';
 
 interface VideoHeroProps {
   onOpenBooking: () => void;
@@ -49,13 +50,16 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onOpenBooking }) => {
           The Premium Barbershop Groningen
         </p>
 
-        <button
-          onClick={onOpenBooking}
-          className="gold-button neon-cta px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest inline-flex items-center gap-3"
-        >
-          <Scissors className="w-4 h-4" />
-          <span>{t.nav.bookNow}</span>
-        </button>
+        <Magnetic strength={16}>
+          <button
+            onClick={onOpenBooking}
+            className="group sheen-border neon-cta relative overflow-hidden rounded-full inline-flex items-center gap-3 pl-8 pr-7 py-4 bg-gradient-to-r from-[#F0D27A] via-[#D4AF37] to-[#b8942e] text-black font-black text-sm uppercase tracking-widest shadow-[0_8px_30px_rgba(212,175,55,0.35)] transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_45px_rgba(212,175,55,0.55)]"
+          >
+            <Scissors className="w-4 h-4 transition-transform duration-300 group-hover:-rotate-[20deg]" />
+            <span>{t.nav.bookNow}</span>
+            <ArrowRight className="w-4 h-4 -mr-1.5 opacity-0 max-w-0 -translate-x-2 group-hover:opacity-100 group-hover:max-w-[1.5rem] group-hover:translate-x-0 transition-all duration-300" />
+          </button>
+        </Magnetic>
 
         <div className="absolute bottom-8 text-amber-300/60 animate-bounce">
           <ChevronDown className="w-6 h-6" />
